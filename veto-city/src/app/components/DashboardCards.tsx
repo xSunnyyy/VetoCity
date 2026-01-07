@@ -3,13 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { buildTeams, formatPoints } from "../lib/league";
 
-type CardKind =
-  | "waivers"
-  | "trades"
-  | "power"
-  | "motw"
-  | "blowout"
-  | "lucky";
+type CardKind = "waivers" | "trades" | "power" | "motw" | "blowout" | "lucky";
 
 type PlayerMeta = {
   full_name?: string;
@@ -18,7 +12,6 @@ type PlayerMeta = {
   position?: string;
   team?: string;
 };
-
 type PlayerMap = Record<string, PlayerMeta>;
 
 type DraftPick = {
@@ -33,9 +26,15 @@ function scoreFmt(n: number) {
   return (Math.round(n * 10) / 10).toFixed(1);
 }
 
+/** ---------- UI primitives ---------- */
+
+function cx(...parts: Array<string | false | null | undefined>) {
+  return parts.filter(Boolean).join(" ");
+}
+
 function Icon({ kind }: { kind: CardKind }) {
   const base =
-    "h-9 w-9 rounded-none border border-zinc-800 bg-zinc-950 flex items-center justify-center";
+    "h-10 w-10 rounded-xl border border-zinc-800/80 bg-zinc-950/60 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] flex items-center justify-center";
   const glyph = "text-zinc-200";
   switch (kind) {
     case "waivers":
@@ -136,34 +135,66 @@ function Icon({ kind }: { kind: CardKind }) {
 function CardShell({
   kind,
   title,
+  subtitle,
   children,
 }: {
   kind: CardKind;
   title: string;
+  subtitle?: string;
   children: React.ReactNode;
 }) {
   return (
-    <div className="group relative rounded-none border border-zinc-800 bg-zinc-950 p-5 transition hover:border-zinc-700">
+    <div className="group relative overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[0_14px_40px_rgba(0,0,0,0.42)] backdrop-blur">
       <div className="pointer-events-none absolute inset-0 opacity-0 transition group-hover:opacity-100">
         <div className="absolute inset-0 bg-gradient-to-br from-zinc-800/20 via-transparent to-transparent" />
       </div>
 
-      <div className="relative flex items-start gap-3">
+      <div className="relative flex items-start gap-3 px-5 pt-5">
         <Icon kind={kind} />
         <div className="min-w-0 flex-1">
-          <div className="text-xs font-medium tracking-wide text-zinc-400">
-            {title.toUpperCase()}
-          </div>
+          <div className="text-sm font-semibold tracking-wide text-zinc-100">{title}</div>
+          {subtitle ? (
+            <div className="mt-1 text-xs text-zinc-500">{subtitle}</div>
+          ) : null}
+        </div>
+
+        <div className="text-xs text-zinc-500 opacity-0 transition group-hover:opacity-100">
+          {/* reserved for "View all" later */}
         </div>
       </div>
 
-      <div className="relative mt-4">{children}</div>
+      <div className="relative px-5 pb-5 pt-4">{children}</div>
     </div>
   );
 }
 
 function Divider() {
-  return <div className="h-px w-full bg-zinc-900/70" />;
+  return <div className="h-px w-full bg-zinc-800/70" />;
+}
+
+function Pill({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="inline-flex items-center rounded-full border border-zinc-800 bg-zinc-950/60 px-2 py-0.5 text-[11px] font-medium text-zinc-300">
+      {children}
+    </span>
+  );
+}
+
+function Chips({ items }: { items: string[] }) {
+  // wraps nicely; keeps the "row" feel but looks modern
+  return (
+    <div className="mt-2 flex flex-wrap gap-1.5">
+      {items.map((s, i) => (
+        <span
+          key={`${s}-${i}`}
+          className="max-w-full truncate rounded-full border border-zinc-800 bg-zinc-950/70 px-2 py-0.5 text-[11px] text-zinc-300"
+          title={s}
+        >
+          {s}
+        </span>
+      ))}
+    </div>
+  );
 }
 
 function TeamScoreBox({
@@ -178,7 +209,7 @@ function TeamScoreBox({
   bottomScore: number;
 }) {
   return (
-    <div className="rounded-none border border-zinc-900/70 bg-zinc-950 p-4">
+    <div className="rounded-xl border border-zinc-800/80 bg-zinc-950/60 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
           <div className="truncate text-sm font-semibold text-zinc-200">{topTeam}</div>
@@ -186,7 +217,7 @@ function TeamScoreBox({
         <div className="text-lg font-semibold text-zinc-100">{scoreFmt(topScore)}</div>
       </div>
 
-      <div className="my-3 h-px w-full bg-zinc-900/70" />
+      <div className="my-3 h-px w-full bg-zinc-800/70" />
 
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
@@ -197,6 +228,8 @@ function TeamScoreBox({
     </div>
   );
 }
+
+/** ---------- Sleeper helpers (unchanged logic) ---------- */
 
 function txnTime(t: any): number {
   return (
@@ -251,9 +284,7 @@ function playerName(players: PlayerMap | null, id: string) {
   const p = players[id];
   if (!p) return id;
 
-  const name =
-    p.full_name || [p.first_name, p.last_name].filter(Boolean).join(" ") || id;
-
+  const name = p.full_name || [p.first_name, p.last_name].filter(Boolean).join(" ") || id;
   const suffix = [p.position, p.team].filter(Boolean).join(" · ");
   return suffix ? `${name} (${suffix})` : name;
 }
@@ -309,12 +340,10 @@ export function DashboardCards() {
         const waivers = data.transactions
           .filter((t) => t.type === "waiver" || t.type === "free_agent")
           .sort((a, b) => txnTime(b) - txnTime(a))
-          .slice(0, 5)
+          .slice(0, 3)
           .map((t) => {
             const rosterId =
-              (t.adds && Object.values(t.adds)[0]) ??
-              (t.roster_ids && t.roster_ids[0]) ??
-              -1;
+              (t.adds && Object.values(t.adds)[0]) ?? (t.roster_ids && t.roster_ids[0]) ?? -1;
 
             const teamName =
               rosterId !== -1 ? teams.get(rosterId)?.name ?? `Team ${rosterId}` : "Unknown";
@@ -326,7 +355,7 @@ export function DashboardCards() {
         const trades = data.transactions
           .filter((t) => t.type === "trade")
           .sort((a, b) => txnTime(b) - txnTime(a))
-          .slice(0, 5)
+          .slice(0, 2)
           .map((t) => {
             const rosterIds = (t.roster_ids ?? []).slice(0, 2);
             const aRid = rosterIds[0] ?? -1;
@@ -365,9 +394,9 @@ export function DashboardCards() {
             const wins = r.settings?.wins ?? 0;
             const losses = r.settings?.losses ?? 0;
 
-            const pf = (r.settings?.fpts ?? 0) + ((r.settings?.fpts_decimal ?? 0) / 100);
+            const pf = (r.settings?.fpts ?? 0) + (r.settings?.fpts_decimal ?? 0) / 100;
             const pa =
-              (r.settings?.fpts_against ?? 0) + ((r.settings?.fpts_against_decimal ?? 0) / 100);
+              (r.settings?.fpts_against ?? 0) + (r.settings?.fpts_against_decimal ?? 0) / 100;
 
             const score = wins * 2 + pf / 100 - pa / 120;
             return { team, wins, losses, pf, score };
@@ -401,8 +430,8 @@ export function DashboardCards() {
   const content = useMemo(() => {
     if (error) {
       return (
-        <div className="rounded-none border border-red-900/60 bg-zinc-950 p-5 text-red-200">
-          <div className="font-semibold">Load error</div>
+        <div className="rounded-2xl border border-red-900/60 bg-zinc-950/60 p-5 text-red-200 shadow-[0_14px_40px_rgba(0,0,0,0.42)]">
+          <div className="text-sm font-semibold">Load error</div>
           <div className="mt-2 text-sm opacity-90">{error}</div>
         </div>
       );
@@ -412,9 +441,15 @@ export function DashboardCards() {
       return (
         <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="rounded-none border border-zinc-800 bg-zinc-950 p-5">
-              <div className="h-4 w-32 rounded bg-zinc-900/50" />
-              <div className="mt-4 h-24 w-full rounded bg-zinc-900/30" />
+            <div
+              key={i}
+              className="overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 p-5 shadow-[0_14px_40px_rgba(0,0,0,0.42)]"
+            >
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-xl border border-zinc-800/80 bg-zinc-950/60" />
+                <div className="h-4 w-40 rounded bg-zinc-900/50" />
+              </div>
+              <div className="mt-5 h-24 w-full rounded-xl bg-zinc-900/30" />
             </div>
           ))}
         </section>
@@ -423,16 +458,19 @@ export function DashboardCards() {
 
     return (
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <CardShell kind="waivers" title="Waiver Wire">
+        <CardShell kind="waivers" title="Waiver Wire" subtitle="Season to date • latest pickups">
           {waiverRows.length ? (
-            <div className="rounded-none border border-zinc-900/70 bg-zinc-950">
+            <div className="overflow-hidden rounded-xl border border-zinc-800/80 bg-zinc-950/40">
               {waiverRows.map((r, idx) => (
-                <div key={idx}>
-                  <div className="px-3 py-3">
-                    <div className="truncate text-sm font-semibold text-zinc-200">{r.team}</div>
-                    <div className="mt-2 text-xs text-zinc-400">{r.players.join(" • ")}</div>
+                <div key={idx} className="px-4 py-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="truncate text-sm font-semibold text-zinc-200">{r.team}</div>
+                    </div>
+                    <Pill>{`+${Math.min(r.players.length, 4)}`}</Pill>
                   </div>
-                  {idx !== waiverRows.length - 1 ? <Divider /> : null}
+                  <Chips items={r.players} />
+                  {idx !== waiverRows.length - 1 ? <div className="mt-3"><Divider /></div> : null}
                 </div>
               ))}
             </div>
@@ -441,23 +479,36 @@ export function DashboardCards() {
           )}
         </CardShell>
 
-        <CardShell kind="trades" title="Trades">
+        <CardShell kind="trades" title="Trades" subtitle="Season to date • most recent first">
           {tradeRows.length ? (
             <div className="space-y-3">
               {tradeRows.map((t, idx) => (
-                <div key={idx} className="rounded-none border border-zinc-900/70 bg-zinc-950 p-3">
-                  <div className="text-sm font-semibold text-zinc-200">
-                    {t.aTeam} <span className="text-zinc-500">↔</span> {t.bTeam}
+                <div
+                  key={idx}
+                  className="rounded-xl border border-zinc-800/80 bg-zinc-950/40 p-4"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="min-w-0 text-sm font-semibold text-zinc-200">
+                      <span className="truncate">{t.aTeam}</span>{" "}
+                      <span className="text-zinc-500">↔</span>{" "}
+                      <span className="truncate">{t.bTeam}</span>
+                    </div>
+                    <Pill>Trade</Pill>
                   </div>
 
-                  <div className="mt-2 grid grid-cols-1 gap-2 text-xs text-zinc-400">
+                  <div className="mt-3 space-y-2 text-xs text-zinc-400">
                     <div>
-                      <span className="font-medium text-zinc-300">{t.aTeam}</span> gets:{" "}
-                      {t.aGets.join(" • ")}
+                      <span className="font-medium text-zinc-300">{t.aTeam}</span> gets
+                      <div className="mt-1">
+                        <Chips items={t.aGets} />
+                      </div>
                     </div>
-                    <div>
-                      <span className="font-medium text-zinc-300">{t.bTeam}</span> gets:{" "}
-                      {t.bGets.join(" • ")}
+
+                    <div className="pt-2">
+                      <span className="font-medium text-zinc-300">{t.bTeam}</span> gets
+                      <div className="mt-1">
+                        <Chips items={t.bGets} />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -468,21 +519,21 @@ export function DashboardCards() {
           )}
         </CardShell>
 
-        <CardShell kind="power" title="Power Rankings">
+        <CardShell kind="power" title="Power Rankings" subtitle="Top 5 right now">
           {powerRows.length ? (
-            <div className="rounded-none border border-zinc-900/70 bg-zinc-950">
+            <div className="overflow-hidden rounded-xl border border-zinc-800/80 bg-zinc-950/40">
               {powerRows.map((r, idx) => (
-                <div key={r.rank}>
-                  <div className="flex items-center gap-3 px-3 py-3">
-                    <div className="flex h-7 w-7 items-center justify-center rounded-none border border-zinc-800 bg-zinc-950 text-xs font-semibold text-zinc-200">
+                <div key={r.rank} className="px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-950/70 text-xs font-semibold text-zinc-200">
                       {r.rank}
                     </div>
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <div className="truncate text-sm font-semibold text-zinc-200">{r.team}</div>
                       <div className="mt-1 text-xs text-zinc-400">{r.note}</div>
                     </div>
                   </div>
-                  {idx !== powerRows.length - 1 ? <Divider /> : null}
+                  {idx !== powerRows.length - 1 ? <div className="mt-3"><Divider /></div> : null}
                 </div>
               ))}
             </div>
@@ -491,26 +542,53 @@ export function DashboardCards() {
           )}
         </CardShell>
 
-        <CardShell kind="motw" title="Matchup of the Week">
-          <div className="text-sm text-zinc-400">
-            We’ll wire this up once we finalize “current week” logic.
-          </div>
+        <CardShell kind="motw" title="Matchup of the Week" subtitle="Current week">
+          {motw ? (
+            <TeamScoreBox
+              topTeam={motw.topTeam}
+              topScore={motw.topScore}
+              bottomTeam={motw.bottomTeam}
+              bottomScore={motw.bottomScore}
+            />
+          ) : (
+            <div className="text-sm text-zinc-400">
+              We’ll wire this up once we finalize “current week” logic.
+            </div>
+          )}
         </CardShell>
 
-        <CardShell kind="blowout" title="Biggest Blowout">
-          <div className="text-sm text-zinc-400">
-            We’ll wire this up once we finalize “current week” logic.
-          </div>
+        <CardShell kind="blowout" title="Biggest Blowout" subtitle="Current week">
+          {blowout ? (
+            <TeamScoreBox
+              topTeam={blowout.topTeam}
+              topScore={blowout.topScore}
+              bottomTeam={blowout.bottomTeam}
+              bottomScore={blowout.bottomScore}
+            />
+          ) : (
+            <div className="text-sm text-zinc-400">
+              We’ll wire this up once we finalize “current week” logic.
+            </div>
+          )}
         </CardShell>
 
-        <CardShell kind="lucky" title="Luckiest Win">
-          <div className="text-sm text-zinc-400">
-            We’ll wire this up once we finalize “current week” logic.
-          </div>
+        <CardShell kind="lucky" title="Luckiest Win" subtitle="Current week">
+          {lucky ? (
+            <TeamScoreBox
+              topTeam={lucky.topTeam}
+              topScore={lucky.topScore}
+              bottomTeam={lucky.bottomTeam}
+              bottomScore={lucky.bottomScore}
+            />
+          ) : (
+            <div className="text-sm text-zinc-400">
+              We’ll wire this up once we finalize “current week” logic.
+            </div>
+          )}
         </CardShell>
       </section>
     );
-  }, [error, loading, powerRows, tradeRows, waiverRows]);
+  }, [error, loading, powerRows, tradeRows, waiverRows, motw, blowout, lucky]);
 
   return <div>{content}</div>;
 }

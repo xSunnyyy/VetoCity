@@ -7,19 +7,17 @@ export default function HomePage() {
     <main className="min-h-screen bg-zinc-950 text-zinc-100">
       <FloatingNav />
 
-      <div className="mx-auto max-w-6xl px-4 py-10">
-
-        {/* Centered title + CTA (no banner box) */}
-        <section className="mb-10 text-center">
+      {/* leave space for floating nav */}
+      <div className="mx-auto max-w-6xl px-4 pb-10 pt-28">
+        {/* Small, clean hero (not a banner) */}
+        <section className="mb-8 flex flex-col items-center gap-4 text-center">
           <h1 className="text-4xl font-semibold tracking-tight">Veto City</h1>
-          <div className="mt-4 flex justify-center">
-            <Link
-              href="/league/drafts"
-              className="inline-flex h-10 items-center justify-center rounded-none border border-zinc-800 bg-zinc-900 px-5 text-sm font-medium hover:bg-zinc-800"
-            >
-              View the Draft
-            </Link>
-          </div>
+          <Link
+            href="/league/drafts"
+            className="inline-flex h-10 items-center justify-center rounded-full border border-zinc-800 bg-zinc-900/70 px-5 text-sm font-medium hover:bg-zinc-800"
+          >
+            View the Draft
+          </Link>
         </section>
 
         <DashboardCards />

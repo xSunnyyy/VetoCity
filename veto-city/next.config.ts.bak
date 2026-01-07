@@ -1,0 +1,12 @@
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  turbopack: {
+    root: __dirname,
+  },
+
+  // Next 16 moved this OUT of `experimental`
+  outputFileTracingRoot: __dirname,
+};
+
+export default nextConfig;

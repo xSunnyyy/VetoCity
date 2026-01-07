@@ -1,0 +1,2 @@
+mkdir -p public
+type nul > public/.nojekyll  # Windows PowerShell CMD style might differ

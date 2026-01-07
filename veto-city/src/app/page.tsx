@@ -8,6 +8,7 @@ export default function HomePage() {
       <FloatingNav />
 
       <div className="mx-auto max-w-6xl px-4 py-10">
+
         {/* Centered title + CTA (no banner box) */}
         <section className="mb-10 text-center">
           <h1 className="text-4xl font-semibold tracking-tight">Veto City</h1>

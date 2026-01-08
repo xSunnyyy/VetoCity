@@ -546,9 +546,9 @@ export default function RecordsPage() {
     <main className="min-h-screen bg-zinc-950 text-zinc-100">
       <FloatingNav />
 
-      <div className="mx-auto w-full max-w-6xl px-4 pb-12 pt-24">
+      <div className="mx-auto w-full max-w-6xl px-4 pb-12 pt-20 md:pt-24">
         <div className="mb-8 text-center">
-          <h1 className="text-5xl font-semibold tracking-tight">Records</h1>
+          <h1 className="text-3xl font-semibold tracking-tight md:text-5xl">Records</h1>
         </div>
 
         {err ? (

@@ -374,9 +374,9 @@ export default function StandingsPage() {
     <main className="min-h-screen bg-zinc-950 text-zinc-100">
       <FloatingNav />
 
-      <div className="mx-auto max-w-7xl px-4 pb-12 pt-24">
+      <div className="mx-auto max-w-7xl px-4 pb-12 pt-20 md:pt-24">
         <div className="mb-6">
-          <div className="text-3xl font-semibold tracking-tight">Standings</div>
+          <div className="text-2xl font-semibold tracking-tight md:text-3xl">Standings</div>
 
           <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
             <div className="text-sm text-zinc-400">
@@ -395,7 +395,7 @@ export default function StandingsPage() {
                 type="button"
                 onClick={() => setMode("regular")}
                 className={cx(
-                  "h-9 px-4 text-sm",
+                  "h-11 md:h-9 px-4 text-sm transition-colors",
                   mode === "regular"
                     ? "bg-zinc-900/70 text-zinc-100"
                     : "text-zinc-300 hover:bg-zinc-900/40"
@@ -408,7 +408,7 @@ export default function StandingsPage() {
                 type="button"
                 onClick={() => setMode("playoffs")}
                 className={cx(
-                  "h-9 px-4 text-sm",
+                  "h-11 md:h-9 px-4 text-sm transition-colors",
                   mode === "playoffs"
                     ? "bg-zinc-900/70 text-zinc-100"
                     : "text-zinc-300 hover:bg-zinc-900/40"
@@ -435,131 +435,204 @@ export default function StandingsPage() {
         ) : null}
 
         {!loading && !err ? (
-          <div className="overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[0_14px_40px_rgba(0,0,0,0.42)] backdrop-blur">
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[1200px]">
-                <thead className="bg-zinc-950/60">
-                  <tr className="text-left text-xs font-semibold tracking-wide text-zinc-400">
-                    <th className={thTeam}>Team</th>
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[0_14px_40px_rgba(0,0,0,0.42)] backdrop-blur md:block">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-zinc-950/60">
+                    <tr className="text-left text-xs font-semibold tracking-wide text-zinc-400">
+                      <th className={thTeam}>Team</th>
 
-                    <th className={thTight}>
-                      <button type="button" onClick={() => toggleSort("wins")} className={thBtn}>
-                        W{sortIcon(sortKey === "wins", sortDir)}
-                      </button>
-                    </th>
+                      <th className={thTight}>
+                        <button type="button" onClick={() => toggleSort("wins")} className={thBtn}>
+                          W{sortIcon(sortKey === "wins", sortDir)}
+                        </button>
+                      </th>
 
-                    <th className={thTight}>
-                      <button type="button" onClick={() => toggleSort("losses")} className={thBtn}>
-                        L{sortIcon(sortKey === "losses", sortDir)}
-                      </button>
-                    </th>
+                      <th className={thTight}>
+                        <button type="button" onClick={() => toggleSort("losses")} className={thBtn}>
+                          L{sortIcon(sortKey === "losses", sortDir)}
+                        </button>
+                      </th>
 
-                    <th className={thTight}>
-                      <button type="button" onClick={() => toggleSort("top6Wins")} className={thBtn}>
-                        Top6 W{sortIcon(sortKey === "top6Wins", sortDir)}
-                      </button>
-                    </th>
+                      <th className={thTight}>
+                        <button type="button" onClick={() => toggleSort("top6Wins")} className={thBtn}>
+                          Top6 W{sortIcon(sortKey === "top6Wins", sortDir)}
+                        </button>
+                      </th>
 
-                    <th className={thTight}>
-                      <button
-                        type="button"
-                        onClick={() => toggleSort("top6Losses")}
-                        className={thBtn}
-                      >
-                        Top6 L{sortIcon(sortKey === "top6Losses", sortDir)}
-                      </button>
-                    </th>
+                      <th className={thTight}>
+                        <button
+                          type="button"
+                          onClick={() => toggleSort("top6Losses")}
+                          className={thBtn}
+                        >
+                          Top6 L{sortIcon(sortKey === "top6Losses", sortDir)}
+                        </button>
+                      </th>
 
-                    <th className={thTight}>
-                      <button type="button" onClick={() => toggleSort("totalWins")} className={thBtn}>
-                        Total W{sortIcon(sortKey === "totalWins", sortDir)}
-                      </button>
-                    </th>
+                      <th className={thTight}>
+                        <button type="button" onClick={() => toggleSort("totalWins")} className={thBtn}>
+                          Total W{sortIcon(sortKey === "totalWins", sortDir)}
+                        </button>
+                      </th>
 
-                    <th className={thTight}>
-                      <button
-                        type="button"
-                        onClick={() => toggleSort("totalLosses")}
-                        className={thBtn}
-                      >
-                        Total L{sortIcon(sortKey === "totalLosses", sortDir)}
-                      </button>
-                    </th>
+                      <th className={thTight}>
+                        <button
+                          type="button"
+                          onClick={() => toggleSort("totalLosses")}
+                          className={thBtn}
+                        >
+                          Total L{sortIcon(sortKey === "totalLosses", sortDir)}
+                        </button>
+                      </th>
 
-                    <th className={thTight}>
-                      <button type="button" onClick={() => toggleSort("pf")} className={thBtn}>
-                        PF{sortIcon(sortKey === "pf", sortDir)}
-                      </button>
-                    </th>
+                      <th className={thTight}>
+                        <button type="button" onClick={() => toggleSort("pf")} className={thBtn}>
+                          PF{sortIcon(sortKey === "pf", sortDir)}
+                        </button>
+                      </th>
 
-                    <th className={thTight}>
-                      <button type="button" onClick={() => toggleSort("pa")} className={thBtn}>
-                        PA{sortIcon(sortKey === "pa", sortDir)}
-                      </button>
-                    </th>
+                      <th className={thTight}>
+                        <button type="button" onClick={() => toggleSort("pa")} className={thBtn}>
+                          PA{sortIcon(sortKey === "pa", sortDir)}
+                        </button>
+                      </th>
 
-                    <th className={thTight}>
-                      <button type="button" onClick={() => toggleSort("streak")} className={thBtn}>
-                        Streak{sortIcon(sortKey === "streak", sortDir)}
-                      </button>
-                    </th>
-                  </tr>
-                </thead>
+                      <th className={thTight}>
+                        <button type="button" onClick={() => toggleSort("streak")} className={thBtn}>
+                          Streak{sortIcon(sortKey === "streak", sortDir)}
+                        </button>
+                      </th>
+                    </tr>
+                  </thead>
 
-                <tbody>
-                  {sortedRows.map((r, idx) => {
-                    const totalW = r.wins + r.top6Wins;
-                    const totalL = r.losses + r.top6Losses;
+                  <tbody>
+                    {sortedRows.map((r, idx) => {
+                      const totalW = r.wins + r.top6Wins;
+                      const totalL = r.losses + r.top6Losses;
 
-                    return (
-                      <tr
-                        key={r.rosterId}
-                        className="border-t border-zinc-800/70 hover:bg-zinc-900/25"
-                      >
-                        <td className={thTeam}>
-                          <div className="flex items-center gap-3">
-                            <div className="w-6 text-xs font-semibold text-zinc-500">{idx + 1}</div>
-                            <TeamAvatar name={r.name} avatarUrl={r.avatarUrl} />
-                            <div className="min-w-0">
-                              <div className="truncate text-sm font-semibold text-zinc-100">
-                                {r.name}
-                              </div>
-                              <div className="mt-1 text-xs text-zinc-500">
-                                PF {scoreFmt(r.pf)} • PA {scoreFmt(r.pa)}
+                      return (
+                        <tr
+                          key={r.rosterId}
+                          className="border-t border-zinc-800/70 hover:bg-zinc-900/25"
+                        >
+                          <td className={thTeam}>
+                            <div className="flex items-center gap-3">
+                              <div className="w-6 text-xs font-semibold text-zinc-500">{idx + 1}</div>
+                              <TeamAvatar name={r.name} avatarUrl={r.avatarUrl} />
+                              <div className="min-w-0">
+                                <div className="truncate text-sm font-semibold text-zinc-100">
+                                  {r.name}
+                                </div>
+                                <div className="mt-1 text-xs text-zinc-500">
+                                  PF {scoreFmt(r.pf)} • PA {scoreFmt(r.pa)}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </td>
+                          </td>
 
-                        <td className={tdNum}>{r.wins}</td>
-                        <td className={tdNum}>{r.losses}</td>
-                        <td className={tdNum}>{r.top6Wins}</td>
-                        <td className={tdNum}>{r.top6Losses}</td>
-                        <td className={tdNum}>{totalW}</td>
-                        <td className={tdNum}>{totalL}</td>
+                          <td className={tdNum}>{r.wins}</td>
+                          <td className={tdNum}>{r.losses}</td>
+                          <td className={tdNum}>{r.top6Wins}</td>
+                          <td className={tdNum}>{r.top6Losses}</td>
+                          <td className={tdNum}>{totalW}</td>
+                          <td className={tdNum}>{totalL}</td>
 
-                        <td className={tdSoft}>{scoreFmt(r.pf)}</td>
-                        <td className={tdSoft}>{scoreFmt(r.pa)}</td>
+                          <td className={tdSoft}>{scoreFmt(r.pf)}</td>
+                          <td className={tdSoft}>{scoreFmt(r.pa)}</td>
 
-                        <td className="px-3 py-4">
-                          <span className="inline-flex items-center rounded-full border border-zinc-800 bg-zinc-950/60 px-2 py-0.5 text-xs font-semibold text-zinc-200">
-                            {r.streak}
-                          </span>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                          <td className="px-3 py-4">
+                            <span className="inline-flex items-center rounded-full border border-zinc-800 bg-zinc-950/60 px-2 py-0.5 text-xs font-semibold text-zinc-200">
+                              {r.streak}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {data?.fetchedAt ? (
+                <div className="border-t border-zinc-800/70 px-5 py-3 text-xs text-zinc-500">
+                  Updated {new Date(data.fetchedAt).toLocaleString()} • Playoff week start:{" "}
+                  {playoffStartWeek || "—"}
+                </div>
+              ) : null}
             </div>
 
-            {data?.fetchedAt ? (
-              <div className="border-t border-zinc-800/70 px-5 py-3 text-xs text-zinc-500">
-                Updated {new Date(data.fetchedAt).toLocaleString()} • Playoff week start:{" "}
-                {playoffStartWeek || "—"}
-              </div>
-            ) : null}
-          </div>
+            {/* Mobile Card View */}
+            <div className="space-y-3 md:hidden">
+              {sortedRows.map((r, idx) => {
+                const totalW = r.wins + r.top6Wins;
+                const totalL = r.losses + r.top6Losses;
+
+                return (
+                  <div
+                    key={r.rosterId}
+                    className="overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[0_14px_40px_rgba(0,0,0,0.42)] backdrop-blur"
+                  >
+                    <div className="flex items-center gap-3 border-b border-zinc-800/70 p-4">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-950/70 text-sm font-semibold text-zinc-200">
+                        {idx + 1}
+                      </div>
+                      <TeamAvatar name={r.name} avatarUrl={r.avatarUrl} />
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate text-base font-semibold text-zinc-100">
+                          {r.name}
+                        </div>
+                      </div>
+                      <span className="inline-flex items-center rounded-full border border-zinc-800 bg-zinc-950/60 px-2.5 py-1 text-xs font-semibold text-zinc-200">
+                        {r.streak}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 p-4">
+                      <div>
+                        <div className="text-xs font-medium text-zinc-500">Record</div>
+                        <div className="mt-1 text-lg font-semibold text-zinc-100">
+                          {r.wins}-{r.losses}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-xs font-medium text-zinc-500">Top 6</div>
+                        <div className="mt-1 text-lg font-semibold text-zinc-100">
+                          {r.top6Wins}-{r.top6Losses}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-xs font-medium text-zinc-500">Total</div>
+                        <div className="mt-1 text-lg font-semibold text-zinc-100">
+                          {totalW}-{totalL}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-xs font-medium text-zinc-500">Points For</div>
+                        <div className="mt-1 text-base font-semibold text-zinc-200">
+                          {scoreFmt(r.pf)}
+                        </div>
+                      </div>
+                      <div className="col-span-2">
+                        <div className="text-xs font-medium text-zinc-500">Points Against</div>
+                        <div className="mt-1 text-base font-semibold text-zinc-200">
+                          {scoreFmt(r.pa)}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+
+              {data?.fetchedAt ? (
+                <div className="rounded-xl border border-zinc-800/70 bg-zinc-950/60 px-4 py-3 text-xs text-zinc-500">
+                  Updated {new Date(data.fetchedAt).toLocaleString()} • Playoff week start:{" "}
+                  {playoffStartWeek || "—"}
+                </div>
+              ) : null}
+            </div>
+          </>
         ) : null}
       </div>
     </main>

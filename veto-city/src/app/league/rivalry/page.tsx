@@ -382,9 +382,9 @@ export default function RivalryPage() {
       <FloatingNav />
 
       {/* narrower page */}
-      <div className="mx-auto max-w-3xl px-4 pb-12 pt-24">
+      <div className="mx-auto max-w-3xl px-4 pb-12 pt-20 md:pt-24">
         <div className="mb-6 text-center">
-          <h1 className="text-3xl font-semibold tracking-tight">Rivalry</h1>
+          <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">Rivalry</h1>
           <div className="mt-1 text-sm text-zinc-400">All-time head-to-head</div>
         </div>
 

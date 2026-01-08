@@ -828,7 +828,7 @@ export function DashboardCards() {
               onClick={() => setSelectedWeek((w) => Math.max(1, w - 1))}
               disabled={selectedWeek <= 1 || weeklyLoading}
               className={cx(
-                "h-9 rounded-full border px-3 text-sm transition",
+                "h-11 md:h-10 rounded-full border px-4 text-sm transition",
                 selectedWeek <= 1 || weeklyLoading
                   ? "border-zinc-800 text-zinc-600"
                   : "border-zinc-800 bg-zinc-950/60 text-zinc-200 hover:bg-zinc-900/50"
@@ -841,7 +841,7 @@ export function DashboardCards() {
               <select
                 value={selectedWeek}
                 onChange={(e) => setSelectedWeek(Number(e.target.value))}
-                className="h-9 min-w-[110px] cursor-pointer appearance-none rounded-full border border-zinc-800 bg-zinc-950/60 px-4 pr-9 text-sm font-semibold text-zinc-200 outline-none transition hover:bg-zinc-900/50 focus:border-zinc-700"
+                className="h-11 md:h-10 min-w-[120px] md:min-w-[110px] cursor-pointer appearance-none rounded-full border border-zinc-800 bg-zinc-950/60 px-4 pr-10 text-sm font-semibold text-zinc-200 outline-none transition hover:bg-zinc-900/50 focus:border-zinc-700"
               >
                 {Array.from({ length: maxWeek }, (_, i) => i + 1).map((w) => (
                   <option key={w} value={w} className="bg-zinc-950 text-zinc-200">
@@ -859,7 +859,7 @@ export function DashboardCards() {
               onClick={() => setSelectedWeek((w) => Math.min(maxWeek, w + 1))}
               disabled={selectedWeek >= maxWeek || weeklyLoading}
               className={cx(
-                "h-9 rounded-full border px-3 text-sm transition",
+                "h-11 md:h-10 rounded-full border px-4 text-sm transition",
                 selectedWeek >= maxWeek || weeklyLoading
                   ? "border-zinc-800 text-zinc-600"
                   : "border-zinc-800 bg-zinc-950/60 text-zinc-200 hover:bg-zinc-900/50"

@@ -21,8 +21,16 @@ function draftSize(d: any) {
 }
 
 function isNonEmptyString(v: any): v is string {
-  return typeof v === "string" && v.length > 0;
+  return typeof v === "string" && v.trim().length > 0;
 }
+
+type LeagueMeta = {
+  previous_league_id?: string | null;
+  draft_id?: string | null;
+  league_id?: string | null;
+  season?: string | number | null;
+  name?: string | null;
+};
 
 export async function GET() {
   try {
@@ -40,7 +48,8 @@ export async function GET() {
       seen.add(cur);
       leagueIds.push(cur);
 
-      const lg = await j<any>(`${BASE}/league/${cur}`);
+      // ✅ FIX: explicit type annotation prevents TS self-referencing inference bug
+      const lg: LeagueMeta = await j<LeagueMeta>(`${BASE}/league/${cur}`);
       const prev = lg?.previous_league_id;
       cur = isNonEmptyString(prev) ? prev : null;
     }
@@ -49,13 +58,15 @@ export async function GET() {
     const all = await Promise.all(
       leagueIds.map(async (lid) => {
         const [league, users, rosters] = await Promise.all([
-          j<any>(`${BASE}/league/${lid}`),
+          j<LeagueMeta>(`${BASE}/league/${lid}`),
           j<any[]>(`${BASE}/league/${lid}/users`).catch(() => []),
           j<any[]>(`${BASE}/league/${lid}/rosters`).catch(() => []),
         ]);
 
         // Prefer league.draft_id (usually the correct season draft)
-        let draftId: string | null = isNonEmptyString(league?.draft_id) ? league.draft_id : null;
+        let draftId: string | null = isNonEmptyString(league?.draft_id)
+          ? String(league.draft_id)
+          : null;
 
         // If league.draft_id missing, fall back to /drafts and pick largest
         if (!draftId) {

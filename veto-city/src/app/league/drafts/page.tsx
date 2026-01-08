@@ -318,12 +318,12 @@ export default function DraftboardPage() {
           <div>
             {/* ✅ title row now has selector inline */}
             <div className="flex flex-wrap items-center gap-3">
-              <h1 className="text-3xl font-semibold tracking-tight">Draftboard</h1>
+              <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">Draftboard</h1>
 
               <select
                 value={idx}
                 onChange={(e) => setIdx(Number(e.target.value))}
-                className="h-9 rounded-full border border-zinc-800 bg-zinc-950/60 px-3 text-sm font-medium text-zinc-200 outline-none transition hover:bg-zinc-900/40 focus:border-zinc-700"
+                className="h-11 md:h-9 rounded-full border border-zinc-800 bg-zinc-950/60 px-3 text-sm font-medium text-zinc-200 outline-none transition hover:bg-zinc-900/40 focus:border-zinc-700"
               >
                 {draftsAll.map((d, i) => {
                   const season = d?.league?.season ? String(d.league.season) : "—";
@@ -344,7 +344,7 @@ export default function DraftboardPage() {
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Search team or player…"
-              className="h-10 w-full sm:w-[360px] rounded-full border border-zinc-800 bg-zinc-950/60 px-4 text-sm text-zinc-200 outline-none transition placeholder:text-zinc-600 hover:bg-zinc-900/40 focus:border-zinc-700"
+              className="h-11 md:h-10 w-full sm:w-[360px] rounded-full border border-zinc-800 bg-zinc-950/60 px-4 text-sm text-zinc-200 outline-none transition placeholder:text-zinc-600 hover:bg-zinc-900/40 focus:border-zinc-700"
             />
           </div>
         </div>
@@ -387,18 +387,18 @@ export default function DraftboardPage() {
             Draftboard data not ready.
           </div>
         ) : (
-          <div className="flex justify-center">
-            <div className="px-2">
+          <div className="w-full overflow-x-auto px-2 md:flex md:justify-center">
+            <div className="inline-block min-w-full md:min-w-0">
               <div
                 className="overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[0_14px_40px_rgba(0,0,0,0.42)] backdrop-blur"
                 style={{ width: gridExactWidth + 24 }}
               >
-                <div className="flex items-center justify-between gap-3 border-b border-zinc-800/70 px-4 py-3">
+                <div className="flex flex-col gap-3 border-b border-zinc-800/70 px-4 py-3 md:flex-row md:items-center md:justify-between">
                   <div className="text-sm font-semibold text-zinc-100">
                     Draft Board{" "}
                     <span className="text-zinc-500 font-normal">
-                      • {board.rounds} rounds • {board.slots} teams •{" "}
-                      {board.rounds * board.slots} picks
+                      • {board.rounds}R • {board.slots}T •{" "}
+                      {board.rounds * board.slots}P
                     </span>
                   </div>
 

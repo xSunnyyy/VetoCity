@@ -26,17 +26,17 @@ type LeagueBundle = {
 
 function safeName(p: PlayerMeta | undefined, id: string) {
   if (!p) return id;
-  return (
-    p.full_name ||
-    [p.first_name, p.last_name].filter(Boolean).join(" ") ||
-    id
-  );
+  return p.full_name || [p.first_name, p.last_name].filter(Boolean).join(" ") || id;
 }
 
 function metaLine(p: PlayerMeta | undefined) {
   if (!p) return "";
   const bits = [p.position, p.team].filter(Boolean);
   return bits.join(" • ");
+}
+
+function safeStr(v: any) {
+  return typeof v === "string" ? v : v == null ? "" : String(v);
 }
 
 function sleeperAvatarUrl(avatarId?: string | null) {
@@ -76,7 +76,6 @@ async function getPlayersMap(): Promise<PlayerMap> {
 }
 
 function PosPill({ pos }: { pos: string }) {
-  // Muted, dark-theme-friendly palette
   const base =
     "w-11 shrink-0 rounded-none border px-2 py-1 text-[11px] font-semibold tracking-wide text-center";
 
@@ -126,20 +125,14 @@ function PlayerRow({
       </div>
 
       <div className="min-w-0 flex-1">
-        <div className="truncate text-sm font-semibold text-zinc-100">
-          {name}
-        </div>
+        <div className="truncate text-sm font-semibold text-zinc-100">{name}</div>
         <div className="mt-0.5 truncate text-xs text-zinc-400">{meta}</div>
       </div>
 
       {logo ? (
         <div className="h-6 w-6 shrink-0 opacity-90">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={logo}
-            alt={player?.team ?? ""}
-            className="h-full w-full object-contain"
-          />
+          <img src={logo} alt={player?.team ?? ""} className="h-full w-full object-contain" />
         </div>
       ) : (
         <div className="h-6 w-6 shrink-0" />
@@ -230,10 +223,19 @@ export default function RostersPage() {
         const t = teams.get(r.roster_id);
 
         const name = t?.name ?? `Team ${r.roster_id}`;
-        const ownerName = t?.ownerName ?? "";
-        const ownerAvatar = t?.ownerAvatar ?? null;
-        const user = bundle.users.find((u: any) => u.user_id === t?.ownerId);
-        const avatar = sleeperAvatarUrl(ownerAvatar || user?.avatar);
+
+        // ✅ Option A: derive owner display + avatar from users via ownerId
+        const ownerId = t?.ownerId;
+        const user =
+          ownerId != null ? bundle.users.find((u: any) => String(u?.user_id) === String(ownerId)) : null;
+
+        const ownerName =
+          safeStr(user?.metadata?.team_name).trim() ||
+          safeStr(user?.display_name).trim() ||
+          safeStr(user?.username).trim() ||
+          "";
+
+        const avatar = sleeperAvatarUrl(user?.avatar ?? null);
 
         const starters: string[] = Array.isArray(r.starters) ? r.starters : [];
         const allPlayers: string[] = Array.isArray(r.players) ? r.players : [];
@@ -253,11 +255,7 @@ export default function RostersPage() {
           return { pid, pos, p };
         });
 
-        // Build a searchable string (team + owner + all player names)
-        const allNames = [...starterRows, ...benchRows]
-          .map((x) => safeName(x.p, x.pid))
-          .join(" ");
-
+        const allNames = [...starterRows, ...benchRows].map((x) => safeName(x.p, x.pid)).join(" ");
         const searchBlob = `${name} ${ownerName} ${allNames}`.toLowerCase();
 
         return {
@@ -295,10 +293,7 @@ export default function RostersPage() {
 
           <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6">
             {Array.from({ length: 12 }).map((_, i) => (
-              <div
-                key={i}
-                className="rounded-none border border-zinc-800 bg-zinc-950 p-5"
-              >
+              <div key={i} className="rounded-none border border-zinc-800 bg-zinc-950 p-5">
                 <div className="h-5 w-32 rounded bg-zinc-900/50" />
                 <div className="mt-4 h-56 w-full rounded bg-zinc-900/30" />
               </div>
@@ -327,18 +322,14 @@ export default function RostersPage() {
     <main className="min-h-screen bg-zinc-950 text-zinc-100">
       <FloatingNav />
 
-      {/* Wider container + horizontal scroll so 6 columns can still be readable */}
       <div className="mx-auto max-w-none px-4 py-10">
         <div className="mb-6">
           <div className="text-2xl font-semibold tracking-tight">Rosters</div>
         </div>
 
-        {/* Search */}
         <div className="mb-4 rounded-none border border-zinc-800 bg-zinc-950 p-3">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div className="text-sm font-medium text-zinc-200">
-              Search teams, owners, or players
-            </div>
+            <div className="text-sm font-medium text-zinc-200">Search teams, owners, or players</div>
 
             <div className="flex w-full gap-2 sm:w-[420px]">
               <input
@@ -365,9 +356,7 @@ export default function RostersPage() {
           ) : null}
         </div>
 
-        {/* Horizontal scroll wrapper so 6 columns stay wide enough */}
         <div className="overflow-x-auto pb-2">
-          {/* min width ensures each of the 6 columns has room for names */}
           <div className="min-w-[1800px]">
             <div className="grid grid-cols-6 gap-4">
               {filteredTeams.map((t) => {
@@ -378,7 +367,6 @@ export default function RostersPage() {
                     key={t.rosterId}
                     className="overflow-hidden rounded-none border border-zinc-800 bg-zinc-950 shadow-[0_6px_18px_rgba(0,0,0,0.35)]"
                   >
-                    {/* Card Header */}
                     <div className="px-4 pt-4 text-center">
                       <div className="mx-auto flex items-center justify-center gap-2">
                         <div className="h-9 w-9 overflow-hidden rounded-full border border-zinc-800 bg-zinc-950">
@@ -389,21 +377,16 @@ export default function RostersPage() {
                               alt={t.ownerName || t.name}
                               className="h-full w-full object-cover"
                               onError={(e) => {
-                                (e.currentTarget as HTMLImageElement).style.display =
-                                  "none";
+                                (e.currentTarget as HTMLImageElement).style.display = "none";
                               }}
                             />
                           ) : null}
                         </div>
 
                         <div className="min-w-0">
-                          <div className="truncate text-sm font-semibold text-zinc-100">
-                            {t.name}
-                          </div>
+                          <div className="truncate text-sm font-semibold text-zinc-100">{t.name}</div>
                           {t.ownerName ? (
-                            <div className="mt-0.5 truncate text-[11px] text-zinc-400">
-                              {t.ownerName}
-                            </div>
+                            <div className="mt-0.5 truncate text-[11px] text-zinc-400">{t.ownerName}</div>
                           ) : null}
                         </div>
                       </div>
@@ -413,19 +396,12 @@ export default function RostersPage() {
                       <SectionDivider />
                     </div>
 
-                    {/* Starters list */}
                     <div className="divide-y divide-zinc-800/70">
                       {t.starterRows.map((row) => (
-                        <PlayerRow
-                          key={row.pid}
-                          pos={row.pos}
-                          playerId={row.pid}
-                          player={row.p}
-                        />
+                        <PlayerRow key={row.pid} pos={row.pos} playerId={row.pid} player={row.p} />
                       ))}
                     </div>
 
-                    {/* Bench minimized footer */}
                     <div className="mt-0">
                       <SectionDivider />
                       <BenchToggle
@@ -440,7 +416,6 @@ export default function RostersPage() {
                       />
                     </div>
 
-                    {/* Bench list */}
                     {benchOpen ? (
                       <div className="border-t border-zinc-800/70 bg-zinc-950">
                         <div className="divide-y divide-zinc-800/70">
@@ -464,7 +439,7 @@ export default function RostersPage() {
 
         {filteredTeams.length === 0 ? (
           <div className="mt-6 rounded-none border border-zinc-800 bg-zinc-950 p-5 text-sm text-zinc-300">
-            No results for <span className="text-zinc-100 font-semibold">{query}</span>.
+            No results for <span className="font-semibold text-zinc-100">{query}</span>.
           </div>
         ) : null}
       </div>

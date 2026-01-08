@@ -13,22 +13,34 @@ export interface CardProps {
    * Whether to add hover effect (default: true)
    */
   hover?: boolean;
+  /**
+   * Animation on mount (default: "fade-in-up")
+   */
+  animation?: "none" | "fade-in" | "fade-in-up" | "scale-in";
 }
 
 /**
- * Base Card component with consistent styling
+ * Base Card component with consistent styling and animations
  */
-export function Card({ children, className, hover = true }: CardProps) {
+export function Card({ children, className, hover = true, animation = "fade-in-up" }: CardProps) {
+  const animationClasses = {
+    none: "",
+    "fade-in": "animate-fade-in",
+    "fade-in-up": "animate-fade-in-up",
+    "scale-in": "animate-scale-in",
+  };
+
   return (
     <div
       className={cx(
-        "relative overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[0_14px_40px_rgba(0,0,0,0.42)] backdrop-blur",
-        hover && "group",
+        "relative overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[0_14px_40px_rgba(0,0,0,0.42)] backdrop-blur transition-transform duration-300",
+        hover && "group hover:scale-[1.02]",
+        animationClasses[animation],
         className
       )}
     >
       {hover && (
-        <div className="pointer-events-none absolute inset-0 opacity-0 transition group-hover:opacity-100">
+        <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
           <div className="absolute inset-0 bg-gradient-to-br from-zinc-800/20 via-transparent to-transparent" />
         </div>
       )}

@@ -18,5 +18,5 @@ export type { DividerProps } from "./Divider";
 export { TeamRow } from "./TeamRow";
 export type { TeamRowProps } from "./TeamRow";
 
-export { LoadingCard, Skeleton, LoadingState, LoadingSpinner } from "./Loading";
-export type { LoadingCardProps, SkeletonProps, LoadingStateProps } from "./Loading";
+export { LoadingCard, Skeleton, LoadingState, LoadingSpinner, ErrorState } from "./Loading";
+export type { LoadingCardProps, SkeletonProps, LoadingStateProps, ErrorStateProps } from "./Loading";

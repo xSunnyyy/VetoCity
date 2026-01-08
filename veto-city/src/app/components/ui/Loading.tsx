@@ -36,12 +36,19 @@ export function Skeleton({ width, height, rounded = "md", className }: SkeletonP
   return (
     <div
       className={cx(
-        "animate-pulse bg-zinc-900/50",
+        "relative overflow-hidden bg-zinc-900/50",
         roundedClasses[rounded],
         className
       )}
       style={{ width, height }}
-    />
+    >
+      <div
+        className="absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-zinc-800/30 to-transparent"
+        style={{
+          backgroundSize: "1000px 100%",
+        }}
+      />
+    </div>
   );
 }
 

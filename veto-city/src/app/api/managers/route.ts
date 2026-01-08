@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
-
-const LEAGUE_ID = "1245800211851255808";
-const BASE = "https://api.sleeper.app/v1";
+import { LEAGUE_ID, SLEEPER_BASE as BASE } from "@/app/lib/vetocity";
 
 // In-memory cache
 let cache: { ts: number; data: any } | null = null;

@@ -25,7 +25,10 @@ function thumb(avatar?: string | null) {
   return `https://sleepercdn.com/avatars/thumbs/${avatar}`;
 }
 
-function pointsFromRosterSettings(s: any, key: "fpts" | "fpts_against" | "ppts") {
+function pointsFromRosterSettings(
+  s: any,
+  key: "fpts" | "fpts_against" | "ppts"
+) {
   const whole = Number(s?.[key] ?? 0) || 0;
   const decKey =
     key === "fpts"
@@ -37,7 +40,7 @@ function pointsFromRosterSettings(s: any, key: "fpts" | "fpts_against" | "ppts")
   return whole + dec / 100;
 }
 
-async function getAllLeagueIdsNewestFirst(startLeagueId: string) {
+async function getAllLeagueIdsNewestFirst(startLeagueId: string): Promise<string[]> {
   const ids: string[] = [];
   const seen = new Set<string>();
 
@@ -46,6 +49,7 @@ async function getAllLeagueIdsNewestFirst(startLeagueId: string) {
     seen.add(cur);
     ids.push(cur);
 
+    // ✅ explicit annotation fixes TS “self-referencing inference” bug
     const league: any = await j<any>(`${BASE}/league/${cur}`);
     const prev = league?.previous_league_id ? String(league.previous_league_id) : "";
     cur = prev || null;
@@ -71,8 +75,8 @@ type ManagerTotals = {
   waivers: number;
 };
 
-function initManager(managerId: string) {
-  const m: ManagerTotals = {
+function initManager(managerId: string): ManagerTotals {
+  return {
     managerId,
     managerName: `Manager ${managerId}`,
     avatar: null,
@@ -88,7 +92,6 @@ function initManager(managerId: string) {
     trades: 0,
     waivers: 0,
   };
-  return m;
 }
 
 export async function GET() {
@@ -104,8 +107,8 @@ export async function GET() {
     for (const lid of leagueIds) {
       const [league, users, rosters] = await Promise.all([
         j<any>(`${BASE}/league/${lid}`),
-        j<any[]>(`${BASE}/league/${lid}/users`),
-        j<any[]>(`${BASE}/league/${lid}/rosters`),
+        j<any[]>(`${BASE}/league/${lid}/users`).catch(() => []),
+        j<any[]>(`${BASE}/league/${lid}/rosters`).catch(() => []),
       ]);
 
       // user map
@@ -118,6 +121,7 @@ export async function GET() {
         const rid = Number(r?.roster_id);
         const ownerId = r?.owner_id ? String(r.owner_id) : "";
         if (!Number.isFinite(rid) || !ownerId) continue;
+
         ownerByRoster.set(rid, ownerId);
 
         // seed/update manager display info
@@ -125,18 +129,17 @@ export async function GET() {
         const m = managers.get(ownerId)!;
         const u = userById.get(ownerId);
 
-        // Prefer team_name if present, fallback to display_name
         const name =
           safeStr(u?.metadata?.team_name) ||
           safeStr(u?.display_name) ||
+          safeStr(u?.username) ||
           m.managerName;
 
-        // Update to latest non-empty info as we traverse newer -> older
         if (!m.managerName || m.managerName.startsWith("Manager ")) m.managerName = name;
         if (!m.avatar) m.avatar = thumb(u?.avatar ?? null);
       }
 
-      // --- Season totals from roster settings (wins/losses/PF/PA/PPts) ---
+      // Season totals from roster settings
       for (const r of rosters || []) {
         const rid = Number(r?.roster_id);
         if (!Number.isFinite(rid)) continue;
@@ -153,7 +156,7 @@ export async function GET() {
 
         const pf = pointsFromRosterSettings(r?.settings || {}, "fpts");
         const pa = pointsFromRosterSettings(r?.settings || {}, "fpts_against");
-        const ppts = pointsFromRosterSettings(r?.settings || {}, "ppts"); // ✅ Sleeper “possible points”
+        const ppts = pointsFromRosterSettings(r?.settings || {}, "ppts");
 
         m.wins += wins;
         m.losses += losses;
@@ -164,8 +167,7 @@ export async function GET() {
         m.possiblePoints += ppts;
       }
 
-      // --- Transactions scan (all-time trades/waivers) ---
-      // We scan weeks 1..18 for each league id. If a week is empty, Sleeper returns [].
+      // Transactions scan (all-time trades/waivers)
       for (let week = WEEK_SCAN_MIN; week <= WEEK_SCAN_MAX; week++) {
         const txns = await j<any[]>(`${BASE}/league/${lid}/transactions/${week}`).catch(() => []);
         if (!Array.isArray(txns) || !txns.length) continue;
@@ -173,9 +175,11 @@ export async function GET() {
         for (const t of txns) {
           const type = safeStr(t?.type);
 
-          // trades
           if (type === "trade") {
-            const rosterIds: number[] = (t?.roster_ids ?? []).map((x: any) => Number(x)).filter((n: number) => Number.isFinite(n));
+            const rosterIds: number[] = (t?.roster_ids ?? [])
+              .map((x: any) => Number(x))
+              .filter((n: number) => Number.isFinite(n));
+
             for (const rid of rosterIds) {
               const ownerId = ownerByRoster.get(rid);
               if (!ownerId) continue;
@@ -184,11 +188,11 @@ export async function GET() {
             }
           }
 
-          // waivers / free agent (count as waivers)
           if (type === "waiver" || type === "free_agent") {
-            const rosterIds: number[] = (t?.roster_ids ?? []).map((x: any) => Number(x)).filter((n: number) => Number.isFinite(n));
+            const rosterIds: number[] = (t?.roster_ids ?? [])
+              .map((x: any) => Number(x))
+              .filter((n: number) => Number.isFinite(n));
 
-            // Some transactions may have roster_ids empty; fallback to adds owner
             if (!rosterIds.length && t?.adds) {
               const firstRid = Number(Object.values(t.adds)[0]);
               if (Number.isFinite(firstRid)) rosterIds.push(firstRid);
@@ -205,15 +209,11 @@ export async function GET() {
       }
     }
 
-    // payload rows
     const rows = [...managers.values()].map((m) => {
       const games = m.wins + m.losses + m.ties;
       const winPct = games > 0 ? (m.wins + m.ties * 0.5) / games : 0;
-
       const ppg = games > 0 ? m.pointsFor / games : 0;
-
-      const lineupIQ =
-        m.possiblePoints > 0 ? (m.pointsFor / m.possiblePoints) * 100 : 0;
+      const lineupIQ = m.possiblePoints > 0 ? (m.pointsFor / m.possiblePoints) * 100 : 0;
 
       return {
         managerId: m.managerId,

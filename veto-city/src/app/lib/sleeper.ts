@@ -30,6 +30,7 @@ export type SleeperLeague = {
 export type SleeperUser = {
   user_id: string;
   display_name: string;
+  username?: string; // ✅ add this
   avatar?: string | null;
   metadata?: {
     team_name?: string;
@@ -77,8 +78,10 @@ export type SleeperTransaction = {
 export const sleeper = {
   stateNFL: () => fetchJson<SleeperStateNFL>(`/state/nfl`),
   league: (leagueId: string) => fetchJson<SleeperLeague>(`/league/${leagueId}`),
-  users: (leagueId: string) => fetchJson<SleeperUser[]>(`/league/${leagueId}/users`),
-  rosters: (leagueId: string) => fetchJson<SleeperRoster[]>(`/league/${leagueId}/rosters`),
+  users: (leagueId: string) =>
+    fetchJson<SleeperUser[]>(`/league/${leagueId}/users`),
+  rosters: (leagueId: string) =>
+    fetchJson<SleeperRoster[]>(`/league/${leagueId}/rosters`),
   matchups: (leagueId: string, week: number) =>
     fetchJson<SleeperMatchup[]>(`/league/${leagueId}/matchups/${week}`),
   transactions: (leagueId: string, week: number) =>

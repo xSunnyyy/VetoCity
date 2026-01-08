@@ -61,11 +61,6 @@ function buildRosterToOwner(users: any[], rosters: any[]) {
   return rosterToOwner;
 }
 
-/**
- * Determine bracket winner rosterId:
- *  1) row with p === 1 and w exists
- *  2) otherwise, highest round row with w exists
- */
 function bracketWinnerRosterId(bracket: any[] | null | undefined): number | null {
   if (!Array.isArray(bracket) || !bracket.length) return null;
 
@@ -77,7 +72,6 @@ function bracketWinnerRosterId(bracket: any[] | null | undefined): number | null
     .sort((a, b) => Number(b.r) - Number(a.r));
 
   if (withW.length) return Number(withW[0].w);
-
   return null;
 }
 
@@ -100,13 +94,12 @@ export async function GET() {
     const seasons: any[] = [];
     let leagueId: string | null = LEAGUE_ID;
 
-    // guard against infinite loops
     const seen = new Set<string>();
 
     while (leagueId && !seen.has(leagueId)) {
       seen.add(leagueId);
 
-      // ✅ Explicit annotation avoids the Next/TS "self-referencing initializer" bug
+      // ✅ explicit annotation fixes TS inference bug
       const leagueData: any = await j<any>(`${BASE}/league/${leagueId}`);
 
       const [users, rosters, winnersBracket, losersBracket] = await Promise.all([
@@ -118,7 +111,6 @@ export async function GET() {
 
       const rosterToOwner = buildRosterToOwner(users, rosters);
 
-      // Champion
       const champRid =
         bracketWinnerRosterId(winnersBracket) ??
         (Number.isFinite(Number(leagueData?.settings?.winner_roster_id))
@@ -128,7 +120,6 @@ export async function GET() {
           ? Number(leagueData.metadata.latest_league_winner_roster_id)
           : null);
 
-      // Regular Season Champ (best record, tie-break PF)
       const sortedByRecord = [...(rosters || [])]
         .filter((r) => Number.isFinite(Number(r?.roster_id)))
         .sort((a, b) => {
@@ -143,14 +134,12 @@ export async function GET() {
 
       const regRid = sortedByRecord.length ? Number(sortedByRecord[0].roster_id) : null;
 
-      // Best Manager (highest PF)
       const sortedByPF = [...(rosters || [])]
         .filter((r) => Number.isFinite(Number(r?.roster_id)))
         .sort((a, b) => pfFromRoster(b) - pfFromRoster(a));
 
       const bestRid = sortedByPF.length ? Number(sortedByPF[0].roster_id) : null;
 
-      // Toilet Bowl Champ (winner of losers bracket)
       const toiletRid = bracketWinnerRosterId(losersBracket);
 
       const seasonLabel = safeStr(leagueData?.season) || "—";
@@ -170,10 +159,7 @@ export async function GET() {
       leagueId = prev ? prev : null;
     }
 
-    const data = {
-      seasons, // newest -> oldest
-      fetchedAt: new Date().toISOString(),
-    };
+    const data = { seasons, fetchedAt: new Date().toISOString() };
 
     cache = { ts: now, data };
     return NextResponse.json(data);

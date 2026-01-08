@@ -30,7 +30,6 @@ function recordKey(r: any) {
   const ties = Number(s.ties ?? 0) || 0;
   const losses = Number(s.losses ?? 0) || 0;
   const pf = pfFromRoster(r);
-  // Sort wins desc, ties desc, PF desc, losses asc
   return { wins, ties, losses, pf };
 }
 
@@ -63,11 +62,8 @@ function buildRosterToOwner(users: any[], rosters: any[]) {
 }
 
 /**
- * Bracket rows look like:
- * { r: 1, m: 1, t1: 3, t2: 6, w: <roster_id|null>, l: <roster_id|null>, p?: number }
- *
- * We determine champion by:
- *  1) bracket row with p === 1 and w exists
+ * Determine bracket winner rosterId:
+ *  1) row with p === 1 and w exists
  *  2) otherwise, highest round row with w exists
  */
 function bracketWinnerRosterId(bracket: any[] | null | undefined): number | null {
@@ -76,7 +72,6 @@ function bracketWinnerRosterId(bracket: any[] | null | undefined): number | null
   const p1 = bracket.find((x) => Number(x?.p) === 1 && Number.isFinite(Number(x?.w)));
   if (p1) return Number(p1.w);
 
-  // fallback: latest (highest r) game that has a winner
   const withW = bracket
     .filter((x) => Number.isFinite(Number(x?.r)) && Number.isFinite(Number(x?.w)))
     .sort((a, b) => Number(b.r) - Number(a.r));
@@ -102,7 +97,6 @@ export async function GET() {
       return NextResponse.json(cache.data);
     }
 
-    // Walk league history via previous_league_id (newest -> oldest)
     const seasons: any[] = [];
     let leagueId: string | null = LEAGUE_ID;
 
@@ -112,14 +106,14 @@ export async function GET() {
     while (leagueId && !seen.has(leagueId)) {
       seen.add(leagueId);
 
-      // ✅ IMPORTANT: rename to avoid TS self-referencing inference bug
-      const leagueData = await j<any>(`${BASE}/league/${leagueId}`);
+      // ✅ Explicit annotation avoids the Next/TS "self-referencing initializer" bug
+      const leagueData: any = await j<any>(`${BASE}/league/${leagueId}`);
 
       const [users, rosters, winnersBracket, losersBracket] = await Promise.all([
-       _toggle(j<any[]>(`${BASE}/league/${leagueId}/users`)),
-       _toggle(j<any[]>(`${BASE}/league/${leagueId}/rosters`)),
-        _toggle(j<any[]>(`${BASE}/league/${leagueId}/winners_bracket`)),
-        _toggle(j<any[]>(`${BASE}/league/${leagueId}/losers_bracket`)),
+        j<any[]>(`${BASE}/league/${leagueId}/users`).catch(() => []),
+        j<any[]>(`${BASE}/league/${leagueId}/rosters`).catch(() => []),
+        j<any[]>(`${BASE}/league/${leagueId}/winners_bracket`).catch(() => []),
+        j<any[]>(`${BASE}/league/${leagueId}/losers_bracket`).catch(() => []),
       ]);
 
       const rosterToOwner = buildRosterToOwner(users, rosters);
@@ -185,17 +179,5 @@ export async function GET() {
     return NextResponse.json(data);
   } catch (e: any) {
     return NextResponse.json({ error: e?.message || "Failed to load awards" }, { status: 500 });
-  }
-}
-
-/**
- * Small helper to keep your Promise.all clean (always returns [] on failure)
- */
-async function _toggle<T>(p: Promise<T>): Promise<T> {
-  try {
-    return await p;
-  } catch {
-    // @ts-expect-error - used only for arrays in this file
-    return [];
   }
 }

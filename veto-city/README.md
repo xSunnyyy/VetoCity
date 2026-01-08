@@ -1,5 +1,18 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Configuration
+
+To use this project as a template for your own Sleeper fantasy league, you only need to update the league ID in one place:
+
+**`src/app/lib/vetocity.ts`**
+
+```typescript
+export const LEAGUE_ID = "YOUR_LEAGUE_ID_HERE";
+export const SLEEPER_BASE = "https://api.sleeper.app/v1";
+```
+
+Replace `"YOUR_LEAGUE_ID_HERE"` with your Sleeper league ID. All API routes will automatically use this centralized configuration.
+
 ## Getting Started
 
 First, run the development server:

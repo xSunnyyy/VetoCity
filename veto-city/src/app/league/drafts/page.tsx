@@ -313,7 +313,7 @@ export default function DraftboardPage() {
     <main className="min-h-screen bg-zinc-950 text-zinc-100">
       <FloatingNav />
 
-      <div className="mx-auto w-full max-w-[2600px] px-0 pb-12 pt-24">
+      <div className="mx-auto w-full max-w-[2600px] px-0 pb-12 pt-20 md:pt-24">
         <div className="mx-auto mb-6 flex max-w-6xl flex-col gap-3 px-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             {/* ✅ title row now has selector inline */}

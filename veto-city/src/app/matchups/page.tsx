@@ -291,10 +291,10 @@ export default function MatchupsPage() {
     <main className="min-h-screen bg-zinc-950 text-zinc-100">
       <FloatingNav />
 
-      <div className="mx-auto w-full max-w-6xl px-4 pb-12 pt-24">
+      <div className="mx-auto w-full max-w-6xl px-4 pb-12 pt-20 md:pt-24">
         {/* Header: Matchups centered + week switch centered */}
         <div className="mb-8 space-y-4">
-          <h1 className="text-center text-5xl font-semibold tracking-tight">Matchups</h1>
+          <h1 className="text-center text-3xl font-semibold tracking-tight md:text-5xl">Matchups</h1>
 
           <div className="flex items-center justify-center">
             <div className="flex items-center gap-2">
@@ -303,7 +303,7 @@ export default function MatchupsPage() {
                 onClick={() => setSelectedWeek((w) => Math.max(WEEK_MIN, w - 1))}
                 disabled={selectedWeek <= WEEK_MIN || weeklyLoading}
                 className={cx(
-                  "h-10 rounded-full border px-3 text-sm transition",
+                  "h-11 md:h-10 rounded-full border px-4 text-sm transition",
                   selectedWeek <= WEEK_MIN || weeklyLoading
                     ? "border-zinc-800 text-zinc-600"
                     : "border-zinc-800 bg-zinc-950/60 text-zinc-200 hover:bg-zinc-900/50"
@@ -316,7 +316,7 @@ export default function MatchupsPage() {
                 <select
                   value={selectedWeek}
                   onChange={(e) => setSelectedWeek(Number(e.target.value))}
-                  className="h-10 min-w-[140px] cursor-pointer appearance-none rounded-full border border-zinc-800 bg-zinc-950/60 px-4 pr-10 text-sm font-semibold text-zinc-200 outline-none transition hover:bg-zinc-900/50 focus:border-zinc-700"
+                  className="h-11 md:h-10 min-w-[150px] md:min-w-[140px] cursor-pointer appearance-none rounded-full border border-zinc-800 bg-zinc-950/60 px-4 pr-10 text-sm font-semibold text-zinc-200 outline-none transition hover:bg-zinc-900/50 focus:border-zinc-700"
                 >
                   {Array.from({ length: WEEK_MAX }, (_, i) => i + 1).map((w) => (
                     <option key={w} value={w} className="bg-zinc-950 text-zinc-200">
@@ -334,7 +334,7 @@ export default function MatchupsPage() {
                 onClick={() => setSelectedWeek((w) => Math.min(WEEK_MAX, w + 1))}
                 disabled={selectedWeek >= WEEK_MAX || weeklyLoading}
                 className={cx(
-                  "h-10 rounded-full border px-3 text-sm transition",
+                  "h-11 md:h-10 rounded-full border px-4 text-sm transition",
                   selectedWeek >= WEEK_MAX || weeklyLoading
                     ? "border-zinc-800 text-zinc-600"
                     : "border-zinc-800 bg-zinc-950/60 text-zinc-200 hover:bg-zinc-900/50"

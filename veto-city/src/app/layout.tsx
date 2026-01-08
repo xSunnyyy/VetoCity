@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { QueryProvider } from "./components/QueryProvider";
+import { ToastProvider } from "./components/ui";
 
 export const metadata: Metadata = {
   title: "Veto City - Fantasy Football Hub",
@@ -40,7 +42,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" data-layout="SRC_APP_LAYOUT">
-      <body className="bg-zinc-950 text-zinc-100">{children}</body>
+      <body className="bg-zinc-950 text-zinc-100">
+        <QueryProvider>
+          <ToastProvider>{children}</ToastProvider>
+        </QueryProvider>
+      </body>
     </html>
   );
 }

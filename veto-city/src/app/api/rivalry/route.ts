@@ -25,7 +25,7 @@ async function getLeagueChain(startLeagueId: string, maxSeasons = 10) {
   let cur: string | null = startLeagueId;
 
   for (let i = 0; i < maxSeasons && cur; i++) {
-    const league = await j<LeagueInfo>(`${BASE}/league/${cur}`);
+    const league: LeagueInfo = await j<LeagueInfo>(`${BASE}/league/${cur}`);
     chain.push(league);
     cur = league.previous_league_id ?? null;
   }

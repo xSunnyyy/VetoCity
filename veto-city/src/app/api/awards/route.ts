@@ -86,7 +86,10 @@ function bracketWinnerRosterId(bracket: any[] | null | undefined): number | null
   return null;
 }
 
-function rosterInfo(rosterToOwner: Map<number, { name: string; avatar: string | null }>, rid: number | null) {
+function rosterInfo(
+  rosterToOwner: Map<number, { name: string; avatar: string | null }>,
+  rid: number | null
+) {
   if (!rid || !Number.isFinite(rid)) return { rosterId: null, name: "—", avatar: null };
   const o = rosterToOwner.get(rid);
   return { rosterId: rid, name: o?.name ?? `Team ${rid}`, avatar: o?.avatar ?? null };
@@ -109,13 +112,14 @@ export async function GET() {
     while (leagueId && !seen.has(leagueId)) {
       seen.add(leagueId);
 
-      const league = await j<any>(`${BASE}/league/${leagueId}`);
+      // ✅ IMPORTANT: rename to avoid TS self-referencing inference bug
+      const leagueData = await j<any>(`${BASE}/league/${leagueId}`);
 
       const [users, rosters, winnersBracket, losersBracket] = await Promise.all([
-        j<any[]>(`${BASE}/league/${leagueId}/users`).catch(() => []),
-        j<any[]>(`${BASE}/league/${leagueId}/rosters`).catch(() => []),
-        j<any[]>(`${BASE}/league/${leagueId}/winners_bracket`).catch(() => []),
-        j<any[]>(`${BASE}/league/${leagueId}/losers_bracket`).catch(() => []),
+       _toggle(j<any[]>(`${BASE}/league/${leagueId}/users`)),
+       _toggle(j<any[]>(`${BASE}/league/${leagueId}/rosters`)),
+        _toggle(j<any[]>(`${BASE}/league/${leagueId}/winners_bracket`)),
+        _toggle(j<any[]>(`${BASE}/league/${leagueId}/losers_bracket`)),
       ]);
 
       const rosterToOwner = buildRosterToOwner(users, rosters);
@@ -123,9 +127,11 @@ export async function GET() {
       // Champion
       const champRid =
         bracketWinnerRosterId(winnersBracket) ??
-        (Number.isFinite(Number(league?.settings?.winner_roster_id)) ? Number(league.settings.winner_roster_id) : null) ??
-        (Number.isFinite(Number(league?.metadata?.latest_league_winner_roster_id))
-          ? Number(league.metadata.latest_league_winner_roster_id)
+        (Number.isFinite(Number(leagueData?.settings?.winner_roster_id))
+          ? Number(leagueData.settings.winner_roster_id)
+          : null) ??
+        (Number.isFinite(Number(leagueData?.metadata?.latest_league_winner_roster_id))
+          ? Number(leagueData.metadata.latest_league_winner_roster_id)
           : null);
 
       // Regular Season Champ (best record, tie-break PF)
@@ -153,20 +159,20 @@ export async function GET() {
       // Toilet Bowl Champ (winner of losers bracket)
       const toiletRid = bracketWinnerRosterId(losersBracket);
 
-      const seasonLabel = safeStr(league?.season) || "—";
+      const seasonLabel = safeStr(leagueData?.season) || "—";
 
       seasons.push({
         season: seasonLabel,
-        leagueId: safeStr(league?.league_id) || leagueId,
-        leagueName: safeStr(league?.name) || "League",
-        status: safeStr(league?.status) || "",
+        leagueId: safeStr(leagueData?.league_id) || leagueId,
+        leagueName: safeStr(leagueData?.name) || "League",
+        status: safeStr(leagueData?.status) || "",
         champion: rosterInfo(rosterToOwner, champRid),
         regSeason: rosterInfo(rosterToOwner, regRid),
         bestManager: rosterInfo(rosterToOwner, bestRid),
         toiletBowl: rosterInfo(rosterToOwner, toiletRid),
       });
 
-      const prev = safeStr(league?.previous_league_id).trim();
+      const prev = safeStr(leagueData?.previous_league_id).trim();
       leagueId = prev ? prev : null;
     }
 
@@ -179,5 +185,17 @@ export async function GET() {
     return NextResponse.json(data);
   } catch (e: any) {
     return NextResponse.json({ error: e?.message || "Failed to load awards" }, { status: 500 });
+  }
+}
+
+/**
+ * Small helper to keep your Promise.all clean (always returns [] on failure)
+ */
+async function _toggle<T>(p: Promise<T>): Promise<T> {
+  try {
+    return await p;
+  } catch {
+    // @ts-expect-error - used only for arrays in this file
+    return [];
   }
 }

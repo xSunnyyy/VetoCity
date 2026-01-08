@@ -83,7 +83,7 @@ async function getAllLeagueIdsNewestFirst(startLeagueId: string) {
     seen.add(cur);
     ids.push(cur);
 
-    const league = await j<any>(`${BASE}/league/${cur}`);
+    const league: any = await j<any>(`${BASE}/league/${cur}`);
     const prev = league?.previous_league_id ? String(league.previous_league_id) : "";
     cur = prev || null;
   }

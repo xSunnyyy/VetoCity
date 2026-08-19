@@ -1,6 +1,7 @@
 import Link from "next/link";
 import FloatingNav from "@/app/components/FloatingNav";
 import { DashboardCards } from "./components/DashboardCards";
+import { ChampionshipBanners } from "./components/ChampionshipBanners";
 
 export default function HomePage() {
   return (
@@ -19,6 +20,8 @@ export default function HomePage() {
             View the Draft
           </Link>
         </section>
+
+        <ChampionshipBanners />
 
         <DashboardCards />
       </div>

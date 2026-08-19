@@ -37,7 +37,10 @@ function buildRosterToOwner(users: any[], rosters: any[]) {
     if (u?.user_id) userById.set(String(u.user_id), u);
   }
 
-  const rosterToOwner = new Map<number, { name: string; avatar: string | null }>();
+  const rosterToOwner = new Map<
+    number,
+    { name: string; avatar: string | null; wins: number; losses: number; ties: number }
+  >();
   for (const r of rosters || []) {
     const rid = Number(r?.roster_id);
     if (!Number.isFinite(rid)) continue;
@@ -53,7 +56,11 @@ function buildRosterToOwner(users: any[], rosters: any[]) {
 
     const avatar = u?.avatar ? safeStr(u.avatar) : null;
 
-    rosterToOwner.set(rid, { name, avatar });
+    const wins = Number(r?.settings?.wins ?? 0) || 0;
+    const losses = Number(r?.settings?.losses ?? 0) || 0;
+    const ties = Number(r?.settings?.ties ?? 0) || 0;
+
+    rosterToOwner.set(rid, { name, avatar, wins, losses, ties });
   }
 
   return rosterToOwner;
@@ -74,12 +81,18 @@ function bracketWinnerRosterId(bracket: any[] | null | undefined): number | null
 }
 
 function rosterInfo(
-  rosterToOwner: Map<number, { name: string; avatar: string | null }>,
+  rosterToOwner: Map<number, { name: string; avatar: string | null; wins: number; losses: number; ties: number }>,
   rid: number | null
 ) {
-  if (!rid || !Number.isFinite(rid)) return { rosterId: null, name: "—", avatar: null };
+  if (!rid || !Number.isFinite(rid))
+    return { rosterId: null, name: "—", avatar: null, record: null };
   const o = rosterToOwner.get(rid);
-  return { rosterId: rid, name: o?.name ?? `Team ${rid}`, avatar: o?.avatar ?? null };
+  return {
+    rosterId: rid,
+    name: o?.name ?? `Team ${rid}`,
+    avatar: o?.avatar ?? null,
+    record: o ? { wins: o.wins, losses: o.losses, ties: o.ties } : null,
+  };
 }
 
 export async function GET() {

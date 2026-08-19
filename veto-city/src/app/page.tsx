@@ -1,7 +1,8 @@
 import Link from "next/link";
 import FloatingNav from "@/app/components/FloatingNav";
-import { DashboardCards } from "./components/DashboardCards";
 import { ChampionshipBanners } from "./components/ChampionshipBanners";
+import { LeagueAtAGlance } from "./components/LeagueAtAGlance";
+import { LeagueHistory } from "./components/LeagueHistory";
 
 export default function HomePage() {
   return (
@@ -23,7 +24,9 @@ export default function HomePage() {
 
         <ChampionshipBanners />
 
-        <DashboardCards />
+        <LeagueAtAGlance />
+
+        <LeagueHistory />
       </div>
     </main>
   );

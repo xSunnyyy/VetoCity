@@ -68,11 +68,19 @@ export default function FloatingNav() {
             Dashboard
           </Link>
 
+          <Link href="/rules" className={cx(pill, isActive("/rules") && pillActive)}>
+            Rules
+          </Link>
+
           <Link
             href="/matchups"
             className={cx(pill, isActive("/matchups") && pillActive)}
           >
             Matchups
+          </Link>
+
+          <Link href="/movement" className={cx(pill, isActive("/movement") && pillActive)}>
+            Movement
           </Link>
 
           <div className="relative" ref={menuRef}>
@@ -179,6 +187,18 @@ export default function FloatingNav() {
                 Dashboard
               </Link>
               <Link
+                href="/rules"
+                onClick={() => setMobileMenuOpen(false)}
+                className={cx(
+                  "flex items-center px-4 py-3 text-base font-medium transition-colors",
+                  isActive("/rules")
+                    ? "bg-zinc-900/50 text-zinc-100"
+                    : "text-zinc-200 hover:bg-zinc-900/30"
+                )}
+              >
+                Rules
+              </Link>
+              <Link
                 href="/matchups"
                 onClick={() => setMobileMenuOpen(false)}
                 className={cx(
@@ -189,6 +209,18 @@ export default function FloatingNav() {
                 )}
               >
                 Matchups
+              </Link>
+              <Link
+                href="/movement"
+                onClick={() => setMobileMenuOpen(false)}
+                className={cx(
+                  "flex items-center px-4 py-3 text-base font-medium transition-colors",
+                  isActive("/movement")
+                    ? "bg-zinc-900/50 text-zinc-100"
+                    : "text-zinc-200 hover:bg-zinc-900/30"
+                )}
+              >
+                Movement
               </Link>
 
               <div className="my-2 h-px bg-zinc-800/70" />

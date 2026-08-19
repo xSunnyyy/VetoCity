@@ -51,7 +51,7 @@ function Banner({
         }
       >
         {/* banner body — text lives here, never clipped */}
-        <div className="relative overflow-hidden bg-gradient-to-b from-zinc-800 to-zinc-950 px-3 pb-4 pt-5 shadow-[0_18px_34px_rgba(0,0,0,0.55)] ring-1 ring-inset ring-amber-500/30">
+        <div className="relative overflow-hidden bg-gradient-to-b from-zinc-800 to-zinc-950 px-3 pb-4 pt-5 shadow-[0_18px_34px_rgba(0,0,0,0.55)] ring-1 ring-inset ring-red-500/30">
           {/* subtle cloth ridges */}
           <div
             className="pointer-events-none absolute inset-0 opacity-[0.06]"
@@ -60,12 +60,12 @@ function Banner({
                 "repeating-linear-gradient(90deg, #fff 0px, #fff 1px, transparent 1px, transparent 9px)",
             }}
           />
-          {/* top gold trim */}
-          <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-amber-600/70 via-amber-300/90 to-amber-600/70" />
+          {/* top trim */}
+          <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-red-700/70 via-red-400/90 to-red-700/70" />
 
           <div className="relative">
             <div className="text-lg leading-none">🏆</div>
-            <div className="mt-1.5 text-[10px] font-bold tracking-[0.22em] text-amber-400">
+            <div className="mt-1.5 text-[10px] font-bold tracking-[0.22em] text-red-400">
               CHAMPIONS
             </div>
             <div className="mt-2 line-clamp-2 min-h-[2.5rem] text-sm font-semibold leading-tight text-zinc-50">
@@ -73,7 +73,7 @@ function Banner({
             </div>
             <div className="mt-2 text-2xl font-black tracking-tight text-zinc-100">{season}</div>
             {record ? (
-              <div className="mt-2 inline-flex items-center rounded-full border border-amber-500/40 bg-amber-500/10 px-2.5 py-0.5 text-[11px] font-semibold text-amber-300">
+              <div className="mt-2 inline-flex items-center rounded-full border border-red-500/40 bg-red-500/10 px-2.5 py-0.5 text-[11px] font-semibold text-red-300">
                 {record}
               </div>
             ) : null}
@@ -82,7 +82,7 @@ function Banner({
 
         {/* pennant tail — purely decorative, can never eat into text */}
         <div
-          className="h-6 w-full bg-zinc-950 ring-1 ring-inset ring-amber-500/30"
+          className="h-6 w-full bg-zinc-950 ring-1 ring-inset ring-red-500/30"
           style={{ clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 50% 40%, 0% 100%)" }}
         />
       </div>

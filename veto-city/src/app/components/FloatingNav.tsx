@@ -15,7 +15,8 @@ type IconKey =
   | "standings"
   | "drafts"
   | "awards"
-  | "records";
+  | "records"
+  | "more";
 
 type NavItem = { label: string; href: string; icon: IconKey };
 
@@ -36,8 +37,19 @@ const primaryItems: NavItem[] = [
   { label: "Movement", href: "/movement", icon: "movement" },
 ];
 
-// All destinations, flattened, for the mobile icon bar.
-const mobileItems: NavItem[] = [...primaryItems, ...leagueItems];
+// Mobile bottom bar: only the essentials get a permanent icon slot.
+const mobileMainItems: NavItem[] = [
+  { label: "Dashboard", href: "/", icon: "dashboard" },
+  { label: "Rules", href: "/rules", icon: "rules" },
+  { label: "Managers", href: "/league/managers", icon: "managers" },
+  { label: "Movement", href: "/movement", icon: "movement" },
+];
+
+// Everything else lives behind "More".
+const mobileMoreItems: NavItem[] = [
+  { label: "Matchups", href: "/matchups", icon: "matchups" },
+  ...leagueItems.filter((it) => it.href !== "/league/managers"),
+];
 
 function cx(...parts: Array<string | false | null | undefined>) {
   return parts.filter(Boolean).join(" ");
@@ -134,12 +146,22 @@ function NavIcon({ icon, className }: { icon: IconKey; className?: string }) {
           <path d="M7 3h10v18l-5-3-5 3Z" />
         </svg>
       );
+    case "more":
+      return (
+        <svg {...common}>
+          <rect x="3" y="3" width="7" height="7" rx="1.2" />
+          <rect x="14" y="3" width="7" height="7" rx="1.2" />
+          <rect x="3" y="14" width="7" height="7" rx="1.2" />
+          <rect x="14" y="14" width="7" height="7" rx="1.2" />
+        </svg>
+      );
   }
 }
 
 export default function FloatingNav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -149,7 +171,10 @@ export default function FloatingNav() {
       }
     }
     function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") {
+        setOpen(false);
+        setMoreOpen(false);
+      }
     }
     document.addEventListener("mousedown", onDown);
     document.addEventListener("keydown", onKey);
@@ -162,6 +187,11 @@ export default function FloatingNav() {
   const isActive = useMemo(() => {
     return (href: string) => pathname === href || (href !== "/" && pathname?.startsWith(href + "/"));
   }, [pathname]);
+
+  const moreActive = useMemo(
+    () => mobileMoreItems.some((it) => isActive(it.href)),
+    [isActive]
+  );
 
   const pill =
     "h-9 min-w-[120px] inline-flex items-center justify-center rounded-full border border-zinc-800/80 bg-zinc-950/70 px-4 text-sm font-medium text-zinc-200 hover:bg-zinc-900/70 transition-colors";
@@ -228,15 +258,16 @@ export default function FloatingNav() {
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
         aria-label="Primary"
       >
-        <div className="flex gap-1 overflow-x-auto px-2 py-1.5">
-          {mobileItems.map((it) => {
+        <div className="flex items-stretch justify-between gap-1 px-2 py-1.5">
+          {mobileMainItems.map((it) => {
             const active = isActive(it.href);
             return (
               <Link
                 key={it.href}
                 href={it.href}
+                onClick={() => setMoreOpen(false)}
                 className={cx(
-                  "flex min-w-[60px] shrink-0 flex-col items-center gap-1 rounded-xl px-2 py-1.5 text-center transition-colors",
+                  "flex flex-1 flex-col items-center gap-1 rounded-xl px-2 py-1.5 text-center transition-colors",
                   active ? "text-zinc-100" : "text-zinc-500 hover:text-zinc-300"
                 )}
               >
@@ -245,8 +276,69 @@ export default function FloatingNav() {
               </Link>
             );
           })}
+
+          <button
+            type="button"
+            onClick={() => setMoreOpen((v) => !v)}
+            aria-haspopup="dialog"
+            aria-expanded={moreOpen}
+            className={cx(
+              "flex flex-1 flex-col items-center gap-1 rounded-xl px-2 py-1.5 text-center transition-colors",
+              moreOpen || moreActive ? "text-zinc-100" : "text-zinc-500 hover:text-zinc-300"
+            )}
+          >
+            <NavIcon icon="more" className={cx("h-5 w-5", (moreOpen || moreActive) && "text-red-400")} />
+            <span className="text-[10px] font-medium leading-none">More</span>
+          </button>
         </div>
       </nav>
+
+      {/* Mobile "More" popup */}
+      {moreOpen ? (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMoreOpen(false)} />
+          <div
+            className="absolute inset-x-0 bottom-0 rounded-t-2xl border-t border-zinc-800 bg-zinc-950 shadow-[0_-16px_50px_rgba(0,0,0,0.6)]"
+            style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+            role="dialog"
+            aria-label="More navigation"
+          >
+            <div className="flex items-center justify-between border-b border-zinc-800/70 px-5 py-4">
+              <span className="text-sm font-semibold tracking-wide text-zinc-100">More</span>
+              <button
+                type="button"
+                onClick={() => setMoreOpen(false)}
+                className="flex h-8 w-8 items-center justify-center rounded-full text-zinc-400 hover:bg-zinc-900/50 hover:text-zinc-200"
+                aria-label="Close"
+              >
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-4 gap-2 px-4 py-5">
+              {mobileMoreItems.map((it) => {
+                const active = isActive(it.href);
+                return (
+                  <Link
+                    key={it.href}
+                    href={it.href}
+                    onClick={() => setMoreOpen(false)}
+                    className={cx(
+                      "flex flex-col items-center gap-1.5 rounded-xl px-2 py-3 text-center transition-colors",
+                      active ? "bg-zinc-900/60 text-zinc-100" : "text-zinc-400 hover:bg-zinc-900/40 hover:text-zinc-200"
+                    )}
+                  >
+                    <NavIcon icon={it.icon} className={cx("h-6 w-6", active && "text-red-400")} />
+                    <span className="text-[11px] font-medium leading-none">{it.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      ) : null}
     </>
   );
 }

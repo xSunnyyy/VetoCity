@@ -8,6 +8,7 @@ type NavItem = { label: string; href: string };
 
 const leagueItems: NavItem[] = [
   { label: "Rosters", href: "/league/rosters" },
+  { label: "Managers", href: "/league/managers" },
   { label: "Rivalry", href: "/league/rivalry" },
   { label: "Standings", href: "/league/standings" },
   { label: "Drafts", href: "/league/drafts" },

@@ -124,7 +124,7 @@ export function ChampionshipBanners() {
   const champions = useMemo(() => {
     return (seasons ?? [])
       .filter((s) => s.champion?.rosterId != null)
-      .sort((a, b) => Number(a.season) - Number(b.season));
+      .sort((a, b) => Number(b.season) - Number(a.season));
   }, [seasons]);
 
   if (err || (!loading && !champions.length)) return null;

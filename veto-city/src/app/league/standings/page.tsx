@@ -374,7 +374,7 @@ export default function StandingsPage() {
     <main className="min-h-screen bg-zinc-950 text-zinc-100">
       <FloatingNav />
 
-      <div className="mx-auto max-w-7xl px-4 pb-12 pt-20 md:pt-24">
+      <div className="mx-auto max-w-7xl px-4 pb-12 pt-6 md:pt-24">
         <div className="mb-6">
           <div className="text-2xl font-semibold tracking-tight md:text-3xl">Standings</div>
 

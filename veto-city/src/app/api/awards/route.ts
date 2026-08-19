@@ -174,16 +174,11 @@ export async function GET() {
 
       const toiletRid = bracketWinnerRosterId(losersBracket);
 
-      // True last place: the loser of the losers-bracket championship game
-      // (the "toilet bowl" final), falling back to the worst regular-season
-      // standing when a league has no losers bracket.
-      const losersFinal = placementGame(losersBracket, 1);
-      const lastPlaceRid =
-        losersFinal && Number.isFinite(Number(losersFinal.l))
-          ? Number(losersFinal.l)
-          : sortedByRecord.length
-          ? Number(sortedByRecord[sortedByRecord.length - 1].roster_id)
-          : null;
+      // Wall of Shame: the league's worst record for the season (standings-
+      // based), not whoever happened to lose a placement/toilet-bowl game.
+      const lastPlaceRid = sortedByRecord.length
+        ? Number(sortedByRecord[sortedByRecord.length - 1].roster_id)
+        : null;
 
       const seasonLabel = safeStr(leagueData?.season) || "—";
 

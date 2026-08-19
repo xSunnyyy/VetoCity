@@ -8,6 +8,7 @@ type Winner = {
   ownerName: string;
   name: string;
   avatar: string | null;
+  record: { wins: number; losses: number; ties: number } | null;
 };
 
 type SeasonAwards = {
@@ -261,12 +262,13 @@ export function LeagueHistory() {
               </div>
             </TableSection>
 
-            <TableSection title="Wall of Shame" subtitle="Last place, by year">
+            <TableSection title="Wall of Shame" subtitle="Worst record, by year">
               <table className="w-full text-left text-sm">
                 <thead>
                   <tr className="border-b border-zinc-800/70 text-xs text-zinc-500">
                     <th className="px-4 py-2 font-medium">Yr</th>
                     <th className="px-4 py-2 font-medium">Team</th>
+                    <th className="px-4 py-2 font-medium text-right">Record</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -275,6 +277,13 @@ export function LeagueHistory() {
                       <td className="px-4 py-2.5 align-top text-xs font-semibold text-zinc-400">{s.season}</td>
                       <td className="px-4 py-2.5 align-top">
                         <PodiumCell w={s.lastPlace} />
+                      </td>
+                      <td className="px-4 py-2.5 align-top text-right text-sm font-medium text-zinc-300">
+                        {s.lastPlace?.record
+                          ? s.lastPlace.record.ties
+                            ? `${s.lastPlace.record.wins}-${s.lastPlace.record.losses}-${s.lastPlace.record.ties}`
+                            : `${s.lastPlace.record.wins}-${s.lastPlace.record.losses}`
+                          : "—"}
                       </td>
                     </tr>
                   ))}

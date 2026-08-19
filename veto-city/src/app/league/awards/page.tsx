@@ -207,7 +207,7 @@ export default function AwardsPage() {
     <main className="min-h-screen bg-zinc-950 text-zinc-100">
       <FloatingNav />
 
-      <div className="mx-auto w-full max-w-6xl px-4 pb-12 pt-20 md:pt-24">
+      <div className="mx-auto w-full max-w-6xl px-4 pb-12 pt-6 md:pt-24">
         <div className="mb-6">
           <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">Awards</h1>
           <div className="mt-1 text-sm text-zinc-400">

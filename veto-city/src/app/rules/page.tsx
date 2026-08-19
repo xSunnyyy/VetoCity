@@ -150,7 +150,7 @@ export default function RulesPage() {
     <main className="min-h-screen bg-zinc-950 text-zinc-100">
       <FloatingNav />
 
-      <div className="mx-auto w-full max-w-4xl px-4 pb-12 pt-20 md:pt-24">
+      <div className="mx-auto w-full max-w-4xl px-4 pb-12 pt-6 md:pt-24">
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-semibold tracking-tight md:text-5xl">League Constitution</h1>
           <div className="mt-2 text-sm text-zinc-400">Rules, scoring, and the fine print</div>

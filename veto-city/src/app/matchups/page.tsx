@@ -291,7 +291,7 @@ export default function MatchupsPage() {
     <main className="min-h-screen bg-zinc-950 text-zinc-100">
       <FloatingNav />
 
-      <div className="mx-auto w-full max-w-6xl px-4 pb-12 pt-20 md:pt-24">
+      <div className="mx-auto w-full max-w-6xl px-4 pb-12 pt-6 md:pt-24">
         {/* Header: Matchups centered + week switch centered */}
         <div className="mb-8 space-y-4">
           <h1 className="text-center text-3xl font-semibold tracking-tight md:text-5xl">Matchups</h1>

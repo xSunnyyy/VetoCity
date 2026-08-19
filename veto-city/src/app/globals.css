@@ -59,6 +59,11 @@ body {
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
   }
+
+  /* Keep page content clear of the fixed bottom icon nav bar */
+  main {
+    padding-bottom: calc(4.75rem + env(safe-area-inset-bottom));
+  }
 }
 
 /* Reduced motion for users who prefer it */

@@ -228,12 +228,12 @@ export async function GET() {
         leagueName: "Veto City",
         status: "complete",
         champion: legacyToRosterInfo(legacy.champion),
-        runnerUp: legacyToRosterInfo(legacy.runnerUp),
-        third: legacyToRosterInfo(legacy.third),
+        runnerUp: legacy.runnerUp ? legacyToRosterInfo(legacy.runnerUp) : EMPTY_PLACEMENT,
+        third: legacy.third ? legacyToRosterInfo(legacy.third) : EMPTY_PLACEMENT,
         regSeason: EMPTY_PLACEMENT,
         bestManager: EMPTY_PLACEMENT,
-        toiletBowl: legacyToRosterInfo(legacy.lastPlace),
-        lastPlace: legacyToRosterInfo(legacy.lastPlace),
+        toiletBowl: legacy.lastPlace ? legacyToRosterInfo(legacy.lastPlace) : EMPTY_PLACEMENT,
+        lastPlace: legacy.lastPlace ? legacyToRosterInfo(legacy.lastPlace) : EMPTY_PLACEMENT,
       });
     }
 

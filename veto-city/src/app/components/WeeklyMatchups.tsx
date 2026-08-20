@@ -259,7 +259,7 @@ export function WeeklyMatchups() {
             onClick={() => setSelectedWeek((w) => Math.max(WEEK_MIN, w - 1))}
             disabled={selectedWeek <= WEEK_MIN || weeklyLoading || loading}
             className={cx(
-              "h-11 md:h-9 rounded-full border px-4 text-sm transition",
+              "h-11 md:h-9 rounded-xl border px-4 text-sm transition",
               selectedWeek <= WEEK_MIN || weeklyLoading || loading
                 ? "border-zinc-800 text-zinc-600"
                 : "border-zinc-800 bg-zinc-950/60 text-zinc-200 hover:bg-zinc-900/50"
@@ -273,7 +273,7 @@ export function WeeklyMatchups() {
               value={selectedWeek}
               onChange={(e) => setSelectedWeek(Number(e.target.value))}
               disabled={loading}
-              className="h-11 md:h-9 min-w-[130px] cursor-pointer appearance-none rounded-full border border-zinc-800 bg-zinc-950/60 px-4 pr-9 text-sm font-semibold text-zinc-200 outline-none transition hover:bg-zinc-900/50 focus:border-zinc-700 disabled:opacity-60"
+              className="h-11 md:h-9 min-w-[130px] cursor-pointer appearance-none rounded-xl border border-zinc-800 bg-zinc-950/60 px-4 pr-9 text-sm font-semibold text-zinc-200 outline-none transition hover:bg-zinc-900/50 focus:border-zinc-700 disabled:opacity-60"
             >
               {Array.from({ length: WEEK_MAX }, (_, i) => i + 1).map((w) => (
                 <option key={w} value={w} className="bg-zinc-950 text-zinc-200">
@@ -289,7 +289,7 @@ export function WeeklyMatchups() {
             onClick={() => setSelectedWeek((w) => Math.min(WEEK_MAX, w + 1))}
             disabled={selectedWeek >= WEEK_MAX || weeklyLoading || loading}
             className={cx(
-              "h-11 md:h-9 rounded-full border px-4 text-sm transition",
+              "h-11 md:h-9 rounded-xl border px-4 text-sm transition",
               selectedWeek >= WEEK_MAX || weeklyLoading || loading
                 ? "border-zinc-800 text-zinc-600"
                 : "border-zinc-800 bg-zinc-950/60 text-zinc-200 hover:bg-zinc-900/50"

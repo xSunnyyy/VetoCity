@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 type Winner = {
@@ -259,6 +260,14 @@ export function LeagueHistory() {
                       : "—"}
                   </span>
                 </div>
+              </div>
+              <div className="flex justify-center border-t border-zinc-800/60 px-4 py-4">
+                <Link
+                  href="/league/drafts"
+                  className="inline-flex h-11 md:h-10 items-center justify-center rounded-full border border-zinc-800 bg-zinc-900/70 px-6 text-sm font-medium hover:bg-zinc-800 transition-colors"
+                >
+                  View the Draft
+                </Link>
               </div>
             </TableSection>
 

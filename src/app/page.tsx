@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import FloatingNav from "@/app/components/FloatingNav";
 import { ChampionshipBanners } from "./components/ChampionshipBanners";
 import { WeeklyMatchups } from "./components/WeeklyMatchups";
@@ -28,15 +27,6 @@ export default function HomePage() {
         <ChampionshipBanners />
 
         <WeeklyMatchups />
-
-        <div className="mb-10 flex justify-center">
-          <Link
-            href="/league/drafts"
-            className="inline-flex h-11 md:h-10 items-center justify-center rounded-full border border-zinc-800 bg-zinc-900/70 px-6 text-sm font-medium hover:bg-zinc-800 transition-colors"
-          >
-            View the Draft
-          </Link>
-        </div>
 
         <LeagueAtAGlance />
 

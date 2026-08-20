@@ -90,6 +90,16 @@ body {
   background-color: rgb(220 38 38 / 0.8); /* red-600/80 */
 }
 
+/* Fully hidden scrollbar for sections that scroll by drag/touch instead */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 /* Reduced motion for users who prefer it */
 @media (prefers-reduced-motion: reduce) {
   *,

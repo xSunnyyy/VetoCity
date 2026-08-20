@@ -153,7 +153,7 @@ export default function RulesPage() {
 
       <div className="mx-auto w-full max-w-4xl px-4 pb-12 pt-6 md:pt-24">
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-semibold tracking-tight md:text-5xl">League Constitution</h1>
+          <h1 className="text-3xl font-semibold tracking-tight md:text-5xl">League Rules</h1>
           <div className="mt-2 text-sm text-zinc-400">Rules, scoring, and the fine print</div>
         </div>
 

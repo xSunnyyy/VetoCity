@@ -195,10 +195,7 @@ export default function RulesPage() {
                   data.playoffRoundLabel ? ` · ${data.playoffRoundLabel}` : ""
                 }`}
               />
-              <Row
-                label="Trade Deadline"
-                value={`Week ${data.tradeDeadlineWeek} · ${data.vetoVotesNeeded} votes to veto`}
-              />
+              <Row label="Trade Deadline" value={`Week ${data.tradeDeadlineWeek}`} />
               <Row
                 label="Waivers"
                 value={[
@@ -208,7 +205,6 @@ export default function RulesPage() {
                   .filter(Boolean)
                   .join(" · ")}
               />
-              <Row label="Keepers" value={data.maxKeepers > 0 ? `${data.maxKeepers} allowed` : "None"} />
             </Section>
 
             <Section title="Scoring" subtitle={data.scoringType}>

@@ -151,10 +151,7 @@ export function LeagueAtAGlance() {
               label="Regular Season"
               value={`${rules.regularSeasonWeeks} weeks · ${rules.playoffTeams}-team playoffs, Wks ${rules.playoffWeekStart}–${rules.playoffWeekEnd}`}
             />
-            <Row
-              label="Trade Deadline"
-              value={`Week ${rules.tradeDeadlineWeek} · ${rules.vetoVotesNeeded} votes to veto`}
-            />
+            <Row label="Trade Deadline" value={`Week ${rules.tradeDeadlineWeek}`} />
             <Row
               label="Waivers"
               value={rules.waiverBudget != null ? `${rules.waiverType} $${rules.waiverBudget}` : rules.waiverType}

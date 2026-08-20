@@ -11,15 +11,17 @@ export type LegacyManager = {
   name: string; // the name this manager went by that season
   managerId: string | null; // current Sleeper user_id, or null if no longer in the league
   ownerName: string; // current Sleeper display name, or "" if no longer in the league
-  record: { wins: number; losses: number; ties: number };
+  record: { wins: number; losses: number; ties: number } | null;
 };
 
 export type LegacySeason = {
   season: string;
   champion: LegacyManager;
-  runnerUp: LegacyManager;
-  third: LegacyManager;
-  lastPlace: LegacyManager;
+  // Only the champion is known for some older seasons (just a banner, no
+  // full podium/standings) — these are omitted rather than guessed.
+  runnerUp?: LegacyManager;
+  third?: LegacyManager;
+  lastPlace?: LegacyManager;
 };
 
 // Legacy first name -> current Sleeper identity (or null if they've since
@@ -50,6 +52,18 @@ function m(name: string, wins: number, losses: number): LegacyManager {
     managerId: id?.managerId ?? null,
     ownerName: id?.ownerName ?? "",
     record: { wins, losses, ties: 0 },
+  };
+}
+
+// For seasons where only the champion's name is known — no record, no rest
+// of the podium.
+function mChampion(name: string): LegacyManager {
+  const id = IDENTITY[name];
+  return {
+    name,
+    managerId: id?.managerId ?? null,
+    ownerName: id?.ownerName ?? "",
+    record: null,
   };
 }
 
@@ -98,4 +112,10 @@ export const LEGACY_SEASONS: LegacySeason[] = [
     third: m("Shahed", 9, 4),
     lastPlace: m("Abbas", 6, 7),
   },
+  // Champion-only years — just who won, no full standings.
+  { season: "2016", champion: mChampion("Kam") },
+  { season: "2015", champion: mChampion("Abbas") },
+  { season: "2014", champion: mChampion("Russ") },
+  { season: "2013", champion: mChampion("Sunny") },
+  { season: "2012", champion: mChampion("Abbas") },
 ];

@@ -233,7 +233,9 @@ export default function RulesPage() {
           </div>
         )}
 
-        <RulesAndRegulations />
+        <div className="mt-6">
+          <RulesAndRegulations />
+        </div>
       </div>
     </main>
   );

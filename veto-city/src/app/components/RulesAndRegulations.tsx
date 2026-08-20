@@ -1,7 +1,3 @@
-"use client";
-
-import { useState } from "react";
-
 type BylawItem = string | { label: string; sub: string[] };
 type BylawSection = { number: number; title: string; items: BylawItem[] };
 
@@ -13,16 +9,6 @@ const SECTIONS: BylawSection[] = [
       "League is on Sleeper.",
       "League fee: $50.",
       "No more mandatory $50 (last year was the final mandatory period) — majority voted to keep it at $50 this year as well. The only way to increase the fee is a unanimous league vote.",
-      {
-        label: "Lineup Settings",
-        sub: [
-          "1/2 PPR",
-          "Weekly lineup: 1 QB, 2 RB, 2 WR, 1 TE, 2 WR/RB/TE",
-          "2022 — Defense removed. 2023 — agreed to continue without DEF/K.",
-          "No IR spot",
-          "6 bench spots",
-        ],
-      },
     ],
   },
   {
@@ -105,13 +91,9 @@ const SECTIONS: BylawSection[] = [
   },
 ];
 
-function cx(...parts: Array<string | false | null | undefined>) {
-  return parts.filter(Boolean).join(" ");
-}
-
 function BylawList({ items }: { items: BylawItem[] }) {
   return (
-    <ul className="space-y-2.5">
+    <ul className="space-y-2">
       {items.map((item, i) => {
         if (typeof item === "string") {
           return (
@@ -124,11 +106,11 @@ function BylawList({ items }: { items: BylawItem[] }) {
 
         return (
           <li key={i}>
-            <div className="flex gap-2.5 text-sm font-semibold leading-relaxed text-zinc-100">
-              <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-red-500/70" />
+            <div className="flex gap-2.5 text-sm font-medium leading-relaxed text-zinc-200">
+              <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-zinc-600" />
               <span>{item.label}</span>
             </div>
-            <ul className="ml-3.5 mt-2 space-y-2 border-l border-zinc-800/70 pl-4">
+            <ul className="ml-3.5 mt-1.5 space-y-1.5 border-l border-zinc-800/70 pl-4">
               {item.sub.map((s, j) => (
                 <li key={j} className="text-sm leading-relaxed text-zinc-400">
                   {s}
@@ -142,52 +124,21 @@ function BylawList({ items }: { items: BylawItem[] }) {
   );
 }
 
-function BylawCard({ section, defaultOpen }: { section: BylawSection; defaultOpen: boolean }) {
-  const [open, setOpen] = useState(defaultOpen);
-
-  return (
-    <div className="overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[0_14px_40px_rgba(0,0,0,0.42)] backdrop-blur">
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
-        aria-expanded={open}
-      >
-        <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-red-800/50 bg-red-950/30 text-sm font-bold text-red-300">
-            {section.number}
-          </div>
-          <div className="text-sm font-semibold tracking-wide text-zinc-100">{section.title}</div>
-        </div>
-
-        <div
-          className={cx(
-            "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-zinc-800/80 bg-zinc-950/60 text-zinc-400 transition",
-            open ? "rotate-180" : "rotate-0"
-          )}
-          aria-hidden
-        >
-          ▾
-        </div>
-      </button>
-
-      <div className={cx("px-5 pb-5", open ? "block" : "hidden")}>
-        <BylawList items={section.items} />
-      </div>
-    </div>
-  );
-}
-
 export function RulesAndRegulations() {
   return (
-    <div className="mt-6">
-      <div className="mb-4 text-center text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500">
-        Rules &amp; Regulations
+    <div className="overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[0_14px_40px_rgba(0,0,0,0.42)] backdrop-blur">
+      <div className="border-b border-zinc-800/70 bg-zinc-900/40 px-5 py-4 text-center">
+        <div className="text-sm font-semibold tracking-wide text-zinc-100">Rules &amp; Regulations</div>
       </div>
 
-      <div className="space-y-3">
+      <div>
         {SECTIONS.map((s) => (
-          <BylawCard key={s.number} section={s} defaultOpen={s.number === 1} />
+          <div key={s.number} className="border-b border-zinc-800/60 px-5 py-4 last:border-b-0">
+            <div className="mb-3 text-sm font-semibold text-zinc-100">
+              {s.number}. {s.title}
+            </div>
+            <BylawList items={s.items} />
+          </div>
         ))}
       </div>
     </div>

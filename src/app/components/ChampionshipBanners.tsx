@@ -73,11 +73,14 @@ function Banner({
               {name}
             </div>
             <div className="mt-2 text-2xl font-black tracking-tight text-zinc-100">{season}</div>
-            {record ? (
-              <div className="mt-2 inline-flex items-center rounded-full border border-red-500/40 bg-red-500/10 px-2.5 py-0.5 text-[11px] font-semibold text-red-300">
-                {record}
-              </div>
-            ) : null}
+            <div
+              className={
+                "mt-2 inline-flex items-center rounded-full border border-red-500/40 bg-red-500/10 px-2.5 py-0.5 text-[11px] font-semibold text-red-300" +
+                (record ? "" : " invisible")
+              }
+            >
+              {record || "—"}
+            </div>
           </div>
         </div>
 

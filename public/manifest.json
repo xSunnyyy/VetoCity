@@ -51,10 +51,10 @@
       ]
     },
     {
-      "name": "Matchups",
-      "short_name": "Matchups",
-      "description": "View weekly matchups",
-      "url": "/matchups",
+      "name": "Movement",
+      "short_name": "Movement",
+      "description": "View waivers, trades, and power rankings",
+      "url": "/movement",
       "icons": [
         {
           "src": "/icon-192.png",

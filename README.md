@@ -8,28 +8,29 @@ This repo is a **GitHub template**: click "Use this template" to spin up a site 
 
 ## 1. Project structure
 
-The actual Next.js app lives in a **nested `veto-city/` directory**, not at the repo root:
+The Next.js app lives directly at the repo root:
 
 ```
-VetoCity/                      ← repo root
+VetoCity/
 ├── README.md                  ← you are here
 ├── data/
 │   └── billys-report.json     ← Billy's Report data (see §6)
-└── veto-city/                 ← the Next.js app — cd here for everything
-    ├── package.json
-    ├── src/app/
-    │   ├── lib/vetocity.ts    ← LEAGUE_ID lives here (§2)
-    │   ├── page.tsx           ← homepage / dashboard
-    │   ├── rules/page.tsx     ← "League Rules" page
-    │   ├── movement/page.tsx  ← waivers / trades / power rankings
-    │   ├── league/            ← rosters, managers, rivalry, standings,
-    │   │                        drafts, awards, records, Billy's Report
-    │   ├── components/        ← shared UI (nav, banners, dashboard sections)
-    │   └── api/                ← server routes that call the Sleeper API
-    └── ...
+├── package.json
+├── public/
+│   └── manifest.json          ← PWA name/icons/shortcuts (see §4)
+└── src/app/
+    ├── layout.tsx              ← page <title>, meta description, and other <head> tags (see §4)
+    ├── lib/vetocity.ts         ← LEAGUE_ID lives here (§2)
+    ├── page.tsx                ← homepage / dashboard
+    ├── rules/page.tsx          ← "League Rules" page
+    ├── movement/page.tsx       ← waivers / trades / power rankings
+    ├── league/                 ← rosters, managers, rivalry, standings,
+    │                             drafts, awards, records, Billy's Report
+    ├── components/             ← shared UI (nav, banners, dashboard sections)
+    └── api/                    ← server routes that call the Sleeper API
 ```
 
-Every `npm` command below assumes you've `cd veto-city` first.
+All `npm` commands run from the repo root — no subfolder to `cd` into.
 
 ---
 
@@ -37,14 +38,14 @@ Every `npm` command below assumes you've `cd veto-city` first.
 
 ```bash
 git clone <your-fork-url>
-cd VetoCity/veto-city
+cd VetoCity
 npm install
 npm run dev
 ```
 
 The site defaults to VetoCity's own league. To point it at **your** league, there's exactly one required change:
 
-**`veto-city/src/app/lib/vetocity.ts`**
+**`src/app/lib/vetocity.ts`**
 
 ```ts
 export const LEAGUE_ID = "YOUR_SLEEPER_LEAGUE_ID";
@@ -68,15 +69,32 @@ This app's `LEAGUE_ID` constant always has to point at the **current** season's 
    https://api.sleeper.app/v1/user/<user_id>/leagues/nfl/<new_season_year>
    ```
    Look for the league with your league's name in the response and grab its `league_id`. (You can get a `user_id` from `https://api.sleeper.app/v1/league/<old_league_id>/users`.)
-2. Update `LEAGUE_ID` in `veto-city/src/app/lib/vetocity.ts` to the new value.
+2. Update `LEAGUE_ID` in `src/app/lib/vetocity.ts` to the new value.
 3. Deploy. Historical seasons keep working automatically since the chain now starts one link further along.
 
 ---
 
-## 4. Deploying to Vercel
+## 4. Changing text, titles, and meta tags
+
+The league name/branding shows up in a few different places, since browser tabs, search results, and "Add to Home Screen" each read from a different spot:
+
+| What | Where | Notes |
+|---|---|---|
+| Browser tab title, meta description, Apple "web app" title, favicon/icons | `src/app/layout.tsx` — the exported `metadata` object | This drives the `<title>` and `<meta name="description">` tags Next.js renders into `<head>` for every page |
+| Theme color (browser chrome / status bar tint) | `src/app/layout.tsx` — the exported `viewport` object | `themeColor` |
+| Homepage hero heading (the big text under the nav) | `src/app/page.tsx` | Just JSX text, not a meta tag — this is what visitors actually see, separate from the browser tab title |
+| PWA name, short name, description, theme/background color, home-screen icons, "Add to Home Screen" shortcuts | `public/manifest.json` | Used when someone installs the site as an app on their phone. The `shortcuts` array are the quick actions that show up on a long-press of the home screen icon — keep their `url`s pointed at real routes (we found one still pointing at a page that had been removed) |
+| Favicon file itself | `src/app/favicon.ico` | Next.js auto-serves this from the `app/` directory by convention |
+| Home-screen icon images | `public/icon-192.png`, `public/icon-512.png` | Referenced by both `layout.tsx` metadata and `manifest.json` — replace the files themselves to change the artwork |
+
+There's no Open Graph / Twitter card image configured by default — if you want a custom preview image for links shared in Slack/Discord/iMessage, add an `openGraph` block to the `metadata` export in `layout.tsx`.
+
+---
+
+## 5. Deploying to Vercel
 
 1. Import the repo into Vercel.
-2. **Set the project's Root Directory to `veto-city`** — this is the #1 thing people forget when forking this template. Vercel builds from the repo root by default, won't find `package.json`, and the build fails. (Project Settings → General → Root Directory.)
+2. Root Directory can be left blank/default — the app lives at the repo root.
 3. If you're keeping the Billy's Report feature (see §6), add a `GITHUB_TOKEN` environment variable — details below.
 4. Deploy. Vercel auto-deploys `main` to production and every other branch as a preview.
 
@@ -84,7 +102,7 @@ This app's `LEAGUE_ID` constant always has to point at the **current** season's 
 
 Vercel's serverless functions have **no persistent disk** — writing a plain JSON file to disk works fine in `next dev` but silently vanishes on Vercel between deploys (and even between invocations; only `/tmp` exists, and it's ephemeral). A "just write a file" approach for any feature that needs to remember user input will not survive on Vercel.
 
-The fix, in `veto-city/src/app/lib/githubStore.ts`: instead of writing to local disk, Billy's Report entries are read and written as a JSON file **committed directly to this GitHub repo** via the GitHub Contents API (`data/billys-report.json` at the repo root). That makes the data genuinely permanent, shared identically by every visitor regardless of which serverless instance served the request, and it works the same in local dev as it does in production.
+The fix, in `src/app/lib/githubStore.ts`: instead of writing to local disk, Billy's Report entries are read and written as a JSON file **committed directly to this GitHub repo** via the GitHub Contents API (`data/billys-report.json` at the repo root). That makes the data genuinely permanent, shared identically by every visitor regardless of which serverless instance served the request, and it works the same in local dev as it does in production.
 
 **Setup required — a `GITHUB_TOKEN` env var:**
 
@@ -98,17 +116,17 @@ The fix, in `veto-city/src/app/lib/githubStore.ts`: instead of writing to local 
 `githubStore.ts` writes to whichever branch matches Vercel's `VERCEL_GIT_COMMIT_REF` (so each preview deployment reads/writes its own branch's copy of the data file), or you can pin it explicitly with a `REPORTS_BRANCH` env var. It falls back to `main` if neither is set.
 
 **Don't want Billy's Report at all?** It's fully self-contained and safe to delete:
-- `veto-city/src/app/league/billys-report/`
-- `veto-city/src/app/api/billys-report/`
-- `veto-city/src/app/lib/githubStore.ts`
+- `src/app/league/billys-report/`
+- `src/app/api/billys-report/`
+- `src/app/lib/githubStore.ts`
 - `data/billys-report.json`
-- Remove the `{ label: "Billy's Report", ... }` entry from `secondaryItems` in `veto-city/src/app/components/FloatingNav.tsx`
+- Remove the `{ label: "Billy's Report", ... }` entry from `secondaryItems` in `src/app/components/FloatingNav.tsx`
 
 No `GITHUB_TOKEN` needed if you do this.
 
 ---
 
-## 5. What's generic vs. what's VetoCity-specific
+## 6. What's generic vs. what's VetoCity-specific
 
 Everything under `src/app/api/` and most of `src/app/components/` computes entirely from live Sleeper data — no per-league editing needed beyond `LEAGUE_ID`. A few things are hand-written for VetoCity specifically and should be reviewed/replaced if you're standing up a different league:
 
@@ -116,34 +134,36 @@ Everything under `src/app/api/` and most of `src/app/components/` computes entir
 |---|---|---|
 | Hero title ("Veto City") | `src/app/page.tsx` | Just text — swap for your league's name |
 | Bylaws / league rules prose | `src/app/components/RulesAndRegulations.tsx` | Hardcoded text (fees, trade rules, Sacko punishment, payout structure) — this is VetoCity's actual governance, not derived from Sleeper. Rewrite the `SECTIONS` array for your own league's rules, or delete the component and its usage in `src/app/rules/page.tsx` if you don't want this section |
-| Billy's Report | see §6 | An optional weekly-recap feature some leagues won't want; delete cleanly per the instructions above if not needed |
+| Billy's Report | see §5 | An optional weekly-recap feature some leagues won't want; delete cleanly per the instructions above if not needed |
 | Championship banner / accent color (red) | `src/app/components/ChampionshipBanners.tsx` and the `red-*` Tailwind classes sprinkled through the dashboard components | Cosmetic — recolor to taste |
+| Meta tags, PWA name, hero text | see §4 | Every mention of "Veto City" text across `layout.tsx`, `page.tsx`, and `manifest.json` |
 
 Everything else — Rosters, Managers, Standings (with season navigation), Rivalry, Drafts, Awards, Records, Movement, the Rules page's Format/Roster/Scoring tables — reads Sleeper's API directly and needs no per-league content edits.
 
 ---
 
-## 6. Forking this template for a new league
+## 7. Forking this template for a new league
 
 GitHub's "Use this template" button creates a **completely new, disconnected git history** — the new repo has no relationship to this one that Git or GitHub tracks. There's no automatic sync in either direction.
 
 **Setting up a new league site:**
 1. Click "Use this template" (or "Generate" if using the GitHub CLI) to create your new repo.
-2. Clone it, update `LEAGUE_ID` (§2), update the hero title and any of the VetoCity-specific content in §5.
-3. Deploy to Vercel (§4), remembering the Root Directory setting.
+2. Clone it, update `LEAGUE_ID` (§2), update the hero title and any of the VetoCity-specific content in §4/§6.
+3. Deploy to Vercel (§5).
 
-**Pulling future VetoCity improvements into an already-forked league site:** since there's no git link between the repos, this has to be done by hand — diff the two repos' files and port over what applies, skipping anything VetoCity-specific per §5. If you're working with an AI coding assistant, the simplest approach is to give it push access to both repositories in the same session and ask it to port a specific set of changes over — that's how updates have been synced to sibling league sites built from this template so far.
+**Pulling future VetoCity improvements into an already-forked league site:** since there's no git link between the repos, this has to be done by hand — diff the two repos' files and port over what applies, skipping anything VetoCity-specific per §6. If you're working with an AI coding assistant, the simplest approach is to give it push access to both repositories in the same session and ask it to port a specific set of changes over — that's how updates have been synced to sibling league sites built from this template so far.
+
+Note: sibling sites forked before this repo's structure was flattened (§1) still have their app nested inside a `veto-city/` subfolder — that's a difference in repo layout only, not behavior, and doesn't need to be "fixed" unless you want the same flattened layout there too.
 
 ---
 
-## 7. Local development
+## 8. Local development
 
 ```bash
-cd veto-city
 npm install
 npm run dev      # http://localhost:3000
 npm run build    # production build — good sanity check before deploying
 npm run lint
 ```
 
-No `.env` file is required for local dev unless you're testing Billy's Report, in which case you need `GITHUB_TOKEN` set locally too (a `.env.local` file in `veto-city/` works, since Next.js loads it automatically and it's gitignored).
+No `.env` file is required for local dev unless you're testing Billy's Report, in which case you need `GITHUB_TOKEN` set locally too (a `.env.local` file at the repo root works, since Next.js loads it automatically and it's gitignored).

@@ -75,3 +75,32 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: e?.message || "Failed to save the report" }, { status: 500 });
   }
 }
+
+export async function DELETE(req: Request) {
+  try {
+    const id = new URL(req.url).searchParams.get("id");
+    if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
+
+    // Retry once in case another write raced us and moved the file's sha.
+    let lastErr: unknown = null;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const { data, sha } = await readJsonFile<ReportEntry[]>(FILE_PATH, []);
+        const next = data.filter((e) => e.id !== id);
+
+        if (next.length === data.length) {
+          return NextResponse.json({ error: "That report no longer exists." }, { status: 404 });
+        }
+
+        await writeJsonFile(FILE_PATH, next, sha, `Delete Billy's Report entry ${id}`);
+        return NextResponse.json({ entries: sortNewestFirst(next) });
+      } catch (e) {
+        lastErr = e;
+      }
+    }
+
+    throw lastErr;
+  } catch (e: any) {
+    return NextResponse.json({ error: e?.message || "Failed to delete the report" }, { status: 500 });
+  }
+}

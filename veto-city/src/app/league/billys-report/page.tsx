@@ -178,6 +178,8 @@ export default function BillysReportPage() {
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteErr, setDeleteErr] = useState<string | null>(null);
 
   useEffect(() => {
     let alive = true;
@@ -207,6 +209,28 @@ export default function BillysReportPage() {
   }, []);
 
   const rows = useMemo(() => entries ?? [], [entries]);
+
+  async function handleDelete(entry: ReportEntry) {
+    if (!window.confirm(`Delete "${entry.title}"? This can't be undone.`)) return;
+
+    try {
+      setDeletingId(entry.id);
+      setDeleteErr(null);
+
+      const res = await fetch(`/api/billys-report?id=${encodeURIComponent(entry.id)}`, {
+        method: "DELETE",
+      });
+      const json = await res.json();
+
+      if (!res.ok || json.error) throw new Error(json.error || `API error ${res.status}`);
+
+      setEntries(json.entries);
+    } catch (e: any) {
+      setDeleteErr(e?.message || "Failed to delete the report.");
+    } finally {
+      setDeletingId(null);
+    }
+  }
 
   return (
     <main className="min-h-screen bg-zinc-950 text-zinc-100">
@@ -240,6 +264,12 @@ export default function BillysReportPage() {
           />
         ) : null}
 
+        {deleteErr ? (
+          <div className="mb-4 rounded-2xl border border-red-900/60 bg-zinc-950/60 p-4 text-sm text-red-200 shadow-[0_14px_40px_rgba(0,0,0,0.42)]">
+            {deleteErr}
+          </div>
+        ) : null}
+
         {err ? (
           <div className="rounded-2xl border border-red-900/60 bg-zinc-950/60 p-5 text-red-200 shadow-[0_14px_40px_rgba(0,0,0,0.42)]">
             <div className="text-sm font-semibold">Load error</div>
@@ -264,7 +294,30 @@ export default function BillysReportPage() {
               >
                 <div className="flex items-center justify-between border-b border-zinc-800/70 bg-zinc-900/40 px-5 py-3">
                   <div className="text-sm font-semibold tracking-wide text-zinc-100">{entry.title}</div>
-                  <div className="text-xs text-zinc-500">{fmtDate(entry.createdAt)}</div>
+                  <div className="flex items-center gap-3">
+                    <div className="text-xs text-zinc-500">{fmtDate(entry.createdAt)}</div>
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(entry)}
+                      disabled={deletingId === entry.id}
+                      className="flex h-7 w-7 items-center justify-center rounded-full text-zinc-500 transition hover:bg-red-950/40 hover:text-red-300 disabled:opacity-50"
+                      aria-label={`Delete ${entry.title}`}
+                      title={`Delete ${entry.title}`}
+                    >
+                      {deletingId === entry.id ? (
+                        <span className="text-xs">…</span>
+                      ) : (
+                        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.8}
+                            d="M6 7h12M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-8 0 .8 12.2A2 2 0 0 0 9.8 21h4.4a2 2 0 0 0 2-1.8L17 7"
+                          />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
                 </div>
 
                 <div className="overflow-x-auto">

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { LEAGUE_ID, SLEEPER_BASE as BASE } from "@/app/lib/vetocity";
+import { LEGACY_SEASONS, type LegacyManager } from "@/app/lib/legacyHistory";
 
 // Simple in-memory cache (good on Vercel for short bursts, fine locally)
 let cache: { ts: number; data: any } | null = null;
@@ -110,6 +111,24 @@ function rosterInfo(rosterToOwner: Map<number, OwnerInfo>, rid: number | null) {
   };
 }
 
+// Legacy (pre-Sleeper-chain) seasons carry no real roster_id, but downstream
+// UI treats `rosterId != null` as "this placement exists" — so each gets a
+// synthetic negative id, unique per call, instead of a real Sleeper id.
+let legacyRosterIdCounter = -1;
+
+function legacyToRosterInfo(mgr: LegacyManager) {
+  return {
+    rosterId: legacyRosterIdCounter--,
+    managerId: mgr.managerId,
+    ownerName: mgr.ownerName,
+    name: mgr.name,
+    avatar: null,
+    record: mgr.record,
+  };
+}
+
+const EMPTY_PLACEMENT = { rosterId: null, managerId: null, ownerName: "", name: "—", avatar: null, record: null };
+
 export async function GET() {
   try {
     const now = Date.now();
@@ -198,6 +217,24 @@ export async function GET() {
 
       const prev = safeStr(leagueData?.previous_league_id).trim();
       leagueId = prev ? prev : null;
+    }
+
+    // Pre-Sleeper history, manually entered in Sleeper's app and not
+    // reachable through the API — see src/app/lib/legacyHistory.ts.
+    for (const legacy of LEGACY_SEASONS) {
+      seasons.push({
+        season: legacy.season,
+        leagueId: `legacy-${legacy.season}`,
+        leagueName: "Veto City",
+        status: "complete",
+        champion: legacyToRosterInfo(legacy.champion),
+        runnerUp: legacyToRosterInfo(legacy.runnerUp),
+        third: legacyToRosterInfo(legacy.third),
+        regSeason: EMPTY_PLACEMENT,
+        bestManager: EMPTY_PLACEMENT,
+        toiletBowl: legacyToRosterInfo(legacy.lastPlace),
+        lastPlace: legacyToRosterInfo(legacy.lastPlace),
+      });
     }
 
     const data = { seasons, fetchedAt: new Date().toISOString() };

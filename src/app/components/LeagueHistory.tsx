@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { useDragScroll } from "@/app/lib/useDragScroll";
 
 type Winner = {
   rosterId: number | null;
@@ -41,13 +42,16 @@ type RecordsPayload = {
 };
 
 function TableSection({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
+  const dragRef = useDragScroll<HTMLDivElement>();
   return (
     <div className="overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[0_14px_40px_rgba(0,0,0,0.42)] backdrop-blur">
       <div className="border-b border-zinc-800/70 bg-zinc-900/40 px-4 py-3">
         <div className="text-sm font-semibold tracking-wide text-zinc-100">{title}</div>
         {subtitle ? <div className="mt-0.5 text-xs text-zinc-500">{subtitle}</div> : null}
       </div>
-      <div className="overflow-x-auto">{children}</div>
+      <div ref={dragRef} className="no-scrollbar cursor-grab overflow-x-auto">
+        {children}
+      </div>
     </div>
   );
 }
@@ -181,32 +185,34 @@ export function LeagueHistory() {
       ) : (
         <div className="space-y-4">
           <TableSection title="Year-by-Year Podium">
-            <table className="w-full min-w-[560px] text-left text-sm">
-              <thead>
-                <tr className="border-b border-zinc-800/70 text-xs text-zinc-500">
-                  <th className="px-4 py-2 font-medium">Yr</th>
-                  <th className="px-4 py-2 font-medium">Champion</th>
-                  <th className="px-4 py-2 font-medium">Runner-Up</th>
-                  <th className="px-4 py-2 font-medium">Third</th>
-                </tr>
-              </thead>
-              <tbody>
-                {podiumSeasons.map((s) => (
-                  <tr key={s.season} className="border-b border-zinc-800/50 last:border-b-0">
-                    <td className="px-4 py-2.5 align-top text-xs font-semibold text-zinc-400">{s.season}</td>
-                    <td className="px-4 py-2.5 align-top">
-                      <PodiumCell w={s.champion} />
-                    </td>
-                    <td className="px-4 py-2.5 align-top">
-                      <PodiumCell w={s.runnerUp} />
-                    </td>
-                    <td className="px-4 py-2.5 align-top">
-                      <PodiumCell w={s.third} />
-                    </td>
+            <div className="no-scrollbar max-h-[24rem] overflow-y-auto">
+              <table className="w-full min-w-[560px] text-left text-sm">
+                <thead className="sticky top-0 z-10 bg-zinc-950">
+                  <tr className="border-b border-zinc-800/70 text-xs text-zinc-500">
+                    <th className="px-4 py-2 font-medium">Yr</th>
+                    <th className="px-4 py-2 font-medium">Champion</th>
+                    <th className="px-4 py-2 font-medium">Runner-Up</th>
+                    <th className="px-4 py-2 font-medium">Third</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {podiumSeasons.map((s) => (
+                    <tr key={s.season} className="border-b border-zinc-800/50 last:border-b-0">
+                      <td className="px-4 py-2.5 align-top text-xs font-semibold text-zinc-400">{s.season}</td>
+                      <td className="px-4 py-2.5 align-top">
+                        <PodiumCell w={s.champion} />
+                      </td>
+                      <td className="px-4 py-2.5 align-top">
+                        <PodiumCell w={s.runnerUp} />
+                      </td>
+                      <td className="px-4 py-2.5 align-top">
+                        <PodiumCell w={s.third} />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </TableSection>
 
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -272,32 +278,34 @@ export function LeagueHistory() {
             </TableSection>
 
             <TableSection title="Wall of Shame" subtitle="Worst record, by year">
-              <table className="w-full text-left text-sm">
-                <thead>
-                  <tr className="border-b border-zinc-800/70 text-xs text-zinc-500">
-                    <th className="px-4 py-2 font-medium">Yr</th>
-                    <th className="px-4 py-2 font-medium">Team</th>
-                    <th className="px-4 py-2 font-medium text-right">Record</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {podiumSeasons.map((s) => (
-                    <tr key={s.season} className="border-b border-zinc-800/50 last:border-b-0">
-                      <td className="px-4 py-2.5 align-top text-xs font-semibold text-zinc-400">{s.season}</td>
-                      <td className="px-4 py-2.5 align-top">
-                        <PodiumCell w={s.lastPlace} />
-                      </td>
-                      <td className="px-4 py-2.5 align-top text-right text-sm font-medium text-zinc-300">
-                        {s.lastPlace?.record
-                          ? s.lastPlace.record.ties
-                            ? `${s.lastPlace.record.wins}-${s.lastPlace.record.losses}-${s.lastPlace.record.ties}`
-                            : `${s.lastPlace.record.wins}-${s.lastPlace.record.losses}`
-                          : "—"}
-                      </td>
+              <div className="no-scrollbar max-h-[24rem] overflow-y-auto">
+                <table className="w-full text-left text-sm">
+                  <thead className="sticky top-0 z-10 bg-zinc-950">
+                    <tr className="border-b border-zinc-800/70 text-xs text-zinc-500">
+                      <th className="px-4 py-2 font-medium">Yr</th>
+                      <th className="px-4 py-2 font-medium">Team</th>
+                      <th className="px-4 py-2 font-medium text-right">Record</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {podiumSeasons.map((s) => (
+                      <tr key={s.season} className="border-b border-zinc-800/50 last:border-b-0">
+                        <td className="px-4 py-2.5 align-top text-xs font-semibold text-zinc-400">{s.season}</td>
+                        <td className="px-4 py-2.5 align-top">
+                          <PodiumCell w={s.lastPlace} />
+                        </td>
+                        <td className="px-4 py-2.5 align-top text-right text-sm font-medium text-zinc-300">
+                          {s.lastPlace?.record
+                            ? s.lastPlace.record.ties
+                              ? `${s.lastPlace.record.wins}-${s.lastPlace.record.losses}-${s.lastPlace.record.ties}`
+                              : `${s.lastPlace.record.wins}-${s.lastPlace.record.losses}`
+                            : "—"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </TableSection>
           </div>
         </div>

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import FloatingNav from "@/app/components/FloatingNav";
 import { ChampionshipBanners } from "./components/ChampionshipBanners";
@@ -14,7 +15,14 @@ export default function HomePage() {
       <div className="mx-auto max-w-7xl px-4 pb-10 pt-6 md:pt-28">
         {/* Small, clean hero (not a banner) */}
         <section className="mb-8 flex flex-col items-center gap-4 text-center">
-          <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">Veto City</h1>
+          <Image
+            src="/veto-city-logo.png"
+            alt="Veto City"
+            width={900}
+            height={758}
+            priority
+            className="h-24 w-auto md:h-32"
+          />
           <Link
             href="/league/drafts"
             className="inline-flex h-11 md:h-10 items-center justify-center rounded-full border border-zinc-800 bg-zinc-900/70 px-6 text-sm font-medium hover:bg-zinc-800 transition-colors"

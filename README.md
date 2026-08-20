@@ -82,7 +82,7 @@ The league name/branding shows up in a few different places, since browser tabs,
 |---|---|---|
 | Browser tab title, meta description, Apple "web app" title, favicon/icons | `src/app/layout.tsx` — the exported `metadata` object | This drives the `<title>` and `<meta name="description">` tags Next.js renders into `<head>` for every page |
 | Theme color (browser chrome / status bar tint) | `src/app/layout.tsx` — the exported `viewport` object | `themeColor` |
-| Homepage hero heading (the big text under the nav) | `src/app/page.tsx` | Just JSX text, not a meta tag — this is what visitors actually see, separate from the browser tab title |
+| Homepage hero logo (the big mark under the nav) | `src/app/page.tsx` renders `public/veto-city-logo.png` | Not a meta tag — this is what visitors actually see, separate from the browser tab title. Swap in your own transparent-background PNG at that path (or point the `<Image>` `src` at a new filename), and adjust its `width`/`height` props to match your image's actual pixel dimensions so it doesn't stretch |
 | PWA name, short name, description, theme/background color, home-screen icons, "Add to Home Screen" shortcuts | `public/manifest.json` | Used when someone installs the site as an app on their phone. The `shortcuts` array are the quick actions that show up on a long-press of the home screen icon — keep their `url`s pointed at real routes (we found one still pointing at a page that had been removed) |
 | Favicon file itself | `src/app/favicon.ico` | Next.js auto-serves this from the `app/` directory by convention |
 | Home-screen icon images | `public/icon-192.png`, `public/icon-512.png` | Referenced by both `layout.tsx` metadata and `manifest.json` — replace the files themselves to change the artwork |
@@ -132,11 +132,11 @@ Everything under `src/app/api/` and most of `src/app/components/` computes entir
 
 | What | Where | Why it's league-specific |
 |---|---|---|
-| Hero title ("Veto City") | `src/app/page.tsx` | Just text — swap for your league's name |
+| Hero logo | `public/veto-city-logo.png`, referenced in `src/app/page.tsx` | An image, not text — swap the file for your own league's logo |
 | Bylaws / league rules prose | `src/app/components/RulesAndRegulations.tsx` | Hardcoded text (fees, trade rules, Sacko punishment, payout structure) — this is VetoCity's actual governance, not derived from Sleeper. Rewrite the `SECTIONS` array for your own league's rules, or delete the component and its usage in `src/app/rules/page.tsx` if you don't want this section |
 | Billy's Report | see §5 | An optional weekly-recap feature some leagues won't want; delete cleanly per the instructions above if not needed |
 | Championship banner / accent color (red) | `src/app/components/ChampionshipBanners.tsx` and the `red-*` Tailwind classes sprinkled through the dashboard components | Cosmetic — recolor to taste |
-| Meta tags, PWA name, hero text | see §4 | Every mention of "Veto City" text across `layout.tsx`, `page.tsx`, and `manifest.json` |
+| Meta tags, PWA name, hero logo | see §4 | Every mention of "Veto City" across `layout.tsx` and `manifest.json`, plus the `public/veto-city-logo.png` image referenced in `page.tsx` |
 
 Everything else — Rosters, Managers, Standings (with season navigation), Rivalry, Drafts, Awards, Records, Movement, the Rules page's Format/Roster/Scoring tables — reads Sleeper's API directly and needs no per-league content edits.
 

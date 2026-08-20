@@ -3,6 +3,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import FloatingNav from "@/app/components/FloatingNav";
 
+type SeasonRef = { leagueId: string; season: string };
+
 type StandingsBundle = {
   league: any;
   users: any[];
@@ -10,6 +12,8 @@ type StandingsBundle = {
   currentWeek: number;
   matchupsByWeek: { week: number; matchups: any[] }[];
   fetchedAt: string;
+  seasons: SeasonRef[];
+  selectedLeagueId: string;
   error?: string;
 };
 
@@ -114,6 +118,10 @@ export default function StandingsPage() {
 
   const [mode, setMode] = useState<Mode>("regular");
 
+  // Selected season's Sleeper league id — null means "current season" (the
+  // default), letting the effect below always resolve it from the API.
+  const [selectedLeagueId, setSelectedLeagueId] = useState<string | null>(null);
+
   // ✅ both-ways sorting on all columns
   const [sortKey, setSortKey] = useState<SortKey>("wins");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
@@ -126,7 +134,8 @@ export default function StandingsPage() {
         setLoading(true);
         setErr(null);
 
-        const res = await fetch("/api/standings", { cache: "no-store" });
+        const qs = selectedLeagueId ? `?leagueId=${encodeURIComponent(selectedLeagueId)}` : "";
+        const res = await fetch(`/api/standings${qs}`, { cache: "no-store" });
         const json = (await res.json()) as StandingsBundle;
 
         if (!res.ok || (json as any).error) {
@@ -144,7 +153,18 @@ export default function StandingsPage() {
     return () => {
       alive = false;
     };
-  }, []);
+  }, [selectedLeagueId]);
+
+  const seasons = data?.seasons ?? [];
+  const seasonIndex = seasons.findIndex((s) => s.leagueId === data?.selectedLeagueId);
+  // seasons[] is newest-first, so index 0 is current/most recent.
+  const isNewest = seasonIndex <= 0;
+  const isOldest = seasonIndex === -1 || seasonIndex === seasons.length - 1;
+
+  function goToSeason(index: number) {
+    if (index < 0 || index >= seasons.length) return;
+    setSelectedLeagueId(seasons[index].leagueId);
+  }
 
   const { rows, playoffStartWeek, rangeLabel } = useMemo(() => {
     if (!data) {
@@ -378,12 +398,68 @@ export default function StandingsPage() {
         <div className="mb-6">
           <div className="text-2xl font-semibold tracking-tight md:text-3xl">Standings</div>
 
+          {seasons.length ? (
+            <div className="mt-4 flex items-center justify-center gap-2">
+              <button
+                type="button"
+                onClick={() => goToSeason(seasonIndex + 1)}
+                disabled={isOldest || loading}
+                className={cx(
+                  "h-11 md:h-9 rounded-full border px-4 text-sm transition",
+                  isOldest || loading
+                    ? "border-zinc-800 text-zinc-600"
+                    : "border-zinc-800 bg-zinc-950/60 text-zinc-200 hover:bg-zinc-900/50"
+                )}
+              >
+                ← Older
+              </button>
+
+              <div className="relative">
+                <select
+                  value={data?.selectedLeagueId ?? ""}
+                  onChange={(e) => setSelectedLeagueId(e.target.value)}
+                  disabled={loading}
+                  className="h-11 md:h-9 min-w-[110px] cursor-pointer appearance-none rounded-full border border-zinc-800 bg-zinc-950/60 px-4 pr-9 text-sm font-semibold text-zinc-200 outline-none transition hover:bg-zinc-900/50 focus:border-zinc-700 disabled:opacity-60"
+                >
+                  {seasons.map((s) => (
+                    <option key={s.leagueId} value={s.leagueId} className="bg-zinc-950 text-zinc-200">
+                      {s.season}
+                    </option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500">
+                  ▾
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => goToSeason(seasonIndex - 1)}
+                disabled={isNewest || loading}
+                className={cx(
+                  "h-11 md:h-9 rounded-full border px-4 text-sm transition",
+                  isNewest || loading
+                    ? "border-zinc-800 text-zinc-600"
+                    : "border-zinc-800 bg-zinc-950/60 text-zinc-200 hover:bg-zinc-900/50"
+                )}
+              >
+                Newer →
+              </button>
+            </div>
+          ) : null}
+
           <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
             <div className="text-sm text-zinc-400">
               {data ? (
                 <>
-                  {rangeLabel} • Current week:{" "}
-                  <span className="text-zinc-200">Week {data.currentWeek}</span>
+                  {rangeLabel} •{" "}
+                  {data.league?.status === "complete" ? (
+                    <span className="text-zinc-200">Final</span>
+                  ) : (
+                    <>
+                      Current week: <span className="text-zinc-200">Week {data.currentWeek}</span>
+                    </>
+                  )}
                 </>
               ) : (
                 "Loading…"

@@ -3,11 +3,16 @@ import { readJsonFile, writeJsonFile } from "@/app/lib/githubStore";
 
 const FILE_PATH = "data/billys-report.json";
 
+type MatchupRow = {
+  id: string;
+  matchup: string;
+  report: string;
+};
+
 type ReportEntry = {
   id: string;
   title: string;
-  matchups: string;
-  report: string;
+  matchups: MatchupRow[];
   createdAt: string;
 };
 
@@ -28,12 +33,19 @@ export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
     const title = String(body?.title || "").trim();
-    const matchups = String(body?.matchups || "").trim();
-    const report = String(body?.report || "").trim();
 
-    if (!title || !matchups || !report) {
+    const rawRows = Array.isArray(body?.matchups) ? body.matchups : [];
+    const rows: MatchupRow[] = rawRows
+      .map((r: any, i: number) => ({
+        id: `${Date.now()}-${i}`,
+        matchup: String(r?.matchup || "").trim(),
+        report: String(r?.report || "").trim(),
+      }))
+      .filter((r: MatchupRow) => r.matchup || r.report);
+
+    if (!title || !rows.length) {
       return NextResponse.json(
-        { error: "Title, matchups, and report are all required." },
+        { error: "A title and at least one matchup row (with a matchup or report filled in) are required." },
         { status: 400 }
       );
     }
@@ -41,8 +53,7 @@ export async function POST(req: Request) {
     const entry: ReportEntry = {
       id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       title,
-      matchups,
-      report,
+      matchups: rows,
       createdAt: new Date().toISOString(),
     };
 

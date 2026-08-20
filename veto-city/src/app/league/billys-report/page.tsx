@@ -3,13 +3,20 @@
 import { useEffect, useMemo, useState } from "react";
 import FloatingNav from "@/app/components/FloatingNav";
 
+type MatchupRow = {
+  id: string;
+  matchup: string;
+  report: string;
+};
+
 type ReportEntry = {
   id: string;
   title: string;
-  matchups: string;
-  report: string;
+  matchups: MatchupRow[];
   createdAt: string;
 };
+
+const DEFAULT_ROW_COUNT = 6;
 
 function fmtDate(iso: string) {
   try {
@@ -21,6 +28,10 @@ function fmtDate(iso: string) {
   }
 }
 
+function blankRows(n: number) {
+  return Array.from({ length: n }, (_, i) => ({ key: `${Date.now()}-${i}-${Math.random()}`, matchup: "", report: "" }));
+}
+
 function AddEntryForm({
   onSaved,
   onCancel,
@@ -29,15 +40,28 @@ function AddEntryForm({
   onCancel: () => void;
 }) {
   const [title, setTitle] = useState("");
-  const [matchups, setMatchups] = useState("");
-  const [report, setReport] = useState("");
+  const [rows, setRows] = useState(() => blankRows(DEFAULT_ROW_COUNT));
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
+  function updateRow(key: string, field: "matchup" | "report", value: string) {
+    setRows((prev) => prev.map((r) => (r.key === key ? { ...r, [field]: value } : r)));
+  }
+
+  function addRow() {
+    setRows((prev) => [...prev, ...blankRows(1)]);
+  }
+
+  function removeRow(key: string) {
+    setRows((prev) => prev.filter((r) => r.key !== key));
+  }
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!title.trim() || !matchups.trim() || !report.trim()) {
-      setErr("Title, matchups, and report are all required.");
+
+    const filled = rows.filter((r) => r.matchup.trim() || r.report.trim());
+    if (!title.trim() || !filled.length) {
+      setErr("Add a title and fill in at least one matchup row.");
       return;
     }
 
@@ -48,7 +72,10 @@ function AddEntryForm({
       const res = await fetch("/api/billys-report", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, matchups, report }),
+        body: JSON.stringify({
+          title,
+          matchups: filled.map((r) => ({ matchup: r.matchup, report: r.report })),
+        }),
       });
       const json = await res.json();
 
@@ -75,36 +102,52 @@ function AddEntryForm({
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Week 1"
-          className="w-full rounded-xl border border-zinc-800 bg-zinc-950/60 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 outline-none focus:border-zinc-700"
+          className="w-full max-w-xs rounded-xl border border-zinc-800 bg-zinc-950/60 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 outline-none focus:border-zinc-700"
         />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <div>
-          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-zinc-500">
-            Matchups
-          </label>
-          <textarea
-            value={matchups}
-            onChange={(e) => setMatchups(e.target.value)}
-            placeholder={"Kingpin vs Allen Bhai\nI Maye Cook vs silver811\n..."}
-            rows={6}
-            className="w-full resize-y rounded-xl border border-zinc-800 bg-zinc-950/60 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 outline-none focus:border-zinc-700"
-          />
+      <div>
+        <div className="mb-1.5 grid grid-cols-[1fr_1fr_36px] gap-2 px-1 text-xs font-semibold uppercase tracking-wide text-zinc-500">
+          <span>Matchup</span>
+          <span>Report</span>
+          <span />
         </div>
 
-        <div>
-          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-zinc-500">
-            Report
-          </label>
-          <textarea
-            value={report}
-            onChange={(e) => setReport(e.target.value)}
-            placeholder="Billy's take on the week..."
-            rows={6}
-            className="w-full resize-y rounded-xl border border-zinc-800 bg-zinc-950/60 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 outline-none focus:border-zinc-700"
-          />
+        <div className="space-y-2">
+          {rows.map((r, i) => (
+            <div key={r.key} className="grid grid-cols-[1fr_1fr_36px] items-start gap-2">
+              <input
+                value={r.matchup}
+                onChange={(e) => updateRow(r.key, "matchup", e.target.value)}
+                placeholder={`Matchup ${i + 1} (e.g. Kingpin vs Allen Bhai)`}
+                className="w-full rounded-xl border border-zinc-800 bg-zinc-950/60 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 outline-none focus:border-zinc-700"
+              />
+              <textarea
+                value={r.report}
+                onChange={(e) => updateRow(r.key, "report", e.target.value)}
+                placeholder="Billy's take..."
+                rows={1}
+                className="w-full resize-y rounded-xl border border-zinc-800 bg-zinc-950/60 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 outline-none focus:border-zinc-700"
+              />
+              <button
+                type="button"
+                onClick={() => removeRow(r.key)}
+                className="flex h-9 w-9 items-center justify-center rounded-full text-zinc-500 transition hover:bg-zinc-900/60 hover:text-red-300"
+                aria-label="Remove row"
+              >
+                ✕
+              </button>
+            </div>
+          ))}
         </div>
+
+        <button
+          type="button"
+          onClick={addRow}
+          className="mt-3 inline-flex h-9 items-center gap-1.5 rounded-full border border-zinc-800 bg-zinc-950/60 px-4 text-sm font-medium text-zinc-300 transition hover:bg-zinc-900/50"
+        >
+          <span className="text-base leading-none">+</span> Add Matchup
+        </button>
       </div>
 
       {err ? <div className="text-sm text-red-300">{err}</div> : null}
@@ -224,23 +267,27 @@ export default function BillysReportPage() {
                   <div className="text-xs text-zinc-500">{fmtDate(entry.createdAt)}</div>
                 </div>
 
-                <div className="grid grid-cols-1 divide-y divide-zinc-800/60 md:grid-cols-2 md:divide-x md:divide-y-0">
-                  <div className="px-5 py-4">
-                    <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                      Matchups
-                    </div>
-                    <div className="whitespace-pre-wrap text-sm leading-relaxed text-zinc-200">
-                      {entry.matchups}
-                    </div>
-                  </div>
-                  <div className="px-5 py-4">
-                    <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                      Report
-                    </div>
-                    <div className="whitespace-pre-wrap text-sm leading-relaxed text-zinc-200">
-                      {entry.report}
-                    </div>
-                  </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[480px] text-left text-sm">
+                    <thead>
+                      <tr className="border-b border-zinc-800/70 text-xs text-zinc-500">
+                        <th className="w-2/5 px-5 py-2 font-medium">Matchup</th>
+                        <th className="px-5 py-2 font-medium">Report</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {entry.matchups.map((m) => (
+                        <tr key={m.id} className="border-b border-zinc-800/50 last:border-b-0">
+                          <td className="whitespace-pre-wrap px-5 py-3 align-top font-medium text-zinc-100">
+                            {m.matchup || "—"}
+                          </td>
+                          <td className="whitespace-pre-wrap px-5 py-3 align-top leading-relaxed text-zinc-300">
+                            {m.report || "—"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             ))}

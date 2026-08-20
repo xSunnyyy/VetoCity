@@ -197,7 +197,7 @@ export default function RulesPage() {
               />
               <Row
                 label="Trade Deadline"
-                value={`Week ${data.tradeDeadlineWeek}}
+                value={`Week ${data.tradeDeadlineWeek} · ${data.vetoVotesNeeded} votes to veto`}
               />
               <Row
                 label="Waivers"

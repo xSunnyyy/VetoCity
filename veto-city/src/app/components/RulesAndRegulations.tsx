@@ -6,7 +6,6 @@ const SECTIONS: BylawSection[] = [
     number: 1,
     title: "League",
     items: [
-      "League is on Sleeper.",
       "League fee: $50.",
       "No more mandatory $50 (last year was the final mandatory period) — majority voted to keep it at $50 this year as well. The only way to increase the fee is a unanimous league vote.",
     ],
@@ -31,10 +30,6 @@ const SECTIONS: BylawSection[] = [
           "Can not trade your 1st round pick for another's 2nd and 4th round, for example — only swaps of like round-for-round are allowed.",
         ],
       },
-      "Player trades do not require a league vote to pass.",
-      "Accepted trades require a 24hr waiting period before the commissioner approves the trade (if NFL settings can be set to a 1-day waiting period, no commissioner approval is needed).",
-      "If the commissioner needs to approve the trade, parties involved are asked to tag the commissioner in the league chat.",
-      "Only if Sunny is busy, Mizan will be responsible for approving trades.",
       "Trades will be instant.",
       "ONLY trades which are clear collusion will be vetoed by the commissioner.",
       "FAAB can now be traded — effective 9/9/23.",
@@ -49,7 +44,7 @@ const SECTIONS: BylawSection[] = [
       "Best of 3 — loser will be crowned the league Sacko.",
       {
         label: "Punishment",
-        sub: ["2023 Sacko punishment: Sacko pays $200.00, which will be used for next year's league swag."],
+        sub: ["Sacko punishment: Sacko pays $200.00, which will be used as voted upon."],
       },
     ],
   },

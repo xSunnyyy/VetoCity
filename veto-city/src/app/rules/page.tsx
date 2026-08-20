@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import FloatingNav from "@/app/components/FloatingNav";
+import { RulesAndRegulations } from "@/app/components/RulesAndRegulations";
 
 type RulesPayload = {
   leagueName: string;
@@ -231,6 +232,8 @@ export default function RulesPage() {
             </Section>
           </div>
         )}
+
+        <RulesAndRegulations />
       </div>
     </main>
   );

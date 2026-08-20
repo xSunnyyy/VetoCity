@@ -135,7 +135,7 @@ export function ChampionshipBanners() {
         Championship Banners
       </div>
 
-      <div className="overflow-x-auto pb-4">
+      <div className="themed-scrollbar overflow-x-auto pb-4">
         <div className="mx-auto flex w-max items-start gap-7 border-t-[3px] border-zinc-700/80 px-6 pt-0">
           {loading
             ? Array.from({ length: 4 }).map((_, i) => (

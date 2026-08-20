@@ -32,7 +32,7 @@ const SECTIONS: BylawSection[] = [
       },
       "Trades will be instant.",
       "ONLY trades which are clear collusion will be vetoed by the commissioner.",
-      "FAAB can now be traded — effective 9/9/23.",
+      "FAAB can now be traded.",
       "A player traded cannot be traded for again during the season. Can be picked up from waivers, if available, during the season.",
     ],
   },

@@ -21,36 +21,26 @@ type IconKey =
 
 type NavItem = { label: string; href: string; icon: IconKey };
 
-const leagueItems: NavItem[] = [
-  { label: "Rosters", href: "/league/rosters", icon: "rosters" },
+// Shown as top-level pills on desktop and as the permanent icon slots on
+// mobile — same four items, same order, on both.
+const primaryItems: NavItem[] = [
+  { label: "Dashboard", href: "/", icon: "dashboard" },
+  { label: "Rules", href: "/rules", icon: "rules" },
   { label: "Managers", href: "/league/managers", icon: "managers" },
+  { label: "Movement", href: "/movement", icon: "movement" },
+];
+
+// Everything else — the desktop "League Info" dropdown and the mobile
+// "More" popup both render this same list, in this same order.
+const secondaryItems: NavItem[] = [
+  { label: "Billy's Report", href: "/league/billys-report", icon: "report" },
+  { label: "Rosters", href: "/league/rosters", icon: "rosters" },
+  { label: "Matchups", href: "/matchups", icon: "matchups" },
   { label: "Rivalry", href: "/league/rivalry", icon: "rivalry" },
   { label: "Standings", href: "/league/standings", icon: "standings" },
   { label: "Drafts", href: "/league/drafts", icon: "drafts" },
   { label: "Awards", href: "/league/awards", icon: "awards" },
   { label: "Records", href: "/league/records", icon: "records" },
-  { label: "Billy's Report", href: "/league/billys-report", icon: "report" },
-];
-
-const primaryItems: NavItem[] = [
-  { label: "Dashboard", href: "/", icon: "dashboard" },
-  { label: "Rules", href: "/rules", icon: "rules" },
-  { label: "Matchups", href: "/matchups", icon: "matchups" },
-  { label: "Movement", href: "/movement", icon: "movement" },
-];
-
-// Mobile bottom bar: only the essentials get a permanent icon slot.
-const mobileMainItems: NavItem[] = [
-  { label: "Dashboard", href: "/", icon: "dashboard" },
-  { label: "Rules", href: "/rules", icon: "rules" },
-  { label: "Managers", href: "/league/managers", icon: "managers" },
-  { label: "Movement", href: "/movement", icon: "movement" },
-];
-
-// Everything else lives behind "More".
-const mobileMoreItems: NavItem[] = [
-  { label: "Matchups", href: "/matchups", icon: "matchups" },
-  ...leagueItems.filter((it) => it.href !== "/league/managers"),
 ];
 
 function cx(...parts: Array<string | false | null | undefined>) {
@@ -199,7 +189,7 @@ export default function FloatingNav() {
   }, [pathname]);
 
   const moreActive = useMemo(
-    () => mobileMoreItems.some((it) => isActive(it.href)),
+    () => secondaryItems.some((it) => isActive(it.href)),
     [isActive]
   );
 
@@ -239,7 +229,7 @@ export default function FloatingNav() {
                 </div>
                 <div className="h-px bg-zinc-800/70" />
                 <div className="py-1">
-                  {leagueItems.map((it) => (
+                  {secondaryItems.map((it) => (
                     <Link
                       key={it.href}
                       href={it.href}
@@ -269,7 +259,7 @@ export default function FloatingNav() {
         aria-label="Primary"
       >
         <div className="flex items-stretch justify-between gap-1 px-2 py-1.5">
-          {mobileMainItems.map((it) => {
+          {primaryItems.map((it) => {
             const active = isActive(it.href);
             return (
               <Link
@@ -328,7 +318,7 @@ export default function FloatingNav() {
             </div>
 
             <div className="grid grid-cols-4 gap-2 px-4 py-5">
-              {mobileMoreItems.map((it) => {
+              {secondaryItems.map((it) => {
                 const active = isActive(it.href);
                 return (
                   <Link

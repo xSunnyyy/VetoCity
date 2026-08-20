@@ -16,6 +16,7 @@ type IconKey =
   | "drafts"
   | "awards"
   | "records"
+  | "report"
   | "more";
 
 type NavItem = { label: string; href: string; icon: IconKey };
@@ -28,6 +29,7 @@ const leagueItems: NavItem[] = [
   { label: "Drafts", href: "/league/drafts", icon: "drafts" },
   { label: "Awards", href: "/league/awards", icon: "awards" },
   { label: "Records", href: "/league/records", icon: "records" },
+  { label: "Billy's Report", href: "/league/billys-report", icon: "report" },
 ];
 
 const primaryItems: NavItem[] = [
@@ -144,6 +146,14 @@ function NavIcon({ icon, className }: { icon: IconKey; className?: string }) {
       return (
         <svg {...common}>
           <path d="M7 3h10v18l-5-3-5 3Z" />
+        </svg>
+      );
+    case "report":
+      return (
+        <svg {...common}>
+          <path d="M9 3.5h6a1 1 0 0 1 1 1v.5h-8v-.5a1 1 0 0 1 1-1Z" />
+          <rect x="5.5" y="4" width="13" height="17" rx="2" />
+          <path d="M8.5 12.5l2.2 2.2L15.5 10" />
         </svg>
       );
     case "more":

@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import FloatingNav from "@/app/components/FloatingNav";
-import { buildTeams } from "../lib/league";
+import { buildTeams } from "@/app/lib/league";
 
 type MatchupRow = {
   roster_id: number;
@@ -30,8 +29,6 @@ function scoreFmt(n: number) {
   return (Math.round((Number(n) || 0) * 10) / 10).toFixed(1);
 }
 
-/** ---------- Avatar helpers ---------- */
-
 function initials(name: string) {
   const parts = (name || "").trim().split(/\s+/).filter(Boolean);
   const a = parts[0]?.[0] ?? "V";
@@ -44,15 +41,7 @@ function sleeperAvatarThumb(avatar?: string | null) {
   return `https://sleepercdn.com/avatars/thumbs/${avatar}`;
 }
 
-function TeamAvatar({
-  team,
-  avatarUrl,
-  size = 32,
-}: {
-  team: string;
-  avatarUrl?: string | null;
-  size?: number;
-}) {
+function TeamAvatar({ team, avatarUrl, size = 34 }: { team: string; avatarUrl?: string | null; size?: number }) {
   const s = `${size}px`;
   return (
     <div
@@ -72,34 +61,14 @@ function TeamAvatar({
   );
 }
 
-function TeamRow({
-  name,
-  avatarUrl,
-  score,
-  win,
-}: {
-  name: string;
-  avatarUrl?: string | null;
-  score: number;
-  win: boolean;
-}) {
+function TeamRow({ name, avatarUrl, score, win }: { name: string; avatarUrl?: string | null; score: number; win: boolean }) {
   return (
     <div className="flex items-center justify-between gap-3">
       <div className="min-w-0 flex items-center gap-3">
-        <TeamAvatar team={name} avatarUrl={avatarUrl} size={34} />
-        <div className="min-w-0">
-          <div
-            className={cx(
-              "truncate text-sm font-semibold",
-              win ? "text-zinc-100" : "text-zinc-200"
-            )}
-          >
-            {name}
-          </div>
-        </div>
+        <TeamAvatar team={name} avatarUrl={avatarUrl} />
+        <div className={cx("truncate text-sm font-semibold", win ? "text-zinc-100" : "text-zinc-300")}>{name}</div>
       </div>
-
-      <div className={cx("shrink-0 text-lg font-semibold", win ? "text-zinc-100" : "text-zinc-300")}>
+      <div className={cx("shrink-0 text-lg font-semibold", win ? "text-zinc-100" : "text-zinc-400")}>
         {scoreFmt(score)}
       </div>
     </div>
@@ -121,21 +90,21 @@ function MatchupCard({
   return (
     <div className="group relative overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[0_14px_40px_rgba(0,0,0,0.42)] backdrop-blur">
       <div className="pointer-events-none absolute inset-0 opacity-0 transition group-hover:opacity-100">
-        <div className="absolute inset-0 bg-gradient-to-br from-zinc-800/20 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 via-transparent to-transparent" />
       </div>
 
-      <div className="relative px-5 py-5">
+      <div className="relative px-5 py-4">
         <TeamRow name={a.name} avatarUrl={a.avatarUrl} score={a.score} win={aWin} />
-        <div className="my-4 h-px w-full bg-zinc-800/70" />
+        <div className="my-3 h-px w-full bg-zinc-800/70" />
         <TeamRow name={b.name} avatarUrl={b.avatarUrl} score={b.score} win={bWin} />
 
-        {note ? <div className="mt-4 text-xs text-zinc-500">{note}</div> : null}
+        {note ? <div className="mt-3 text-xs text-zinc-500">{note}</div> : null}
       </div>
     </div>
   );
 }
 
-export default function MatchupsPage() {
+export function WeeklyMatchups() {
   const [loading, setLoading] = useState(true);
   const [weeklyLoading, setWeeklyLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -146,7 +115,6 @@ export default function MatchupsPage() {
   const [avatarByRoster, setAvatarByRoster] = useState<Record<number, string | null>>({});
   const [matchups, setMatchups] = useState<MatchupRow[]>([]);
 
-  // initial: get users/rosters, currentWeek, and week data
   useEffect(() => {
     let alive = true;
 
@@ -167,7 +135,6 @@ export default function MatchupsPage() {
 
         setTeamsMap(teams);
 
-        // roster_id -> avatar thumb via users
         const userById = new Map<string, any>();
         for (const u of data.users || []) if (u?.user_id) userById.set(String(u.user_id), u);
 
@@ -181,11 +148,9 @@ export default function MatchupsPage() {
         }
         setAvatarByRoster(avMap);
 
-        // pick default week = currentWeek (capped to 17)
         const cw = Math.min(WEEK_MAX, Math.max(WEEK_MIN, Number(data.currentWeek || 1) || 1));
         setSelectedWeek(cw);
 
-        // show whatever initial payload has (if matchups exist)
         setMatchups(Array.isArray(data.matchups) ? data.matchups : []);
       } catch (e: any) {
         if (alive) setErr(e?.message || "Failed to load matchups.");
@@ -200,7 +165,6 @@ export default function MatchupsPage() {
     };
   }, []);
 
-  // reload weekly matchups when selectedWeek changes
   useEffect(() => {
     let alive = true;
 
@@ -258,14 +222,10 @@ export default function MatchupsPage() {
     for (const [mid, rows] of byMatchup.entries()) {
       const cleaned = rows
         .filter((x) => Number.isFinite(Number(x?.roster_id)))
-        .map((x) => ({
-          roster_id: Number(x.roster_id),
-          points: Number(x.points ?? 0) || 0,
-        }));
+        .map((x) => ({ roster_id: Number(x.roster_id), points: Number(x.points ?? 0) || 0 }));
 
       if (cleaned.length < 2) continue;
 
-      // sort by points desc for display (winner first)
       const sorted = [...cleaned].sort((a, b) => b.points - a.points);
       const a = sorted[0];
       const b = sorted[1];
@@ -283,100 +243,87 @@ export default function MatchupsPage() {
       });
     }
 
-    // stable ordering
     return cards.sort((x, y) => x.id - y.id);
   }, [matchups, teamsMap, avatarByRoster]);
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-100">
-      <FloatingNav />
-
-      <div className="mx-auto w-full max-w-6xl px-4 pb-12 pt-6 md:pt-24">
-        {/* Header: Matchups centered + week switch centered */}
-        <div className="mb-8 space-y-4">
-          <h1 className="text-center text-3xl font-semibold tracking-tight md:text-5xl">Matchups</h1>
-
-          <div className="flex items-center justify-center">
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setSelectedWeek((w) => Math.max(WEEK_MIN, w - 1))}
-                disabled={selectedWeek <= WEEK_MIN || weeklyLoading}
-                className={cx(
-                  "h-11 md:h-10 rounded-full border px-4 text-sm transition",
-                  selectedWeek <= WEEK_MIN || weeklyLoading
-                    ? "border-zinc-800 text-zinc-600"
-                    : "border-zinc-800 bg-zinc-950/60 text-zinc-200 hover:bg-zinc-900/50"
-                )}
-              >
-                ← Prev
-              </button>
-
-              <div className="relative">
-                <select
-                  value={selectedWeek}
-                  onChange={(e) => setSelectedWeek(Number(e.target.value))}
-                  className="h-11 md:h-10 min-w-[150px] md:min-w-[140px] cursor-pointer appearance-none rounded-full border border-zinc-800 bg-zinc-950/60 px-4 pr-10 text-sm font-semibold text-zinc-200 outline-none transition hover:bg-zinc-900/50 focus:border-zinc-700"
-                >
-                  {Array.from({ length: WEEK_MAX }, (_, i) => i + 1).map((w) => (
-                    <option key={w} value={w} className="bg-zinc-950 text-zinc-200">
-                      Week {w}
-                    </option>
-                  ))}
-                </select>
-                <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500">
-                  ▾
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setSelectedWeek((w) => Math.min(WEEK_MAX, w + 1))}
-                disabled={selectedWeek >= WEEK_MAX || weeklyLoading}
-                className={cx(
-                  "h-11 md:h-10 rounded-full border px-4 text-sm transition",
-                  selectedWeek >= WEEK_MAX || weeklyLoading
-                    ? "border-zinc-800 text-zinc-600"
-                    : "border-zinc-800 bg-zinc-950/60 text-zinc-200 hover:bg-zinc-900/50"
-                )}
-              >
-                Next →
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {err ? (
-          <div className="mb-6 rounded-2xl border border-red-900/60 bg-zinc-950/60 p-5 text-red-200 shadow-[0_14px_40px_rgba(0,0,0,0.42)]">
-            <div className="text-sm font-semibold">Load error</div>
-            <div className="mt-2 text-sm opacity-90">{err}</div>
-          </div>
-        ) : null}
-
-        {loading ? (
-          <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                className="overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 p-6 shadow-[0_14px_40px_rgba(0,0,0,0.42)]"
-              >
-                <div className="h-4 w-40 rounded bg-zinc-900/50" />
-                <div className="mt-4 h-24 rounded-2xl bg-zinc-900/30" />
-              </div>
-            ))}
-          </section>
-        ) : weeklyLoading ? (
-          <div className="text-center text-sm text-zinc-400">Loading week…</div>
-        ) : !matchupCards.length ? (
-          <div className="text-center text-sm text-zinc-400">No matchups found for Week {selectedWeek}.</div>
-        ) : (
-          <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {matchupCards.map((m) => (
-              <MatchupCard key={m.id} a={m.a} b={m.b} note={m.note} />
-            ))}
-          </section>
-        )}
+    <section className="mb-10">
+      <div className="mb-4 text-center text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500">
+        This Week&apos;s Matchups
       </div>
-    </main>
+
+      <div className="mb-5 flex items-center justify-center">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setSelectedWeek((w) => Math.max(WEEK_MIN, w - 1))}
+            disabled={selectedWeek <= WEEK_MIN || weeklyLoading || loading}
+            className={cx(
+              "h-11 md:h-9 rounded-full border px-4 text-sm transition",
+              selectedWeek <= WEEK_MIN || weeklyLoading || loading
+                ? "border-zinc-800 text-zinc-600"
+                : "border-zinc-800 bg-zinc-950/60 text-zinc-200 hover:bg-zinc-900/50"
+            )}
+          >
+            ← Prev
+          </button>
+
+          <div className="relative">
+            <select
+              value={selectedWeek}
+              onChange={(e) => setSelectedWeek(Number(e.target.value))}
+              disabled={loading}
+              className="h-11 md:h-9 min-w-[130px] cursor-pointer appearance-none rounded-full border border-zinc-800 bg-zinc-950/60 px-4 pr-9 text-sm font-semibold text-zinc-200 outline-none transition hover:bg-zinc-900/50 focus:border-zinc-700 disabled:opacity-60"
+            >
+              {Array.from({ length: WEEK_MAX }, (_, i) => i + 1).map((w) => (
+                <option key={w} value={w} className="bg-zinc-950 text-zinc-200">
+                  Week {w}
+                </option>
+              ))}
+            </select>
+            <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500">▾</div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setSelectedWeek((w) => Math.min(WEEK_MAX, w + 1))}
+            disabled={selectedWeek >= WEEK_MAX || weeklyLoading || loading}
+            className={cx(
+              "h-11 md:h-9 rounded-full border px-4 text-sm transition",
+              selectedWeek >= WEEK_MAX || weeklyLoading || loading
+                ? "border-zinc-800 text-zinc-600"
+                : "border-zinc-800 bg-zinc-950/60 text-zinc-200 hover:bg-zinc-900/50"
+            )}
+          >
+            Next →
+          </button>
+        </div>
+      </div>
+
+      {err ? (
+        <div className="rounded-2xl border border-red-900/60 bg-zinc-950/60 p-5 text-red-200 shadow-[0_14px_40px_rgba(0,0,0,0.42)]">
+          <div className="text-sm font-semibold">Load error</div>
+          <div className="mt-2 text-sm opacity-90">{err}</div>
+        </div>
+      ) : loading ? (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="h-32 animate-pulse rounded-2xl border border-zinc-800/80 bg-zinc-950/60" />
+          ))}
+        </div>
+      ) : weeklyLoading ? (
+        <div className="text-center text-sm text-zinc-400">Loading week…</div>
+      ) : !matchupCards.length ? (
+        <div className="rounded-2xl border border-zinc-800/80 bg-zinc-950/60 p-8 text-center text-sm text-zinc-400 shadow-[0_14px_40px_rgba(0,0,0,0.42)]">
+          No matchups found for Week {selectedWeek}.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {matchupCards.map((m) => (
+            <MatchupCard key={m.id} a={m.a} b={m.b} note={m.note} />
+          ))}
+        </div>
+      )}
+    </section>
   );
 }

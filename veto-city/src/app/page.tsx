@@ -1,6 +1,7 @@
 import Link from "next/link";
 import FloatingNav from "@/app/components/FloatingNav";
 import { ChampionshipBanners } from "./components/ChampionshipBanners";
+import { WeeklyMatchups } from "./components/WeeklyMatchups";
 import { LeagueAtAGlance } from "./components/LeagueAtAGlance";
 import { LeagueHistory } from "./components/LeagueHistory";
 
@@ -23,6 +24,8 @@ export default function HomePage() {
         </section>
 
         <ChampionshipBanners />
+
+        <WeeklyMatchups />
 
         <LeagueAtAGlance />
 

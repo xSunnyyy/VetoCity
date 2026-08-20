@@ -7,7 +7,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 type IconKey =
   | "dashboard"
   | "rules"
-  | "matchups"
   | "movement"
   | "rosters"
   | "managers"
@@ -35,7 +34,6 @@ const primaryItems: NavItem[] = [
 const secondaryItems: NavItem[] = [
   { label: "Billy's Report", href: "/league/billys-report", icon: "report" },
   { label: "Rosters", href: "/league/rosters", icon: "rosters" },
-  { label: "Matchups", href: "/matchups", icon: "matchups" },
   { label: "Rivalry", href: "/league/rivalry", icon: "rivalry" },
   { label: "Standings", href: "/league/standings", icon: "standings" },
   { label: "Drafts", href: "/league/drafts", icon: "drafts" },
@@ -72,13 +70,6 @@ function NavIcon({ icon, className }: { icon: IconKey; className?: string }) {
           <path d="M7 3h8l4 4v14H7z" />
           <path d="M15 3v4h4" />
           <path d="M9.5 12h6M9.5 15.5h6M9.5 8.5h3" />
-        </svg>
-      );
-    case "matchups":
-      return (
-        <svg {...common}>
-          <rect x="3" y="5" width="18" height="16" rx="2" />
-          <path d="M3 10h18M8 3v4M16 3v4" />
         </svg>
       );
     case "movement":

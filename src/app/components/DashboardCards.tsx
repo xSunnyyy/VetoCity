@@ -1,18 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { buildTeams, formatPoints } from "../lib/league";
+import { useLeagueDataQuery } from "@/app/hooks/useLeagueDataQuery";
+import { usePlayersQuery, type PlayerMap } from "@/app/hooks/usePlayersQuery";
 
 type CardKind = "waivers" | "trades" | "power" | "motw" | "blowout" | "lucky";
-
-type PlayerMeta = {
-  full_name?: string;
-  first_name?: string;
-  last_name?: string;
-  position?: string;
-  team?: string;
-};
-type PlayerMap = Record<string, PlayerMeta>;
 
 type DraftPick = {
   season: string;
@@ -36,17 +29,6 @@ type MatchupRow = {
   roster_id: number;
   matchup_id: number | null;
   points: number;
-};
-
-type LeagueBundle = {
-  users: any[];
-  rosters: any[];
-  transactions: any[];
-  txnWeek: number;
-  currentWeek: number;
-  matchups: MatchupRow[];
-  fetchedAt: string;
-  error?: string;
 };
 
 const DEFAULT_MAX_WEEKS = 18;
@@ -331,40 +313,6 @@ function pickTopAdds(adds: Record<string, number> | undefined, max = 4) {
   return Object.keys(adds).slice(0, max);
 }
 
-function collectPlayerIdsFromTxns(txns: any[]) {
-  const set = new Set<string>();
-  for (const t of txns) {
-    if (t.adds) for (const pid of Object.keys(t.adds)) set.add(pid);
-    if (t.drops) for (const pid of Object.keys(t.drops)) set.add(pid);
-  }
-  return [...set];
-}
-
-async function getPlayersMapIfNeeded(playerIds: string[]): Promise<PlayerMap> {
-  const key = "vetocity_players_nfl_v2";
-  try {
-    const cached = sessionStorage.getItem(key);
-    if (cached) {
-      const parsed = JSON.parse(cached) as PlayerMap;
-      const missing = playerIds.find((id) => !parsed[id]);
-      if (!missing) return parsed;
-    }
-  } catch {}
-
-  // Proxied through our own API instead of fetching Sleeper's full (several
-  // MB) player database directly from the browser — the server caches and
-  // trims it, and a CDN can share one response across every visitor.
-  const res = await fetch("/api/players");
-  if (!res.ok) throw new Error(`Failed to load players map (${res.status})`);
-  const data = (await res.json()) as PlayerMap;
-
-  try {
-    sessionStorage.setItem(key, JSON.stringify(data));
-  } catch {}
-
-  return data;
-}
-
 function playerName(players: PlayerMap | null, id: string) {
   if (!players) return id;
   const p = players[id];
@@ -480,217 +428,144 @@ function computeWeeklyCards(matchups: MatchupRow[], teams: Map<number, any>) {
 /** ---------- Component ---------- */
 
 export function DashboardCards() {
-  const [loading, setLoading] = useState(true);
-  const [weeklyLoading, setWeeklyLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const [waiverRows, setWaiverRows] = useState<{ rosterId: number; team: string; players: string[] }[]>([]);
-  const [tradeRows, setTradeRows] = useState<
-    { aRid: number; bRid: number; aTeam: string; bTeam: string; aGets: string[]; bGets: string[] }[]
-  >([]);
-  const [powerRows, setPowerRows] = useState<{ rank: number; rosterId: number; team: string; note: string }[]>([]);
-
-  const [currentWeek, setCurrentWeek] = useState<number | null>(null);
-
   // selector week
   const [selectedWeek, setSelectedWeek] = useState<number>(1);
-  const [maxWeek, setMaxWeek] = useState<number>(DEFAULT_MAX_WEEKS);
 
-  const [motw, setMotw] = useState<WeeklyCard | null>(null);
-  const [blowout, setBlowout] = useState<WeeklyCard | null>(null);
-  const [lucky, setLucky] = useState<WeeklyCard | null>(null);
+  // React Query gives this a shared cache (see QueryProvider): switching to
+  // a week already fetched this session, or coming back to Movement after
+  // visiting another tab, renders instantly instead of re-running the whole
+  // fetch pipeline. useLeagueDataQuery's placeholderData keeps the previous
+  // week's data on screen while a new week loads in the background, so only
+  // the week-specific cards (motw/blowout/lucky) need their own loading
+  // state — waivers/trades/power rankings are season-to-date and identical
+  // across weeks, so there's nothing to re-derive from a fresh fetch there.
+  const leagueQuery = useLeagueDataQuery({ week: selectedWeek });
+  const playersQuery = usePlayersQuery();
 
-  // roster_id -> avatar url
-  const [avatarByRoster, setAvatarByRoster] = useState<Record<number, string | null>>({});
-  const [teamsMap, setTeamsMap] = useState<Map<number, any>>(new Map());
+  const data = leagueQuery.data;
+  const players = playersQuery.data ?? null;
 
-  useEffect(() => {
-    let alive = true;
+  const loading = leagueQuery.isLoading;
+  const weeklyLoading = leagueQuery.isFetching && !leagueQuery.isLoading;
+  const error =
+    (leagueQuery.error instanceof Error && leagueQuery.error.message) ||
+    (playersQuery.error instanceof Error && playersQuery.error.message) ||
+    null;
 
-    async function loadInitial() {
-      try {
-        setLoading(true);
-        setError(null);
+  const currentWeek = data ? selectedWeek : null;
+  const maxWeek = Math.max(DEFAULT_MAX_WEEKS, data?.maxWeek ?? 0);
 
-        const res = await fetch("/api/league", { cache: "no-store" });
-        const data = (await res.json()) as LeagueBundle;
+  const teamsMap = useMemo(() => {
+    if (!data) return new Map<number, any>();
+    return buildTeams(data.users, data.rosters);
+  }, [data]);
 
-        if (!res.ok || (data as any).error) {
-          throw new Error((data as any).error || `API error ${res.status}`);
-        }
+  const avatarByRoster = useMemo(() => {
+    const avMap: Record<number, string | null> = {};
+    if (!data) return avMap;
 
-        const teams = buildTeams(data.users, data.rosters);
-        if (alive) setTeamsMap(teams);
+    const userById = new Map<string, any>();
+    for (const u of data.users || []) if (u?.user_id) userById.set(String(u.user_id), u);
 
-        const cw = Number(data.currentWeek || 1) || 1;
-        if (alive) {
-          setCurrentWeek(cw);
-          setSelectedWeek(cw);
-
-          // ✅ allow selecting all weeks, even if currentWeek is 1
-          setMaxWeek(Math.max(DEFAULT_MAX_WEEKS, cw));
-        }
-
-        // avatars
-        const userById = new Map<string, any>();
-        for (const u of data.users || []) if (u?.user_id) userById.set(String(u.user_id), u);
-
-        const avMap: Record<number, string | null> = {};
-        for (const r of data.rosters || []) {
-          const rid = r?.roster_id;
-          const ownerId = r?.owner_id;
-          const u = ownerId ? userById.get(String(ownerId)) : null;
-          const url = sleeperAvatarThumb(u?.avatar ?? null);
-          if (typeof rid === "number") avMap[rid] = url;
-        }
-        if (alive) setAvatarByRoster(avMap);
-
-        // players map for waivers/trades
-        const ids = collectPlayerIdsFromTxns(data.transactions);
-        const playersMap = ids.length ? await getPlayersMapIfNeeded(ids) : null;
-
-        const waivers = data.transactions
-          .filter((t) => t.type === "waiver" || t.type === "free_agent")
-          .sort((a, b) => txnTime(b) - txnTime(a))
-          .slice(0, 5)
-          .map((t) => {
-            const rosterId =
-              (t.adds && Object.values(t.adds)[0]) ?? (t.roster_ids && t.roster_ids[0]) ?? -1;
-
-            const teamName = rosterId !== -1 ? teams.get(rosterId)?.name ?? `Team ${rosterId}` : "Unknown";
-            const added = pickTopAdds(t.adds, 4).map((pid) => playerName(playersMap, pid));
-            return { rosterId, team: teamName, players: added.length ? added : ["(No adds listed)"] };
-          });
-
-        const trades = data.transactions
-          .filter((t) => t.type === "trade")
-          .sort((a, b) => txnTime(b) - txnTime(a))
-          .slice(0, 2)
-          .map((t) => {
-            const rosterIds = (t.roster_ids ?? []).slice(0, 2);
-            const aRid = rosterIds[0] ?? -1;
-            const bRid = rosterIds[1] ?? -1;
-
-            const aTeam = aRid !== -1 ? teams.get(aRid)?.name ?? `Team ${aRid}` : "Team A";
-            const bTeam = bRid !== -1 ? teams.get(bRid)?.name ?? `Team ${bRid}` : "Team B";
-
-            const aGets: string[] = [];
-            const bGets: string[] = [];
-
-            if (t.adds) {
-              for (const [pid, rid] of Object.entries(t.adds)) {
-                if (rid === aRid) aGets.push(playerName(playersMap, pid));
-                else if (rid === bRid) bGets.push(playerName(playersMap, pid));
-              }
-            }
-
-            const picks = (t.draft_picks ?? []) as DraftPick[];
-            for (const p of picks) {
-              if (p.owner_id === aRid) aGets.push(pickLabelForPick(p));
-              else if (p.owner_id === bRid) bGets.push(pickLabelForPick(p));
-            }
-
-            return {
-              aRid,
-              bRid,
-              aTeam,
-              bTeam,
-              aGets: aGets.length ? aGets.slice(0, 6) : ["—"],
-              bGets: bGets.length ? bGets.slice(0, 6) : ["—"],
-            };
-          });
-
-        const power = data.rosters
-          .map((r: any) => {
-            const rosterId = r.roster_id;
-            const team = teams.get(rosterId)?.name ?? `Team ${rosterId}`;
-            const wins = r.settings?.wins ?? 0;
-            const losses = r.settings?.losses ?? 0;
-
-            const pf = (r.settings?.fpts ?? 0) + (r.settings?.fpts_decimal ?? 0) / 100;
-            const pa = (r.settings?.fpts_against ?? 0) + (r.settings?.fpts_against_decimal ?? 0) / 100;
-
-            const score = wins * 2 + pf / 100 - pa / 120;
-            return { rosterId, team, wins, losses, pf, score };
-          })
-          .sort((a: any, b: any) => b.score - a.score)
-          .slice(0, 5)
-          .map((t: any, i: number) => ({
-            rank: i + 1,
-            rosterId: t.rosterId,
-            team: t.team,
-            note: `${t.wins}-${t.losses} • PF ${formatPoints(t.pf)}`,
-          }));
-
-        const weekly = computeWeeklyCards(data.matchups || [], teams);
-
-        if (!alive) return;
-
-        setWaiverRows(waivers);
-        setTradeRows(trades);
-        setPowerRows(power);
-
-        setMotw(weekly.motw);
-        setBlowout(weekly.blowout);
-        setLucky(weekly.lucky);
-      } catch (e: any) {
-        if (alive) setError(e?.message || "Failed to load data.");
-      } finally {
-        if (alive) setLoading(false);
-      }
+    for (const r of data.rosters || []) {
+      const rid = r?.roster_id;
+      const ownerId = r?.owner_id;
+      const u = ownerId ? userById.get(String(ownerId)) : null;
+      const url = sleeperAvatarThumb(u?.avatar ?? null);
+      if (typeof rid === "number") avMap[rid] = url;
     }
+    return avMap;
+  }, [data]);
 
-    loadInitial();
-    return () => {
-      alive = false;
-    };
-  }, []);
+  const waiverRows = useMemo(() => {
+    if (!data) return [];
 
-  // weekly reload on selectedWeek
-  useEffect(() => {
-    let alive = true;
+    return (data.transactions || [])
+      .filter((t: any) => t.type === "waiver" || t.type === "free_agent")
+      .sort((a: any, b: any) => txnTime(b) - txnTime(a))
+      .slice(0, 5)
+      .map((t: any) => {
+        const rosterId =
+          (t.adds && Object.values(t.adds)[0]) ?? (t.roster_ids && t.roster_ids[0]) ?? -1;
 
-    async function loadWeekly(w: number) {
-      if (!teamsMap || teamsMap.size === 0) return;
+        const teamName = rosterId !== -1 ? teamsMap.get(rosterId)?.name ?? `Team ${rosterId}` : "Unknown";
+        const added = pickTopAdds(t.adds, 4).map((pid) => playerName(players, pid));
+        return { rosterId, team: teamName, players: added.length ? added : ["(No adds listed)"] };
+      });
+  }, [data, teamsMap, players]);
 
-      try {
-        setWeeklyLoading(true);
-        setError(null);
+  const tradeRows = useMemo(() => {
+    if (!data) return [];
 
-        const res = await fetch(`/api/league?week=${w}`, { cache: "no-store" });
-        const data = (await res.json()) as LeagueBundle;
+    return (data.transactions || [])
+      .filter((t: any) => t.type === "trade")
+      .sort((a: any, b: any) => txnTime(b) - txnTime(a))
+      .slice(0, 2)
+      .map((t: any) => {
+        const rosterIds = (t.roster_ids ?? []).slice(0, 2);
+        const aRid = rosterIds[0] ?? -1;
+        const bRid = rosterIds[1] ?? -1;
 
-        if (!res.ok || (data as any).error) {
-          throw new Error((data as any).error || `API error ${res.status}`);
+        const aTeam = aRid !== -1 ? teamsMap.get(aRid)?.name ?? `Team ${aRid}` : "Team A";
+        const bTeam = bRid !== -1 ? teamsMap.get(bRid)?.name ?? `Team ${bRid}` : "Team B";
+
+        const aGets: string[] = [];
+        const bGets: string[] = [];
+
+        if (t.adds) {
+          for (const [pid, rid] of Object.entries(t.adds)) {
+            if (rid === aRid) aGets.push(playerName(players, pid));
+            else if (rid === bRid) bGets.push(playerName(players, pid));
+          }
         }
 
-        const weekly = computeWeeklyCards(data.matchups || [], teamsMap);
+        const picks = (t.draft_picks ?? []) as DraftPick[];
+        for (const p of picks) {
+          if (p.owner_id === aRid) aGets.push(pickLabelForPick(p));
+          else if (p.owner_id === bRid) bGets.push(pickLabelForPick(p));
+        }
 
-        if (!alive) return;
+        return {
+          aRid,
+          bRid,
+          aTeam,
+          bTeam,
+          aGets: aGets.length ? aGets.slice(0, 6) : ["—"],
+          bGets: bGets.length ? bGets.slice(0, 6) : ["—"],
+        };
+      });
+  }, [data, teamsMap, players]);
 
-        setMotw(weekly.motw);
-        setBlowout(weekly.blowout);
-        setLucky(weekly.lucky);
+  const powerRows = useMemo(() => {
+    if (!data) return [];
 
-        // ✅ label the cards with the selected week (don’t depend on API currentWeek)
-        setCurrentWeek(w);
+    return (data.rosters || [])
+      .map((r: any) => {
+        const rosterId = r.roster_id;
+        const team = teamsMap.get(rosterId)?.name ?? `Team ${rosterId}`;
+        const wins = r.settings?.wins ?? 0;
+        const losses = r.settings?.losses ?? 0;
 
-        // ✅ never shrink available weeks
-        const cw = Number(data.currentWeek || 1) || 1;
-        setMaxWeek((prev) => Math.max(prev, DEFAULT_MAX_WEEKS, cw));
-      } catch (e: any) {
-        if (alive) setError(e?.message || "Failed to load weekly matchups.");
-      } finally {
-        if (alive) setWeeklyLoading(false);
-      }
-    }
+        const pf = (r.settings?.fpts ?? 0) + (r.settings?.fpts_decimal ?? 0) / 100;
+        const pa = (r.settings?.fpts_against ?? 0) + (r.settings?.fpts_against_decimal ?? 0) / 100;
 
-    if (!loading) loadWeekly(selectedWeek);
+        const score = wins * 2 + pf / 100 - pa / 120;
+        return { rosterId, team, wins, losses, pf, score };
+      })
+      .sort((a: any, b: any) => b.score - a.score)
+      .slice(0, 5)
+      .map((t: any, i: number) => ({
+        rank: i + 1,
+        rosterId: t.rosterId,
+        team: t.team,
+        note: `${t.wins}-${t.losses} • PF ${formatPoints(t.pf)}`,
+      }));
+  }, [data, teamsMap]);
 
-    return () => {
-      alive = false;
-    };
-  }, [selectedWeek, teamsMap, loading]);
+  const { motw, blowout, lucky } = useMemo(() => {
+    if (!data) return { motw: null, blowout: null, lucky: null };
+    return computeWeeklyCards(data.matchups || [], teamsMap);
+  }, [data, teamsMap]);
 
   const content = useMemo(() => {
     if (error) {

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { LEAGUE_ID, SLEEPER_BASE as BASE } from "@/app/lib/vetocity";
+import { getLeagueChainNewestFirst } from "@/app/lib/leagueChain";
 
 // Simple in-memory cache
 let cache: { ts: number; data: any } | null = null;
@@ -27,26 +28,15 @@ export async function GET() {
     const now = Date.now();
     if (cache && now - cache.ts < TTL_MS) return NextResponse.json(cache.data);
 
-    // Walk league -> previous_league_id chain (all-time)
-    const seen = new Set<string>();
-    const leagueIds: string[] = [];
-    let cur: string | null = LEAGUE_ID;
-
-    for (let i = 0; i < 25 && cur; i++) {
-      if (seen.has(cur)) break;
-      seen.add(cur);
-      leagueIds.push(cur);
-
-      // ✅ explicit annotation fixes TS inference bug
-      const lg: any = await j<any>(`${BASE}/league/${cur}`);
-      const prev = lg?.previous_league_id;
-      cur = isNonEmptyString(prev) ? prev : null;
-    }
+    // Shared, longer-cached chain walk (see leagueChain.ts) — also hands
+    // back the full league object per season, so no need to re-fetch
+    // `/league/{id}` for each one below.
+    const leagueSeasons = await getLeagueChainNewestFirst(LEAGUE_ID, 25);
 
     const all = await Promise.all(
-      leagueIds.map(async (lid) => {
-        const [league, users, rosters] = await Promise.all([
-          j<any>(`${BASE}/league/${lid}`),
+      leagueSeasons.map(async (league) => {
+        const lid = String(league.league_id);
+        const [users, rosters] = await Promise.all([
           j<any[]>(`${BASE}/league/${lid}/users`).catch(() => []),
           j<any[]>(`${BASE}/league/${lid}/rosters`).catch(() => []),
         ]);

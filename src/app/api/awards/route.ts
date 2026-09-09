@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { LEAGUE_ID, SLEEPER_BASE as BASE } from "@/app/lib/vetocity";
 import { LEGACY_SEASONS, type LegacyManager } from "@/app/lib/legacyHistory";
+import { getLeagueChainNewestFirst } from "@/app/lib/leagueChain";
 
 // Simple in-memory cache (good on Vercel for short bursts, fine locally)
 let cache: { ts: number; data: any } | null = null;
@@ -136,24 +137,30 @@ export async function GET() {
       return NextResponse.json(cache.data);
     }
 
+    // Shared, longer-cached chain walk (see leagueChain.ts) — also hands
+    // back the full league object per season, so no need to re-fetch
+    // `/league/{id}` for each one below. The remaining per-season requests
+    // (users/rosters/brackets) are then fetched for every season in
+    // parallel instead of one season at a time.
+    const leagueSeasons = await getLeagueChainNewestFirst(LEAGUE_ID);
+
+    const seasonBundles = await Promise.all(
+      leagueSeasons.map(async (leagueData) => {
+        const leagueId = String(leagueData.league_id);
+        const [users, rosters, winnersBracket, losersBracket] = await Promise.all([
+          j<any[]>(`${BASE}/league/${leagueId}/users`).catch(() => []),
+          j<any[]>(`${BASE}/league/${leagueId}/rosters`).catch(() => []),
+          j<any[]>(`${BASE}/league/${leagueId}/winners_bracket`).catch(() => []),
+          j<any[]>(`${BASE}/league/${leagueId}/losers_bracket`).catch(() => []),
+        ]);
+
+        return { leagueId, leagueData, users, rosters, winnersBracket, losersBracket };
+      })
+    );
+
     const seasons: any[] = [];
-    let leagueId: string | null = LEAGUE_ID;
 
-    const seen = new Set<string>();
-
-    while (leagueId && !seen.has(leagueId)) {
-      seen.add(leagueId);
-
-      // ✅ explicit annotation fixes TS inference bug
-      const leagueData: any = await j<any>(`${BASE}/league/${leagueId}`);
-
-      const [users, rosters, winnersBracket, losersBracket] = await Promise.all([
-        j<any[]>(`${BASE}/league/${leagueId}/users`).catch(() => []),
-        j<any[]>(`${BASE}/league/${leagueId}/rosters`).catch(() => []),
-        j<any[]>(`${BASE}/league/${leagueId}/winners_bracket`).catch(() => []),
-        j<any[]>(`${BASE}/league/${leagueId}/losers_bracket`).catch(() => []),
-      ]);
-
+    for (const { leagueId, leagueData, users, rosters, winnersBracket, losersBracket } of seasonBundles) {
       const rosterToOwner = buildRosterToOwner(users, rosters);
 
       const champRid =
@@ -214,9 +221,6 @@ export async function GET() {
         toiletBowl: rosterInfo(rosterToOwner, toiletRid),
         lastPlace: rosterInfo(rosterToOwner, lastPlaceRid),
       });
-
-      const prev = safeStr(leagueData?.previous_league_id).trim();
-      leagueId = prev ? prev : null;
     }
 
     // Pre-Sleeper history, manually entered in Sleeper's app and not

@@ -54,7 +54,7 @@ function nflTeamLogoUrl(abbr?: string) {
 }
 
 async function getPlayersMap(): Promise<PlayerMap> {
-  const key = "vetocity_players_nfl_v1";
+  const key = "vetocity_players_nfl_v2";
   try {
     const cached = sessionStorage.getItem(key);
     if (cached) return JSON.parse(cached) as PlayerMap;
@@ -62,7 +62,10 @@ async function getPlayersMap(): Promise<PlayerMap> {
     // ignore
   }
 
-  const res = await fetch("https://api.sleeper.app/v1/players/nfl");
+  // Proxied through our own API instead of fetching Sleeper's full (several
+  // MB) player database directly from the browser — the server caches and
+  // trims it, and a CDN can share one response across every visitor.
+  const res = await fetch("/api/players");
   if (!res.ok) throw new Error(`Failed to load players map (${res.status})`);
   const data = (await res.json()) as PlayerMap;
 

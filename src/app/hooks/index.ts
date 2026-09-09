@@ -28,3 +28,6 @@ export type { PlayerMap, PlayerMeta } from "./usePlayersQuery";
 
 export { useManagerCardsQuery } from "./useManagerCardsQuery";
 export type { ManagerCardsData } from "./useManagerCardsQuery";
+
+export { useNewsQuery, NewsNotConfiguredError } from "./useNewsQuery";
+export type { NewsData, NewsRecapItem, NewsLookaheadItem } from "./useNewsQuery";

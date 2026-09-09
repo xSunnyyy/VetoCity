@@ -139,17 +139,37 @@ export async function GET() {
     if (cache && now - cache.ts < TTL_MS) return NextResponse.json(cache.data);
 
     const leagueIds = await getAllLeagueIdsOldestFirst(LEAGUE_ID);
+
+    // Fetch every season's data (including all weeks of matchups) in
+    // parallel up front. Only the chain walk above has to be sequential;
+    // once we know the season list, none of these requests depend on each
+    // other, so awaiting them one week/season at a time was pure wasted
+    // latency (season-count * 18 serial round-trips to Sleeper).
+    const weekNumbers = Array.from({ length: WEEK_MAX - WEEK_MIN + 1 }, (_, i) => WEEK_MIN + i);
+
+    const seasonsData = await Promise.all(
+      leagueIds.map(async (lid) => {
+        const [league, users, rosters, winnersBracket, matchupsByWeek] = await Promise.all([
+          j<any>(`${BASE}/league/${lid}`),
+          j<any[]>(`${BASE}/league/${lid}/users`).catch(() => []),
+          j<any[]>(`${BASE}/league/${lid}/rosters`).catch(() => []),
+          j<any[]>(`${BASE}/league/${lid}/winners_bracket`).catch(() => []),
+          Promise.all(
+            weekNumbers.map((w) => j<any[]>(`${BASE}/league/${lid}/matchups/${w}`).catch(() => []))
+          ),
+        ]);
+
+        return { league, users, rosters, winnersBracket, matchupsByWeek };
+      })
+    );
+
     const managers = new Map<string, ManagerAgg>();
     let earliestSeason: string | null = null;
 
-    for (const lid of leagueIds) {
-      const [league, users, rosters, winnersBracket] = await Promise.all([
-        j<any>(`${BASE}/league/${lid}`),
-        j<any[]>(`${BASE}/league/${lid}/users`).catch(() => []),
-        j<any[]>(`${BASE}/league/${lid}/rosters`).catch(() => []),
-        j<any[]>(`${BASE}/league/${lid}/winners_bracket`).catch(() => []),
-      ]);
-
+    // Processing stays sequential (oldest season first) because streaks and
+    // "first/last season" bookkeeping depend on chronological order — but
+    // that's now pure in-memory work with no network waits.
+    for (const { league, users, rosters, winnersBracket, matchupsByWeek } of seasonsData) {
       const season = safeStr(league?.season) || "—";
       if (earliestSeason === null) earliestSeason = season;
 
@@ -230,8 +250,9 @@ export async function GET() {
       // Game-by-game scan (chronological within the season) for record, points,
       // weekly highs, best game, playoff record (approximated as games played
       // in weeks at/after playoff_week_start), and win streaks.
-      for (let week = WEEK_MIN; week <= WEEK_MAX; week++) {
-        const matchups = await j<any[]>(`${BASE}/league/${lid}/matchups/${week}`).catch(() => []);
+      for (let wi = 0; wi < weekNumbers.length; wi++) {
+        const week = weekNumbers[wi];
+        const matchups = matchupsByWeek[wi];
         if (!Array.isArray(matchups) || !matchups.length) continue;
 
         const isPlayoffWeek = playoffWeekStart > 0 && week >= playoffWeekStart;

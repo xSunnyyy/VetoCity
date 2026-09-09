@@ -15,18 +15,6 @@ function clamp(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, n));
 }
 
-/**
- * Find the latest week that has *any* transactions.
- * (This is what you originally used to decide how many weeks to pull.)
- */
-async function determineTxnWeek(maxWeek: number): Promise<number> {
-  for (let w = maxWeek; w >= 1; w--) {
-    const tx = await j<any[]>(`${BASE}/league/${LEAGUE_ID}/transactions/${w}`).catch(() => []);
-    if (Array.isArray(tx) && tx.length > 0) return w;
-  }
-  return 1;
-}
-
 function inferMaxWeekFromLeague(league: any) {
   const s = league?.settings || {};
   const leg = Number(s.leg ?? 0) || 0; // regular season length (often 14)
@@ -61,17 +49,26 @@ export async function GET(req: Request) {
       return NextResponse.json(cached.data);
     }
 
-    // ✅ Weekly matchups (drives Matchup of Week / Blowout / Lucky)
-    const matchups = await j<any[]>(`${BASE}/league/${LEAGUE_ID}/matchups/${week}`).catch(() => []);
+    // ✅ Weekly matchups (drives Matchup of Week / Blowout / Lucky) and
+    // season-to-date transactions (drives Waivers + Trades cards), fetched
+    // together in one parallel batch. Previously this walked backward from
+    // maxWeek to find the latest week with transactions one request at a
+    // time (up to 18 serial round-trips) before even starting the real
+    // transaction fetch — now every week is requested at once.
+    const weekNumbers = Array.from({ length: maxWeek }, (_, i) => i + 1);
 
-    // ✅ Season-to-date transactions (drives Waivers + Trades cards)
-    // Pull weeks 1..txnWeek and flatten (same as your original working route)
-    const txnWeek = await determineTxnWeek(maxWeek);
-    const weeks = Array.from({ length: txnWeek }, (_, i) => i + 1);
+    const [matchups, txnsByWeek] = await Promise.all([
+      j<any[]>(`${BASE}/league/${LEAGUE_ID}/matchups/${week}`).catch(() => []),
+      Promise.all(
+        weekNumbers.map((w) => j<any[]>(`${BASE}/league/${LEAGUE_ID}/transactions/${w}`).catch(() => []))
+      ),
+    ]);
 
-    const txnsByWeek = await Promise.all(
-      weeks.map((w) => j<any[]>(`${BASE}/league/${LEAGUE_ID}/transactions/${w}`).catch(() => []))
-    );
+    let txnWeek = 1;
+    txnsByWeek.forEach((tx, i) => {
+      if (Array.isArray(tx) && tx.length > 0) txnWeek = weekNumbers[i];
+    });
+
     const transactions = txnsByWeek.flat();
 
     const data = {

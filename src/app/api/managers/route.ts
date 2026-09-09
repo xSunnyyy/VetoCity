@@ -102,12 +102,32 @@ export async function GET() {
     // managerId -> totals
     const managers = new Map<string, ManagerTotals>();
 
-    for (const lid of leagueIds) {
-      const [league, users, rosters] = await Promise.all([
-        j<any>(`${BASE}/league/${lid}`),
-        j<any[]>(`${BASE}/league/${lid}/users`).catch(() => []),
-        j<any[]>(`${BASE}/league/${lid}/rosters`).catch(() => []),
-      ]);
+    // Fetch every season's league/users/rosters and all weeks of
+    // transactions in parallel up front, since none of these requests
+    // depend on each other or on processing order — awaiting one
+    // week/season at a time was pure wasted latency (season-count * 18
+    // serial round-trips to Sleeper).
+    const weekNumbers = Array.from(
+      { length: WEEK_SCAN_MAX - WEEK_SCAN_MIN + 1 },
+      (_, i) => WEEK_SCAN_MIN + i
+    );
+
+    const seasonsData = await Promise.all(
+      leagueIds.map(async (lid) => {
+        const [league, users, rosters, txnsByWeek] = await Promise.all([
+          j<any>(`${BASE}/league/${lid}`),
+          j<any[]>(`${BASE}/league/${lid}/users`).catch(() => []),
+          j<any[]>(`${BASE}/league/${lid}/rosters`).catch(() => []),
+          Promise.all(
+            weekNumbers.map((w) => j<any[]>(`${BASE}/league/${lid}/transactions/${w}`).catch(() => []))
+          ),
+        ]);
+
+        return { league, users, rosters, txnsByWeek };
+      })
+    );
+
+    for (const { users, rosters, txnsByWeek } of seasonsData) {
 
       // user map
       const userById = new Map<string, any>();
@@ -166,8 +186,7 @@ export async function GET() {
       }
 
       // Transactions scan (all-time trades/waivers)
-      for (let week = WEEK_SCAN_MIN; week <= WEEK_SCAN_MAX; week++) {
-        const txns = await j<any[]>(`${BASE}/league/${lid}/transactions/${week}`).catch(() => []);
+      for (const txns of txnsByWeek) {
         if (!Array.isArray(txns) || !txns.length) continue;
 
         for (const t of txns) {

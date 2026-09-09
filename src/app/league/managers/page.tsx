@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import FloatingNav from "@/app/components/FloatingNav";
+import { useManagerCardsQuery } from "@/app/hooks/useManagerCardsQuery";
 
 type BestSeason = {
   season: string;
@@ -46,14 +47,6 @@ type ManagerCard = {
   longestWinStreak: number;
 
   recentTeamNames: { season: string; name: string }[];
-};
-
-type ManagerCardsPayload = {
-  leagueId: string;
-  managersCount: number;
-  rows: ManagerCard[];
-  fetchedAt: string;
-  error?: string;
 };
 
 function cx(...parts: Array<string | false | null | undefined>) {
@@ -213,42 +206,14 @@ function ManagerCardView({ m }: { m: ManagerCard }) {
 }
 
 export default function ManagersPage() {
-  const [data, setData] = useState<ManagerCardsPayload | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [err, setErr] = useState<string | null>(null);
+  // React Query gives this a 5-minute shared cache (see QueryProvider):
+  // revisiting the Managers tab within that window shows data instantly
+  // instead of re-fetching and flashing the loading skeleton again.
+  const { data, isLoading: loading, error } = useManagerCardsQuery();
+  const err = error instanceof Error ? error.message : null;
   const [query, setQuery] = useState("");
 
-  useEffect(() => {
-    let alive = true;
-
-    async function load() {
-      try {
-        setLoading(true);
-        setErr(null);
-
-        const res = await fetch("/api/manager-cards", { cache: "no-store" });
-        const json = (await res.json()) as ManagerCardsPayload;
-
-        if (!res.ok || (json as any).error) {
-          throw new Error((json as any).error || `API error ${res.status}`);
-        }
-
-        if (!alive) return;
-        setData(json);
-      } catch (e: any) {
-        if (alive) setErr(e?.message || "Failed to load managers.");
-      } finally {
-        if (alive) setLoading(false);
-      }
-    }
-
-    load();
-    return () => {
-      alive = false;
-    };
-  }, []);
-
-  const rows = useMemo(() => data?.rows ?? [], [data]);
+  const rows = useMemo(() => (data?.rows as ManagerCard[] | undefined) ?? [], [data]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();

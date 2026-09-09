@@ -22,3 +22,9 @@ export type { StandingsData as StandingsQueryData } from "./useStandingsQuery";
 
 export { useMatchupsQuery } from "./useMatchupsQuery";
 export type { MatchupsData as MatchupsQueryData } from "./useMatchupsQuery";
+
+export { usePlayersQuery } from "./usePlayersQuery";
+export type { PlayerMap, PlayerMeta } from "./usePlayersQuery";
+
+export { useManagerCardsQuery } from "./useManagerCardsQuery";
+export type { ManagerCardsData } from "./useManagerCardsQuery";

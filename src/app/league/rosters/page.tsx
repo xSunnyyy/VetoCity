@@ -1,28 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import FloatingNav from "@/app/components/FloatingNav";
 import { buildTeams } from "@/app/lib/league";
-
-type PlayerMeta = {
-  full_name?: string;
-  first_name?: string;
-  last_name?: string;
-  position?: string;
-  team?: string;
-};
-
-type PlayerMap = Record<string, PlayerMeta>;
-
-type LeagueBundle = {
-  users: any[];
-  rosters: any[];
-  transactions: any[];
-  txnWeek: number;
-  fetchedAt: string;
-  league?: any;
-  error?: string;
-};
+import { useLeagueDataQuery } from "@/app/hooks/useLeagueDataQuery";
+import { usePlayersQuery, type PlayerMeta } from "@/app/hooks/usePlayersQuery";
 
 function safeName(p: PlayerMeta | undefined, id: string) {
   if (!p) return id;
@@ -51,31 +33,6 @@ function playerHeadshotUrl(playerId: string) {
 function nflTeamLogoUrl(abbr?: string) {
   if (!abbr) return null;
   return `https://sleepercdn.com/images/team_logos/nfl/${abbr.toLowerCase()}.png`;
-}
-
-async function getPlayersMap(): Promise<PlayerMap> {
-  const key = "vetocity_players_nfl_v2";
-  try {
-    const cached = sessionStorage.getItem(key);
-    if (cached) return JSON.parse(cached) as PlayerMap;
-  } catch {
-    // ignore
-  }
-
-  // Proxied through our own API instead of fetching Sleeper's full (several
-  // MB) player database directly from the browser — the server caches and
-  // trims it, and a CDN can share one response across every visitor.
-  const res = await fetch("/api/players");
-  if (!res.ok) throw new Error(`Failed to load players map (${res.status})`);
-  const data = (await res.json()) as PlayerMap;
-
-  try {
-    sessionStorage.setItem(key, JSON.stringify(data));
-  } catch {
-    // ignore
-  }
-
-  return data;
 }
 
 function PosPill({ pos }: { pos: string }) {
@@ -174,47 +131,19 @@ function BenchToggle({
 }
 
 export default function RostersPage() {
-  const [loading, setLoading] = useState(true);
-  const [err, setErr] = useState<string | null>(null);
+  // React Query gives this a 5-minute shared cache (see QueryProvider):
+  // revisiting Rosters within that window shows data instantly instead of
+  // re-fetching and flashing the loading skeleton again.
+  const leagueQuery = useLeagueDataQuery();
+  const playersQuery = usePlayersQuery();
 
-  const [bundle, setBundle] = useState<LeagueBundle | null>(null);
-  const [players, setPlayers] = useState<PlayerMap | null>(null);
+  const bundle = leagueQuery.data ?? null;
+  const players = playersQuery.data ?? null;
+  const loading = leagueQuery.isLoading || playersQuery.isLoading;
+  const err = leagueQuery.error instanceof Error ? leagueQuery.error.message : null;
+
   const [openBench, setOpenBench] = useState<Record<number, boolean>>({});
-
   const [query, setQuery] = useState("");
-
-  useEffect(() => {
-    let alive = true;
-
-    async function load() {
-      try {
-        setLoading(true);
-        setErr(null);
-
-        const res = await fetch("/api/league", { cache: "no-store" });
-        const data = (await res.json()) as LeagueBundle;
-
-        if (!res.ok || (data as any).error) {
-          throw new Error((data as any).error || `API error ${res.status}`);
-        }
-
-        const pm = await getPlayersMap();
-
-        if (!alive) return;
-        setBundle(data);
-        setPlayers(pm);
-      } catch (e: any) {
-        if (alive) setErr(e?.message || "Failed to load rosters.");
-      } finally {
-        if (alive) setLoading(false);
-      }
-    }
-
-    load();
-    return () => {
-      alive = false;
-    };
-  }, []);
 
   const teamsData = useMemo(() => {
     if (!bundle) return [];

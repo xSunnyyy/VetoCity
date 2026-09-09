@@ -115,13 +115,29 @@ export async function GET() {
     const bestSeasonRecord: TopEntry[] = [];
     const worstSeasonRecord: TopEntry[] = [];
 
-    for (const lid of leagueIds) {
-      const [league, users, rosters] = await Promise.all([
-        j<any>(`${BASE}/league/${lid}`),
-        j<any[]>(`${BASE}/league/${lid}/users`),
-        j<any[]>(`${BASE}/league/${lid}/rosters`),
-      ]);
+    // Fetch every season's league/users/rosters and all weeks of matchups in
+    // parallel up front. Nothing in this route depends on season or week
+    // order (results just get pushed into arrays and top10'd at the end),
+    // so awaiting one week/season at a time was pure wasted latency
+    // (season-count * 14 serial round-trips to Sleeper).
+    const weekNumbers = Array.from({ length: WEEK_MAX - WEEK_MIN + 1 }, (_, i) => WEEK_MIN + i);
 
+    const seasonsData = await Promise.all(
+      leagueIds.map(async (lid) => {
+        const [league, users, rosters, matchupsByWeek] = await Promise.all([
+          j<any>(`${BASE}/league/${lid}`),
+          j<any[]>(`${BASE}/league/${lid}/users`),
+          j<any[]>(`${BASE}/league/${lid}/rosters`),
+          Promise.all(
+            weekNumbers.map((w) => j<MatchupRow[]>(`${BASE}/league/${lid}/matchups/${w}`).catch(() => []))
+          ),
+        ]);
+
+        return { league, users, rosters, matchupsByWeek };
+      })
+    );
+
+    for (const { league, users, rosters, matchupsByWeek } of seasonsData) {
       const season = safeStr(league?.season) || "—";
 
       const userById = new Map<string, any>();
@@ -210,8 +226,9 @@ export async function GET() {
       }
 
       // ✅ Weekly scan weeks 1–14
-      for (let week = WEEK_MIN; week <= WEEK_MAX; week++) {
-        const matchups = await j<MatchupRow[]>(`${BASE}/league/${lid}/matchups/${week}`).catch(() => []);
+      for (let wi = 0; wi < weekNumbers.length; wi++) {
+        const week = weekNumbers[wi];
+        const matchups = matchupsByWeek[wi];
 
         // single-team high/low
         for (const m of matchups || []) {

@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
 import { LEAGUE_ID, SLEEPER_BASE as BASE } from "@/app/lib/vetocity";
+import { getLeagueChainNewestFirst } from "@/app/lib/leagueChain";
 
-// Two small caches: the season chain (rarely changes) and per-season
-// standings data (recomputed more often since the live season updates).
-let seasonsCache: { ts: number; data: SeasonRef[] } | null = null;
-const SEASONS_TTL_MS = 5 * 60 * 1000;
-
+// Per-season standings data cache (recomputed more often since the live
+// season updates). The season chain itself now uses the shared, longer-lived
+// cache in leagueChain.ts instead of a private one here.
 const dataCacheByLeagueId = new Map<string, { ts: number; data: any }>();
 const DATA_TTL_MS = 60 * 1000;
 
@@ -15,26 +14,6 @@ async function j<T>(url: string): Promise<T> {
   const res = await fetch(url, { next: { revalidate: 0 } });
   if (!res.ok) throw new Error(`Sleeper error ${res.status} for ${url}`);
   return (await res.json()) as T;
-}
-
-async function getSeasonChain(startLeagueId: string): Promise<SeasonRef[]> {
-  const now = Date.now();
-  if (seasonsCache && now - seasonsCache.ts < SEASONS_TTL_MS) return seasonsCache.data;
-
-  const chain: SeasonRef[] = [];
-  const seen = new Set<string>();
-
-  let cur: string | null = startLeagueId;
-  while (cur && !seen.has(cur)) {
-    seen.add(cur);
-    const league: any = await j<any>(`${BASE}/league/${cur}`);
-    chain.push({ leagueId: cur, season: String(league?.season ?? "") });
-    const prev = league?.previous_league_id ? String(league.previous_league_id) : "";
-    cur = prev || null;
-  }
-
-  seasonsCache = { ts: now, data: chain };
-  return chain;
 }
 
 const WEEK_MAX = 18;
@@ -72,7 +51,12 @@ export async function GET(req: Request) {
     const url = new URL(req.url);
     const requestedLeagueId = url.searchParams.get("leagueId");
 
-    const seasons = await getSeasonChain(LEAGUE_ID);
+    const leagueSeasons = await getLeagueChainNewestFirst(LEAGUE_ID);
+    const seasons: SeasonRef[] = leagueSeasons.map((lg) => ({
+      leagueId: String(lg?.league_id ?? ""),
+      season: String(lg?.season ?? ""),
+    }));
+
     const targetLeagueId =
       requestedLeagueId && seasons.some((s) => s.leagueId === requestedLeagueId)
         ? requestedLeagueId
@@ -84,8 +68,13 @@ export async function GET(req: Request) {
       return NextResponse.json({ ...cached.data, seasons, selectedLeagueId: targetLeagueId });
     }
 
-    const [league, users, rosters] = await Promise.all([
-      j(`${BASE}/league/${targetLeagueId}`),
+    // Already have the full league object from the chain walk above — no
+    // need to fetch `/league/{id}` a second time.
+    const league =
+      leagueSeasons.find((lg) => String(lg?.league_id) === targetLeagueId) ??
+      (await j(`${BASE}/league/${targetLeagueId}`));
+
+    const [users, rosters] = await Promise.all([
       j(`${BASE}/league/${targetLeagueId}/users`),
       j(`${BASE}/league/${targetLeagueId}/rosters`),
     ]);

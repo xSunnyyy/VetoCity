@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { LEAGUE_ID, SLEEPER_BASE as BASE } from "@/app/lib/vetocity";
+import { getLeagueChainNewestFirst } from "@/app/lib/leagueChain";
 
 // Simple in-memory cache
 let cache: { ts: number; data: any } | null = null;
@@ -72,23 +73,6 @@ type RecordsPayload = {
   fetchedAt: string;
 };
 
-async function getAllLeagueIdsNewestFirst(startLeagueId: string) {
-  const ids: string[] = [];
-  const seen = new Set<string>();
-
-  let cur: string | null = startLeagueId;
-  while (cur && !seen.has(cur)) {
-    seen.add(cur);
-    ids.push(cur);
-
-    const league: any = await j<any>(`${BASE}/league/${cur}`);
-    const prev = league?.previous_league_id ? String(league.previous_league_id) : "";
-    cur = prev || null;
-  }
-
-  return ids;
-}
-
 function top10(arr: TopEntry[], cmp: (a: TopEntry, b: TopEntry) => number) {
   return [...arr].sort(cmp).slice(0, 10);
 }
@@ -100,7 +84,10 @@ export async function GET() {
       return NextResponse.json(cache.data);
     }
 
-    const leagueIds = await getAllLeagueIdsNewestFirst(LEAGUE_ID);
+    // Shared, longer-cached chain walk (see leagueChain.ts) — also hands
+    // back the full league object per season, so no need to re-fetch
+    // `/league/{id}` for each one below.
+    const leagueSeasons = await getLeagueChainNewestFirst(LEAGUE_ID);
 
     // --- Accumulators ---
     const highestWeekScore: TopEntry[] = [];
@@ -123,9 +110,9 @@ export async function GET() {
     const weekNumbers = Array.from({ length: WEEK_MAX - WEEK_MIN + 1 }, (_, i) => WEEK_MIN + i);
 
     const seasonsData = await Promise.all(
-      leagueIds.map(async (lid) => {
-        const [league, users, rosters, matchupsByWeek] = await Promise.all([
-          j<any>(`${BASE}/league/${lid}`),
+      leagueSeasons.map(async (league) => {
+        const lid = String(league.league_id);
+        const [users, rosters, matchupsByWeek] = await Promise.all([
           j<any[]>(`${BASE}/league/${lid}/users`),
           j<any[]>(`${BASE}/league/${lid}/rosters`),
           Promise.all(
@@ -325,7 +312,7 @@ export async function GET() {
 
     const payload: RecordsPayload = {
       leagueId: LEAGUE_ID,
-      seasonsCount: leagueIds.length,
+      seasonsCount: leagueSeasons.length,
       weekRange: { min: WEEK_MIN, max: WEEK_MAX },
       lists: {
         highestWeekScore: top10(highestWeekScore, (a, b) => b.value - a.value),

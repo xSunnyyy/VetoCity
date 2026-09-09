@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { LEAGUE_ID, SLEEPER_BASE as BASE } from "@/app/lib/vetocity";
+import { getLeagueChainNewestFirst } from "@/app/lib/leagueChain";
 
 // In-memory cache
 let cache: { ts: number; data: any } | null = null;
@@ -36,24 +37,6 @@ function pointsFromRosterSettings(
       : "ppts_decimal";
   const dec = Number(s?.[decKey] ?? 0) || 0;
   return whole + dec / 100;
-}
-
-async function getAllLeagueIdsNewestFirst(startLeagueId: string): Promise<string[]> {
-  const ids: string[] = [];
-  const seen = new Set<string>();
-
-  let cur: string | null = startLeagueId;
-  while (cur && !seen.has(cur)) {
-    seen.add(cur);
-    ids.push(cur);
-
-    // ✅ explicit annotation fixes TS “self-referencing inference” bug
-    const league: any = await j<any>(`${BASE}/league/${cur}`);
-    const prev = league?.previous_league_id ? String(league.previous_league_id) : "";
-    cur = prev || null;
-  }
-
-  return ids;
 }
 
 type ManagerTotals = {
@@ -97,25 +80,27 @@ export async function GET() {
     const now = Date.now();
     if (cache && now - cache.ts < TTL_MS) return NextResponse.json(cache.data);
 
-    const leagueIds = await getAllLeagueIdsNewestFirst(LEAGUE_ID);
+    // Shared, longer-cached chain walk (see leagueChain.ts) — also hands
+    // back the full league object per season, so no need to re-fetch
+    // `/league/{id}` for each one below.
+    const leagueSeasons = await getLeagueChainNewestFirst(LEAGUE_ID);
 
     // managerId -> totals
     const managers = new Map<string, ManagerTotals>();
 
-    // Fetch every season's league/users/rosters and all weeks of
-    // transactions in parallel up front, since none of these requests
-    // depend on each other or on processing order — awaiting one
-    // week/season at a time was pure wasted latency (season-count * 18
-    // serial round-trips to Sleeper).
+    // Fetch every season's users/rosters and all weeks of transactions in
+    // parallel up front, since none of these requests depend on each other
+    // or on processing order — awaiting one week/season at a time was pure
+    // wasted latency (season-count * 18 serial round-trips to Sleeper).
     const weekNumbers = Array.from(
       { length: WEEK_SCAN_MAX - WEEK_SCAN_MIN + 1 },
       (_, i) => WEEK_SCAN_MIN + i
     );
 
     const seasonsData = await Promise.all(
-      leagueIds.map(async (lid) => {
-        const [league, users, rosters, txnsByWeek] = await Promise.all([
-          j<any>(`${BASE}/league/${lid}`),
+      leagueSeasons.map(async (league) => {
+        const lid = String(league.league_id);
+        const [users, rosters, txnsByWeek] = await Promise.all([
           j<any[]>(`${BASE}/league/${lid}/users`).catch(() => []),
           j<any[]>(`${BASE}/league/${lid}/rosters`).catch(() => []),
           Promise.all(
@@ -123,7 +108,7 @@ export async function GET() {
           ),
         ]);
 
-        return { league, users, rosters, txnsByWeek };
+        return { users, rosters, txnsByWeek };
       })
     );
 

@@ -37,11 +37,23 @@ async function getSeasonChain(startLeagueId: string): Promise<SeasonRef[]> {
   return chain;
 }
 
+const WEEK_MAX = 18;
+const weekNumbers = Array.from({ length: WEEK_MAX }, (_, i) => i + 1);
+
 // Matchup-based week detection (post-season safe) — the last week with any
 // scored matchups. For a completed season this lands on its final week.
-async function determineLastScoredWeek(leagueId: string): Promise<number> {
-  for (let w = 18; w >= 1; w--) {
-    const m = await j<any[]>(`${BASE}/league/${leagueId}/matchups/${w}`).catch(() => []);
+// Fetches every week in parallel instead of scanning backward one request
+// at a time, so the caller can reuse the same results instead of
+// re-fetching weeks 1..currentWeek afterward.
+async function fetchAllWeeksMatchups(leagueId: string): Promise<any[][]> {
+  return Promise.all(
+    weekNumbers.map((w) => j<any[]>(`${BASE}/league/${leagueId}/matchups/${w}`).catch(() => []))
+  );
+}
+
+function lastScoredWeek(matchupsByWeek: any[][]): number {
+  for (let w = matchupsByWeek.length; w >= 1; w--) {
+    const m = matchupsByWeek[w - 1];
     const ok =
       Array.isArray(m) &&
       m.some(
@@ -78,15 +90,12 @@ export async function GET(req: Request) {
       j(`${BASE}/league/${targetLeagueId}/rosters`),
     ]);
 
-    const currentWeek = await determineLastScoredWeek(targetLeagueId);
+    const allWeeksMatchups = await fetchAllWeeksMatchups(targetLeagueId);
+    const currentWeek = lastScoredWeek(allWeeksMatchups);
 
-    const weeks = Array.from({ length: currentWeek }, (_, i) => i + 1);
-    const matchupsByWeek = await Promise.all(
-      weeks.map(async (w) => {
-        const matchups = await j<any[]>(`${BASE}/league/${targetLeagueId}/matchups/${w}`).catch(() => []);
-        return { week: w, matchups };
-      })
-    );
+    const matchupsByWeek = allWeeksMatchups
+      .slice(0, currentWeek)
+      .map((matchups, i) => ({ week: i + 1, matchups }));
 
     const data = {
       league,

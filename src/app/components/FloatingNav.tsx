@@ -8,6 +8,7 @@ type IconKey =
   | "dashboard"
   | "rules"
   | "movement"
+  | "news"
   | "rosters"
   | "managers"
   | "rivalry"
@@ -21,12 +22,13 @@ type IconKey =
 type NavItem = { label: string; href: string; icon: IconKey };
 
 // Shown as top-level pills on desktop and as the permanent icon slots on
-// mobile — same four items, same order, on both.
+// mobile — same five items, same order, on both.
 const primaryItems: NavItem[] = [
   { label: "Dashboard", href: "/", icon: "dashboard" },
   { label: "Rules", href: "/rules", icon: "rules" },
   { label: "Managers", href: "/league/managers", icon: "managers" },
   { label: "Movement", href: "/movement", icon: "movement" },
+  { label: "News", href: "/news", icon: "news" },
 ];
 
 // Everything else — the desktop "League Info" dropdown and the mobile
@@ -77,6 +79,14 @@ function NavIcon({ icon, className }: { icon: IconKey; className?: string }) {
         <svg {...common}>
           <path d="M4 17 10 11l4 4 6-8" />
           <path d="M15 7h5v5" />
+        </svg>
+      );
+    case "news":
+      return (
+        <svg {...common}>
+          <path d="M4 6.5a1.5 1.5 0 0 1 1.5-1.5H16v14.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 4 19.5V6.5Z" />
+          <path d="M16 8h2.5A1.5 1.5 0 0 1 20 9.5v9a1.5 1.5 0 0 1-3 0" />
+          <path d="M7.5 9h5M7.5 12h5M7.5 15h3" />
         </svg>
       );
     case "rosters":

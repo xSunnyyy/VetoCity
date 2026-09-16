@@ -28,6 +28,24 @@ function fmtDate(iso: string) {
   }
 }
 
+function cx(...parts: Array<string | false | null | undefined>) {
+  return parts.filter(Boolean).join(" ");
+}
+
+function ChevronIcon({ expanded }: { expanded: boolean }) {
+  return (
+    <svg
+      className={cx("h-4 w-4 shrink-0 text-zinc-500 transition-transform", expanded && "rotate-90")}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      aria-hidden
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 6l6 6-6 6" />
+    </svg>
+  );
+}
+
 function blankRows(n: number) {
   return Array.from({ length: n }, (_, i) => ({ key: `${Date.now()}-${i}-${Math.random()}`, matchup: "", report: "" }));
 }
@@ -181,6 +199,18 @@ export default function BillysReportPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteErr, setDeleteErr] = useState<string | null>(null);
 
+  // Every report starts collapsed — only ids the user has clicked open live here.
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+
+  function toggleExpanded(id: string) {
+    setExpandedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
   useEffect(() => {
     let alive = true;
 
@@ -287,63 +317,86 @@ export default function BillysReportPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {rows.map((entry) => (
-              <div
-                key={entry.id}
-                className="overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[0_14px_40px_rgba(0,0,0,0.42)]"
-              >
-                <div className="flex items-center justify-between border-b border-zinc-800/70 bg-zinc-900/40 px-5 py-3">
-                  <div className="text-sm font-semibold tracking-wide text-zinc-100">{entry.title}</div>
-                  <div className="flex items-center gap-3">
-                    <div className="text-xs text-zinc-500">{fmtDate(entry.createdAt)}</div>
+            {rows.map((entry) => {
+              const expanded = expandedIds.has(entry.id);
+
+              return (
+                <div
+                  key={entry.id}
+                  className="overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[0_14px_40px_rgba(0,0,0,0.42)]"
+                >
+                  <div
+                    className={cx(
+                      "flex items-center justify-between bg-zinc-900/40 px-5 py-3",
+                      expanded && "border-b border-zinc-800/70"
+                    )}
+                  >
                     <button
                       type="button"
-                      onClick={() => handleDelete(entry)}
-                      disabled={deletingId === entry.id}
-                      className="flex h-7 w-7 items-center justify-center rounded-full text-zinc-500 transition hover:bg-red-950/40 hover:text-red-300 disabled:opacity-50"
-                      aria-label={`Delete ${entry.title}`}
-                      title={`Delete ${entry.title}`}
+                      onClick={() => toggleExpanded(entry.id)}
+                      aria-expanded={expanded}
+                      className="flex flex-1 items-center gap-2 rounded-lg py-1 text-left transition hover:text-zinc-50"
                     >
-                      {deletingId === entry.id ? (
-                        <span className="text-xs">…</span>
-                      ) : (
-                        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={1.8}
-                            d="M6 7h12M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-8 0 .8 12.2A2 2 0 0 0 9.8 21h4.4a2 2 0 0 0 2-1.8L17 7"
-                          />
-                        </svg>
-                      )}
+                      <ChevronIcon expanded={expanded} />
+                      <span className="text-sm font-semibold tracking-wide text-zinc-100">{entry.title}</span>
+                      <span className="text-xs text-zinc-500">
+                        ({entry.matchups.length} matchup{entry.matchups.length === 1 ? "" : "s"})
+                      </span>
                     </button>
-                  </div>
-                </div>
 
-                <div className="overflow-x-auto">
-                  <table className="w-full min-w-[480px] text-left text-sm">
-                    <thead>
-                      <tr className="border-b border-zinc-800/70 text-xs text-zinc-500">
-                        <th className="w-2/5 px-5 py-2 font-medium">Matchup</th>
-                        <th className="px-5 py-2 font-medium">Report</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {entry.matchups.map((m) => (
-                        <tr key={m.id} className="border-b border-zinc-800/50 last:border-b-0">
-                          <td className="whitespace-pre-wrap px-5 py-3 align-top font-medium text-zinc-100">
-                            {m.matchup || "—"}
-                          </td>
-                          <td className="whitespace-pre-wrap px-5 py-3 align-top leading-relaxed text-zinc-300">
-                            {m.report || "—"}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                    <div className="flex items-center gap-3">
+                      <div className="text-xs text-zinc-500">{fmtDate(entry.createdAt)}</div>
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(entry)}
+                        disabled={deletingId === entry.id}
+                        className="flex h-7 w-7 items-center justify-center rounded-full text-zinc-500 transition hover:bg-red-950/40 hover:text-red-300 disabled:opacity-50"
+                        aria-label={`Delete ${entry.title}`}
+                        title={`Delete ${entry.title}`}
+                      >
+                        {deletingId === entry.id ? (
+                          <span className="text-xs">…</span>
+                        ) : (
+                          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={1.8}
+                              d="M6 7h12M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-8 0 .8 12.2A2 2 0 0 0 9.8 21h4.4a2 2 0 0 0 2-1.8L17 7"
+                            />
+                          </svg>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  {expanded ? (
+                    <div className="overflow-x-auto">
+                      <table className="w-full min-w-[480px] text-left text-sm">
+                        <thead>
+                          <tr className="border-b border-zinc-800/70 text-xs text-zinc-500">
+                            <th className="w-2/5 px-5 py-2 font-medium">Matchup</th>
+                            <th className="px-5 py-2 font-medium">Report</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {entry.matchups.map((m) => (
+                            <tr key={m.id} className="border-b border-zinc-800/50 last:border-b-0">
+                              <td className="whitespace-pre-wrap px-5 py-3 align-top font-medium text-zinc-100">
+                                {m.matchup || "—"}
+                              </td>
+                              <td className="whitespace-pre-wrap px-5 py-3 align-top leading-relaxed text-zinc-300">
+                                {m.report || "—"}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : null}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

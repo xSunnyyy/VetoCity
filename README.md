@@ -24,6 +24,7 @@ VetoCity/
     ├── page.tsx                ← homepage / dashboard
     ├── rules/page.tsx          ← "League Rules" page
     ├── movement/page.tsx       ← waivers / trades / power rankings
+    ├── news/page.tsx           ← AI beat writer weekly recap (see §5)
     ├── league/                 ← rosters, managers, rivalry, standings,
     │                             drafts, awards, records, Billy's Report
     ├── components/             ← shared UI (nav, banners, dashboard sections)
@@ -96,7 +97,8 @@ There's no Open Graph / Twitter card image configured by default — if you want
 1. Import the repo into Vercel.
 2. Root Directory can be left blank/default — the app lives at the repo root.
 3. If you're keeping the Billy's Report feature (see §6), add a `GITHUB_TOKEN` environment variable — details below.
-4. Deploy. Vercel auto-deploys `main` to production and every other branch as a preview.
+4. If you're keeping the News page (see §6), add an `ANTHROPIC_API_KEY` environment variable — details below.
+5. Deploy. Vercel auto-deploys `main` to production and every other branch as a preview.
 
 ### Why Billy's Report needs its own storage story
 
@@ -124,6 +126,27 @@ The fix, in `src/app/lib/githubStore.ts`: instead of writing to local disk, Bill
 
 No `GITHUB_TOKEN` needed if you do this.
 
+### The News page needs an Anthropic API key
+
+The News tab (`src/app/news/page.tsx`, `src/app/api/news/route.ts`) has an AI "beat writer" persona write a funny, opinionated recap of the week that just passed (or a preview, before the season's first games) using your league's real standings, matchups, and recent waiver/trade activity pulled from Sleeper. It calls the [Claude API](https://console.anthropic.com) to write the article, so it needs its own credential — separate from anything Vercel or GitHub already gives you.
+
+**Setup required — an `ANTHROPIC_API_KEY` env var:**
+
+1. [console.anthropic.com](https://console.anthropic.com) → **Settings → API Keys** → create a key.
+2. Vercel → your project → **Settings → Environment Variables** → add `ANTHROPIC_API_KEY` with that value, scoped to Production (and Preview too, if you want preview deployments to generate articles).
+3. For local dev, add the same variable to a `.env.local` file at the repo root (not committed — see §8).
+4. Redeploy — env var changes don't apply to a deployment that's already live.
+
+Without this configured, the News page shows a friendly "not configured yet" message instead of erroring — the rest of the site is unaffected either way. Generated articles are cached in memory per server instance (roughly one real generation per week, refreshed once a new week's scores come in), so this isn't called on every page view.
+
+**Don't want the News page at all?** It's fully self-contained and safe to delete:
+- `src/app/news/`
+- `src/app/api/news/`
+- Remove the `{ label: "News", ... }` entry from `primaryItems` in `src/app/components/FloatingNav.tsx` (and the matching `"news"` case in `NavIcon`)
+- `@anthropic-ai/sdk` and `zod` can be removed from `package.json` if nothing else uses them
+
+No `ANTHROPIC_API_KEY` needed if you do this.
+
 ---
 
 ## 6. What's generic vs. what's VetoCity-specific
@@ -135,6 +158,7 @@ Everything under `src/app/api/` and most of `src/app/components/` computes entir
 | Hero logo | `public/veto-city-logo.png`, referenced in `src/app/page.tsx` | An image, not text — swap the file for your own league's logo |
 | Bylaws / league rules prose | `src/app/components/RulesAndRegulations.tsx` | Hardcoded text (fees, trade rules, Sacko punishment, payout structure) — this is VetoCity's actual governance, not derived from Sleeper. Rewrite the `SECTIONS` array for your own league's rules, or delete the component and its usage in `src/app/rules/page.tsx` if you don't want this section |
 | Billy's Report | see §5 | An optional weekly-recap feature some leagues won't want; delete cleanly per the instructions above if not needed |
+| News (AI beat writer) | see §5 | Also optional, and needs its own API key; delete cleanly per the instructions above if not needed. The persona name ("Chip Waivers") and tone are set in `SYSTEM_PROMPT` in `src/app/api/news/route.ts` — edit that if you want a different voice |
 | Championship banner / accent color (red) | `src/app/components/ChampionshipBanners.tsx` and the `red-*` Tailwind classes sprinkled through the dashboard components | Cosmetic — recolor to taste |
 | Meta tags, PWA name, hero logo | see §4 | Every mention of "Veto City" across `layout.tsx` and `manifest.json`, plus the `public/veto-city-logo.png` image referenced in `page.tsx` |
 
@@ -166,4 +190,4 @@ npm run build    # production build — good sanity check before deploying
 npm run lint
 ```
 
-No `.env` file is required for local dev unless you're testing Billy's Report, in which case you need `GITHUB_TOKEN` set locally too (a `.env.local` file at the repo root works, since Next.js loads it automatically and it's gitignored).
+No `.env` file is required for local dev unless you're testing Billy's Report (needs `GITHUB_TOKEN`) or the News page (needs `ANTHROPIC_API_KEY`) — a `.env.local` file at the repo root works for either, since Next.js loads it automatically and it's gitignored.

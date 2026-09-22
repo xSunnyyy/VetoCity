@@ -122,8 +122,9 @@ export default function StandingsPage() {
   // default), letting the effect below always resolve it from the API.
   const [selectedLeagueId, setSelectedLeagueId] = useState<string | null>(null);
 
-  // ✅ both-ways sorting on all columns
-  const [sortKey, setSortKey] = useState<SortKey>("wins");
+  // ✅ both-ways sorting on all columns — standings default to Total Wins,
+  // then PF as the tiebreaker (see the sort comparator below).
+  const [sortKey, setSortKey] = useState<SortKey>("totalWins");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
 
   useEffect(() => {
@@ -362,10 +363,8 @@ export default function StandingsPage() {
       const primary = sortDir === "asc" ? av - bv : bv - av;
       if (primary !== 0) return primary;
 
-      // stable tie-breakers
-      const aTotalW = a.wins + a.top6Wins;
-      const bTotalW = b.wins + b.top6Wins;
-      return bTotalW - aTotalW || b.wins - a.wins || b.pf - a.pf || a.name.localeCompare(b.name);
+      // Standings ties break by points for, then name for full stability.
+      return b.pf - a.pf || a.name.localeCompare(b.name);
     });
 
     return list;

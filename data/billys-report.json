@@ -72,5 +72,75 @@
       }
     ],
     "createdAt": "2026-09-23T19:50:14.789Z"
+  },
+  {
+    "id": "1790194952917-qtx211",
+    "title": "Week 3 (2026)",
+    "matchups": [
+      {
+        "id": "1790194952917-0",
+        "matchup": "Duddu Paaaji vs Silver",
+        "report": "QB and RB going to Duddu. I do like Silvers WRs and the flex spot but Duddu flex can pop off this week against Car and Ten.",
+        "rosterIdA": 8,
+        "rosterIdB": 12,
+        "teamA": "Duddu Paaaji",
+        "teamB": "Silver",
+        "winnerRosterId": 8
+      },
+      {
+        "id": "1790194952917-1",
+        "matchup": "Kingpin vs Sacko Bhai",
+        "report": "Both QBs are bum — I like Sackos RBs but do like Kingpins WRs although we can see Sackos WRs pop. Ooo I like Sacko bhais Flex a lot more.",
+        "rosterIdA": 10,
+        "rosterIdB": 11,
+        "teamA": "Kingpin",
+        "teamB": "Sacko Bhai",
+        "winnerRosterId": 11
+      },
+      {
+        "id": "1790194952917-2",
+        "matchup": "Kurta Pajama vs Regular Season Q",
+        "report": "Both QBs are great but Burrow has harder to play — Q got the better RBs. Chase vs Higgins basically. Watson can pop but never know. I will Kurta Pajamas Flex more. Sending this to Q tho. Gibbs is the deciding factor.",
+        "rosterIdA": 3,
+        "rosterIdB": 5,
+        "teamA": "Kurta Pajama",
+        "teamB": "Regular Season Q",
+        "winnerRosterId": 5
+      },
+      {
+        "id": "1790194952917-3",
+        "matchup": "General Mcnaughty vs Haramdami",
+        "report": "Mahomes over T Law for me. I like Haramis RBs better but JSN and Coker been killing it. Olave surprised me though! Kraft is a bum!! Kincaid all day. IL take Kittle over Wilson.",
+        "rosterIdA": 6,
+        "rosterIdB": 7,
+        "teamA": "General Mcnaughty",
+        "teamB": "Haramdami",
+        "winnerRosterId": 6
+      },
+      {
+        "id": "1790194952917-4",
+        "matchup": "Abbyyzz vs Allen Bhai",
+        "report": "Allen is Allen but Young has been looking good. CMC over Cook. Henney for sure. Abbyz rest of the team is looking better so sending the win there.",
+        "rosterIdA": 2,
+        "rosterIdB": 9,
+        "teamA": "Abbyyzz",
+        "teamB": "Allen Bhai",
+        "winnerRosterId": 2
+      },
+      {
+        "id": "1790194952917-5",
+        "matchup": "Barista Bhaijaan vs Purdy Cocky",
+        "report": "Both QBs are bum and potential for pop off. I like Cockys RBs better. I am going with Cockys WRs. Nah Cocky got the better team here. Diggs/Henry? Broken Nabers without Dart???",
+        "rosterIdA": 1,
+        "rosterIdB": 4,
+        "teamA": "Barista Bhaijaan",
+        "teamB": "Purdy Cocky",
+        "winnerRosterId": 4
+      }
+    ],
+    "createdAt": "2026-09-23T20:22:32.917Z",
+    "season": "2026",
+    "week": 3,
+    "leagueId": "1388938159638708224"
   }
 ]

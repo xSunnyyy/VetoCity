@@ -1,39 +1,10 @@
 # PWA (Progressive Web App) Setup
 
-This application is configured as a Progressive Web App, allowing users to install it on their devices.
+This application is configured as a Progressive Web App — installable on phones and desktops.
 
-## Icon Requirements
+## Icons
 
-To complete the PWA setup, you need to add the following icon files to the `/public` directory:
-
-### Required Icons
-
-1. **icon-192.png** (192x192 pixels)
-   - Used for mobile home screen icons
-   - Android Chrome requirements
-
-2. **icon-512.png** (512x512 pixels)
-   - Used for splash screens
-   - High-resolution displays
-
-### Creating Icons
-
-You can create these icons using:
-
-1. **Online Tools:**
-   - [Favicon Generator](https://realfavicongenerator.net/)
-   - [PWA Asset Generator](https://www.pwabuilder.com/imageGenerator)
-
-2. **Design Software:**
-   - Figma, Sketch, Adobe Illustrator
-   - Export as PNG at the required sizes
-
-3. **Command Line (ImageMagick):**
-   ```bash
-   # From a source image
-   convert source.png -resize 192x192 icon-192.png
-   convert source.png -resize 512x512 icon-512.png
-   ```
+`icon-192.png`, `icon-512.png`, and `apple-touch-icon.png` (180x180) already exist in this directory, generated from `veto-city-logo.png` on a `#18181b` background (matches the site's dark theme, with padding so it also works as a maskable icon). To regenerate them after changing the logo, use `sharp` (already a transitive dependency via Next.js) in a small one-off script — resize the source onto a square canvas of the target size with `fit: "contain"`, then flatten it over a `#18181b` background.
 
 ### Icon Design Tips
 
@@ -46,7 +17,7 @@ You can create these icons using:
 ## Features Enabled
 
 ✅ **Installable** - Users can add to home screen
-✅ **Offline-Ready** - Basic offline support (requires service worker)
+✅ **Offline-Ready** - `public/sw.js` caches static assets and falls back to `public/offline.html` for page navigations when there's no connection; live league/API data is always network-only (never cached), so scores are never served stale
 ✅ **App-like Experience** - Standalone display mode
 ✅ **Theme Colors** - Matches dark theme (#18181b)
 ✅ **App Shortcuts** - Quick access to Standings, Rosters, Matchups
@@ -86,7 +57,6 @@ The PWA manifest is located at `/public/manifest.json` and includes:
 
 ## Future Enhancements
 
-🔲 **Service Worker** - Advanced offline caching
 🔲 **Push Notifications** - League updates
 🔲 **Background Sync** - Offline data sync
 🔲 **Share Target** - Share to app

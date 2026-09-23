@@ -49,12 +49,12 @@ export function TeamRow({
     <div className={`flex items-center justify-between gap-3 ${className}`}>
       <div className="flex min-w-0 items-center gap-2">
         <Avatar name={team} avatarUrl={avatarUrl} size={avatarSize} />
-        <div className="truncate text-sm font-semibold text-zinc-200">{team}</div>
+        <div className="truncate text-sm font-semibold text-zinc-200 light:text-zinc-800">{team}</div>
       </div>
       {rightContent ? (
         rightContent
       ) : score !== undefined ? (
-        <div className="text-lg font-semibold text-zinc-100">{scoreFmt(score)}</div>
+        <div className="text-lg font-semibold text-zinc-100 light:text-zinc-900">{scoreFmt(score)}</div>
       ) : null}
     </div>
   );

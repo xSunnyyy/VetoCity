@@ -117,11 +117,11 @@ function Card({
   children: React.ReactNode;
 }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[0_14px_40px_rgba(0,0,0,0.42)] backdrop-blur">
+    <div className="overflow-hidden rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)] backdrop-blur">
       <div className="flex items-start justify-between gap-4 px-5 pt-5">
         <div className="min-w-0">
-          <div className="text-sm font-semibold text-zinc-100">{title}</div>
-          {subtitle ? <div className="mt-1 text-xs text-zinc-500">{subtitle}</div> : null}
+          <div className="text-sm font-semibold text-zinc-100 light:text-zinc-900">{title}</div>
+          {subtitle ? <div className="mt-1 text-xs text-zinc-500 light:text-zinc-500">{subtitle}</div> : null}
         </div>
         {right ? <div className="shrink-0">{right}</div> : null}
       </div>
@@ -141,15 +141,15 @@ function StatRow({
 }) {
   return (
     <div className="grid grid-cols-[92px_1fr_92px] items-stretch gap-2 sm:grid-cols-[110px_1fr_110px]">
-      <div className="flex items-center justify-center rounded-xl border border-zinc-800 bg-zinc-950/70 px-2 py-3 text-sm font-semibold text-zinc-100">
+      <div className="flex items-center justify-center rounded-xl border border-zinc-800 light:border-zinc-200 bg-zinc-950/70 light:bg-white/80 px-2 py-3 text-sm font-semibold text-zinc-100 light:text-zinc-900">
         {left}
       </div>
 
-      <div className="flex items-center justify-center rounded-xl border border-zinc-800/80 bg-zinc-900/40 px-3 py-3 text-center text-xs font-semibold tracking-wide text-zinc-200">
+      <div className="flex items-center justify-center rounded-xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-900/40 light:bg-zinc-100 px-3 py-3 text-center text-xs font-semibold tracking-wide text-zinc-200 light:text-zinc-800">
         {label.toUpperCase()}
       </div>
 
-      <div className="flex items-center justify-center rounded-xl border border-zinc-800 bg-zinc-950/70 px-2 py-3 text-sm font-semibold text-zinc-100">
+      <div className="flex items-center justify-center rounded-xl border border-zinc-800 light:border-zinc-200 bg-zinc-950/70 light:bg-white/80 px-2 py-3 text-sm font-semibold text-zinc-100 light:text-zinc-900">
         {right}
       </div>
     </div>
@@ -171,19 +171,19 @@ function TeamDisplay({
     <div className={cx("flex items-center gap-3", align === "right" && "justify-end")}>
       {align === "right" ? (
         <div className="min-w-0 text-right">
-          <div className="truncate text-sm font-semibold text-zinc-100" title={name}>
+          <div className="truncate text-sm font-semibold text-zinc-100 light:text-zinc-900" title={name}>
             {name}
           </div>
-          <div className="mt-0.5 text-xs text-zinc-500">All-time</div>
+          <div className="mt-0.5 text-xs text-zinc-500 light:text-zinc-500">All-time</div>
         </div>
       ) : null}
 
-      <div className="h-12 w-12 overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950/70 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+      <div className="h-12 w-12 overflow-hidden rounded-2xl border border-zinc-800 light:border-zinc-200 bg-zinc-950/70 light:bg-white/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] light:shadow-[inset_0_1px_0_rgba(0,0,0,0.04)]">
         {url ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={url} alt="" className="h-full w-full object-cover" />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-lg font-extrabold text-zinc-200">
+          <div className="flex h-full w-full items-center justify-center text-lg font-extrabold text-zinc-200 light:text-zinc-800">
             {(name || "?").slice(0, 1).toUpperCase()}
           </div>
         )}
@@ -191,10 +191,10 @@ function TeamDisplay({
 
       {align === "left" ? (
         <div className="min-w-0">
-          <div className="truncate text-sm font-semibold text-zinc-100" title={name}>
+          <div className="truncate text-sm font-semibold text-zinc-100 light:text-zinc-900" title={name}>
             {name}
           </div>
-          <div className="mt-0.5 text-xs text-zinc-500">All-time</div>
+          <div className="mt-0.5 text-xs text-zinc-500 light:text-zinc-500">All-time</div>
         </div>
       ) : null}
     </div>
@@ -373,23 +373,23 @@ export default function RivalryPage() {
   }, [games]);
 
   const selectCls =
-    "h-10 rounded-full border border-zinc-800/80 bg-zinc-950/60 px-4 text-sm font-semibold text-zinc-100 outline-none transition hover:bg-zinc-900/60 focus:border-zinc-700";
+    "h-10 rounded-full border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 px-4 text-sm font-semibold text-zinc-100 light:text-zinc-900 outline-none transition hover:bg-zinc-900/60 light:hover:bg-zinc-100 focus:border-zinc-700 light:focus:border-zinc-400";
   const subtleBtn =
-    "inline-flex h-9 items-center justify-center rounded-xl border border-zinc-800/80 bg-zinc-950/60 px-3 text-sm font-semibold text-zinc-200 hover:bg-zinc-900/60";
+    "inline-flex h-9 items-center justify-center rounded-xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 px-3 text-sm font-semibold text-zinc-200 light:text-zinc-800 hover:bg-zinc-900/60 light:hover:bg-zinc-100";
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-100">
+    <main className="min-h-screen bg-zinc-950 light:bg-white text-zinc-100 light:text-zinc-900">
       <FloatingNav />
 
       {/* narrower page */}
       <div className="mx-auto max-w-3xl px-4 pb-12 pt-6 md:pt-24">
         <div className="mb-6 text-center">
           <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">Rivalry</h1>
-          <div className="mt-1 text-sm text-zinc-400">All-time head-to-head</div>
+          <div className="mt-1 text-sm text-zinc-400 light:text-zinc-600">All-time head-to-head</div>
         </div>
 
         {err ? (
-          <div className="mb-6 rounded-2xl border border-red-900/60 bg-zinc-950/60 p-5 text-red-200 shadow-[0_14px_40px_rgba(0,0,0,0.42)]">
+          <div className="mb-6 rounded-2xl border border-red-900/60 light:border-red-300 bg-zinc-950/60 light:bg-zinc-50 p-5 text-red-200 light:text-red-800 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)]">
             <div className="text-sm font-semibold">Load error</div>
             <div className="mt-2 text-sm opacity-90">{err}</div>
           </div>
@@ -399,8 +399,8 @@ export default function RivalryPage() {
         <div className="mb-5 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
           {loading ? (
             <>
-              <div className="h-10 w-full max-w-[16rem] rounded-full bg-zinc-900/40" />
-              <div className="h-10 w-full max-w-[16rem] rounded-full bg-zinc-900/40" />
+              <div className="h-10 w-full max-w-[16rem] rounded-full bg-zinc-900/40 light:bg-zinc-100" />
+              <div className="h-10 w-full max-w-[16rem] rounded-full bg-zinc-900/40 light:bg-zinc-100" />
             </>
           ) : (
             <>
@@ -460,19 +460,19 @@ export default function RivalryPage() {
         >
           {loading ? (
             <div className="space-y-3">
-              <div className="h-16 w-full rounded-2xl bg-zinc-900/30" />
-              <div className="h-16 w-full rounded-2xl bg-zinc-900/30" />
+              <div className="h-16 w-full rounded-2xl bg-zinc-900/30 light:bg-zinc-100/70" />
+              <div className="h-16 w-full rounded-2xl bg-zinc-900/30 light:bg-zinc-100/70" />
             </div>
           ) : (
             <div className="space-y-3">
-              <div className="rounded-2xl border border-zinc-800/70 bg-zinc-950/40 p-4">
+              <div className="rounded-2xl border border-zinc-800/70 light:border-zinc-200 bg-zinc-950/40 light:bg-zinc-50 p-4">
                 <div className="flex items-center justify-between gap-4">
                   <TeamDisplay
                     name={aTeam?.name ?? "—"}
                     avatar={aTeam?.avatar ?? null}
                     align="left"
                   />
-                  <div className="text-xs font-semibold tracking-[0.25em] text-zinc-500">
+                  <div className="text-xs font-semibold tracking-[0.25em] text-zinc-500 light:text-zinc-500">
                     VS
                   </div>
                   <TeamDisplay
@@ -492,7 +492,7 @@ export default function RivalryPage() {
             {loading ? (
               <div className="space-y-3">
                 {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="h-12 w-full rounded-xl bg-zinc-900/30" />
+                  <div key={i} className="h-12 w-full rounded-xl bg-zinc-900/30 light:bg-zinc-100/70" />
                 ))}
               </div>
             ) : (
@@ -523,14 +523,14 @@ export default function RivalryPage() {
         {!loading ? (
           <div className="mt-4">
             <div className="flex items-center justify-between">
-              <div className="text-sm font-semibold text-zinc-200">Match History</div>
+              <div className="text-sm font-semibold text-zinc-200 light:text-zinc-800">Match History</div>
               <button
                 type="button"
                 onClick={() => setHistoryOpen((v) => !v)}
                 className={subtleBtn}
               >
                 {historyOpen ? "Hide" : "Show"}{" "}
-                <span className="ml-2 text-zinc-500">{historyOpen ? "▴" : "▾"}</span>
+                <span className="ml-2 text-zinc-500 light:text-zinc-500">{historyOpen ? "▴" : "▾"}</span>
               </button>
             </div>
 
@@ -542,15 +542,15 @@ export default function RivalryPage() {
               style={{ overflow: "hidden" }}
               aria-hidden={!historyOpen}
             >
-              <div className="overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[0_14px_40px_rgba(0,0,0,0.42)]">
+              <div className="overflow-hidden rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)]">
                 <div className="flex items-center justify-between px-5 py-4">
-                  <div className="text-sm font-semibold text-zinc-100">Recent Games</div>
-                  <div className="text-xs text-zinc-500">{games.length} total</div>
+                  <div className="text-sm font-semibold text-zinc-100 light:text-zinc-900">Recent Games</div>
+                  <div className="text-xs text-zinc-500 light:text-zinc-500">{games.length} total</div>
                 </div>
-                <div className="h-px w-full bg-zinc-800/70" />
+                <div className="h-px w-full bg-zinc-800/70 light:bg-zinc-200" />
 
                 {games.length ? (
-                  <div className="divide-y divide-zinc-800/70">
+                  <div className="divide-y divide-zinc-800/70 light:divide-zinc-200">
                     {games.slice(0, 25).map((g, idx) => {
                       const aWins = g.a.score > g.b.score;
                       const bWins = g.b.score > g.a.score;
@@ -560,15 +560,15 @@ export default function RivalryPage() {
                           key={`${g.season}-${g.week}-${g.matchupId}-${idx}`}
                           className="px-5 py-4"
                         >
-                          <div className="mb-2 text-xs font-semibold tracking-wide text-zinc-500">
+                          <div className="mb-2 text-xs font-semibold tracking-wide text-zinc-500 light:text-zinc-500">
                             {g.season} • WEEK {g.week}
                           </div>
 
-                          <div className="rounded-xl border border-zinc-800/70 bg-zinc-950/40">
+                          <div className="rounded-xl border border-zinc-800/70 light:border-zinc-200 bg-zinc-950/40 light:bg-zinc-50">
                             <div className="flex items-center justify-between gap-3 px-4 py-3">
                               <div
                                 className={cx(
-                                  "truncate text-sm text-zinc-200",
+                                  "truncate text-sm text-zinc-200 light:text-zinc-800",
                                   aWins && "font-semibold"
                                 )}
                               >
@@ -576,18 +576,18 @@ export default function RivalryPage() {
                               </div>
                               <div
                                 className={cx(
-                                  "text-lg text-zinc-100",
+                                  "text-lg text-zinc-100 light:text-zinc-900",
                                   aWins ? "font-semibold" : "font-normal"
                                 )}
                               >
                                 {scoreFmt(g.a.score)}
                               </div>
                             </div>
-                            <div className="h-px w-full bg-zinc-800/70" />
+                            <div className="h-px w-full bg-zinc-800/70 light:bg-zinc-200" />
                             <div className="flex items-center justify-between gap-3 px-4 py-3">
                               <div
                                 className={cx(
-                                  "truncate text-sm text-zinc-200",
+                                  "truncate text-sm text-zinc-200 light:text-zinc-800",
                                   bWins && "font-semibold"
                                 )}
                               >
@@ -595,7 +595,7 @@ export default function RivalryPage() {
                               </div>
                               <div
                                 className={cx(
-                                  "text-lg text-zinc-100",
+                                  "text-lg text-zinc-100 light:text-zinc-900",
                                   bWins ? "font-semibold" : "font-normal"
                                 )}
                               >
@@ -608,7 +608,7 @@ export default function RivalryPage() {
                     })}
                   </div>
                 ) : (
-                  <div className="px-5 py-10 text-sm text-zinc-400">
+                  <div className="px-5 py-10 text-sm text-zinc-400 light:text-zinc-600">
                     No games found for this pair.
                   </div>
                 )}

@@ -41,16 +41,16 @@ function PosPill({ pos }: { pos: string }) {
 
   const color =
     pos === "QB"
-      ? "border-violet-900/70 bg-violet-950/60 text-violet-200/90"
+      ? "border-violet-900/70 light:border-violet-300 bg-violet-950/60 light:bg-violet-100 text-violet-200/90 light:text-violet-800/90"
       : pos === "RB"
-      ? "border-emerald-900/70 bg-emerald-950/60 text-emerald-200/90"
+      ? "border-emerald-900/70 light:border-emerald-300 bg-emerald-950/60 light:bg-emerald-100 text-emerald-200/90 light:text-emerald-800/90"
       : pos === "WR"
-      ? "border-sky-900/70 bg-sky-950/60 text-sky-200/90"
+      ? "border-sky-900/70 light:border-sky-300 bg-sky-950/60 light:bg-sky-100 text-sky-200/90 light:text-sky-800/90"
       : pos === "TE"
-      ? "border-amber-900/70 bg-amber-950/60 text-amber-200/90"
+      ? "border-amber-900/70 light:border-amber-300 bg-amber-950/60 light:bg-amber-100 text-amber-200/90 light:text-amber-800/90"
       : pos === "BN"
-      ? "border-zinc-800 bg-zinc-950 text-zinc-400"
-      : "border-zinc-800 bg-zinc-950 text-zinc-200/90";
+      ? "border-zinc-800 light:border-zinc-200 bg-zinc-950 light:bg-white text-zinc-400 light:text-zinc-600"
+      : "border-zinc-800 light:border-zinc-200 bg-zinc-950 light:bg-white text-zinc-200/90 light:text-zinc-800/90";
 
   return <div className={`${base} ${color}`}>{pos}</div>;
 }
@@ -72,7 +72,7 @@ function PlayerRow({
     <div className="flex items-center gap-3 px-3 py-3">
       <PosPill pos={pos} />
 
-      <div className="h-9 w-9 shrink-0 overflow-hidden rounded-none border border-zinc-800 bg-zinc-950">
+      <div className="h-9 w-9 shrink-0 overflow-hidden rounded-none border border-zinc-800 light:border-zinc-200 bg-zinc-950 light:bg-white">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={playerHeadshotUrl(playerId)}
@@ -85,8 +85,8 @@ function PlayerRow({
       </div>
 
       <div className="min-w-0 flex-1">
-        <div className="truncate text-sm font-semibold text-zinc-100">{name}</div>
-        <div className="mt-0.5 truncate text-xs text-zinc-400">{meta}</div>
+        <div className="truncate text-sm font-semibold text-zinc-100 light:text-zinc-900">{name}</div>
+        <div className="mt-0.5 truncate text-xs text-zinc-400 light:text-zinc-600">{meta}</div>
       </div>
 
       {logo ? (
@@ -102,7 +102,7 @@ function PlayerRow({
 }
 
 function SectionDivider() {
-  return <div className="h-px w-full bg-zinc-800/70" />;
+  return <div className="h-px w-full bg-zinc-800/70 light:bg-zinc-200" />;
 }
 
 function BenchToggle({
@@ -117,12 +117,12 @@ function BenchToggle({
   return (
     <button
       onClick={onClick}
-      className="flex w-full items-center justify-center gap-2 px-3 py-3 text-sm text-zinc-200 hover:bg-zinc-900/40"
+      className="flex w-full items-center justify-center gap-2 px-3 py-3 text-sm text-zinc-200 light:text-zinc-800 hover:bg-zinc-900/40 light:hover:bg-zinc-100"
     >
       <span aria-hidden>🪑</span>
       <span className="font-medium">
         Bench{" "}
-        <span className="text-zinc-500">
+        <span className="text-zinc-500 light:text-zinc-500">
           ({open ? "shown" : "minimized"} • {count})
         </span>
       </span>
@@ -211,23 +211,23 @@ export default function RostersPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-zinc-950 text-zinc-100">
+      <main className="min-h-screen bg-zinc-950 light:bg-white text-zinc-100 light:text-zinc-900">
         <FloatingNav />
         <div className="mx-auto max-w-7xl px-4 py-10">
           <div className="mb-6">
             <div className="text-2xl font-semibold tracking-tight">Rosters</div>
-            <div className="mt-1 text-sm text-zinc-400">Loading teams…</div>
+            <div className="mt-1 text-sm text-zinc-400 light:text-zinc-600">Loading teams…</div>
           </div>
 
-          <div className="rounded-none border border-zinc-800 bg-zinc-950 p-3">
-            <div className="h-10 w-full rounded bg-zinc-900/30" />
+          <div className="rounded-none border border-zinc-800 light:border-zinc-200 bg-zinc-950 light:bg-white p-3">
+            <div className="h-10 w-full rounded bg-zinc-900/30 light:bg-zinc-100/70" />
           </div>
 
           <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6">
             {Array.from({ length: 12 }).map((_, i) => (
-              <div key={i} className="rounded-none border border-zinc-800 bg-zinc-950 p-5">
-                <div className="h-5 w-32 rounded bg-zinc-900/50" />
-                <div className="mt-4 h-56 w-full rounded bg-zinc-900/30" />
+              <div key={i} className="rounded-none border border-zinc-800 light:border-zinc-200 bg-zinc-950 light:bg-white p-5">
+                <div className="h-5 w-32 rounded bg-zinc-900/50 light:bg-zinc-100" />
+                <div className="mt-4 h-56 w-full rounded bg-zinc-900/30 light:bg-zinc-100/70" />
               </div>
             ))}
           </div>
@@ -238,10 +238,10 @@ export default function RostersPage() {
 
   if (err) {
     return (
-      <main className="min-h-screen bg-zinc-950 text-zinc-100">
+      <main className="min-h-screen bg-zinc-950 light:bg-white text-zinc-100 light:text-zinc-900">
         <FloatingNav />
         <div className="mx-auto max-w-7xl px-4 py-10">
-          <div className="rounded-none border border-red-900/60 bg-zinc-950 p-5 text-red-200">
+          <div className="rounded-none border border-red-900/60 light:border-red-300 bg-zinc-950 light:bg-white p-5 text-red-200 light:text-red-800">
             <div className="font-semibold">Rosters error</div>
             <div className="mt-2 text-sm opacity-90">{err}</div>
           </div>
@@ -251,7 +251,7 @@ export default function RostersPage() {
   }
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-100">
+    <main className="min-h-screen bg-zinc-950 light:bg-white text-zinc-100 light:text-zinc-900">
       <FloatingNav />
 
       <div className="mx-auto max-w-none px-4 py-10">
@@ -259,21 +259,21 @@ export default function RostersPage() {
           <div className="text-2xl font-semibold tracking-tight">Rosters</div>
         </div>
 
-        <div className="mb-4 rounded-none border border-zinc-800 bg-zinc-950 p-3">
+        <div className="mb-4 rounded-none border border-zinc-800 light:border-zinc-200 bg-zinc-950 light:bg-white p-3">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div className="text-sm font-medium text-zinc-200">Search teams, owners, or players</div>
+            <div className="text-sm font-medium text-zinc-200 light:text-zinc-800">Search teams, owners, or players</div>
 
             <div className="flex w-full gap-2 sm:w-[420px]">
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search… (ex: Lamar, Abbyyzz, Sacko)"
-                className="w-full rounded-none border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 outline-none focus:border-zinc-600"
+                className="w-full rounded-none border border-zinc-800 light:border-zinc-200 bg-zinc-950 light:bg-white px-3 py-2 text-sm text-zinc-100 light:text-zinc-900 placeholder:text-zinc-500 light:placeholder:text-zinc-400 outline-none focus:border-zinc-600 light:focus:border-zinc-400"
               />
               {query ? (
                 <button
                   onClick={() => setQuery("")}
-                  className="shrink-0 rounded-none border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-200 hover:bg-zinc-900"
+                  className="shrink-0 rounded-none border border-zinc-800 light:border-zinc-200 bg-zinc-950 light:bg-white px-3 py-2 text-sm text-zinc-200 light:text-zinc-800 hover:bg-zinc-900 light:hover:bg-zinc-100"
                 >
                   Clear
                 </button>
@@ -282,7 +282,7 @@ export default function RostersPage() {
           </div>
 
           {query ? (
-            <div className="mt-2 text-xs text-zinc-500">
+            <div className="mt-2 text-xs text-zinc-500 light:text-zinc-500">
               Showing {filteredTeams.length} of {teamsData.length}
             </div>
           ) : null}
@@ -297,11 +297,11 @@ export default function RostersPage() {
                 return (
                   <section
                     key={t.rosterId}
-                    className="overflow-hidden rounded-none border border-zinc-800 bg-zinc-950 shadow-[0_6px_18px_rgba(0,0,0,0.35)]"
+                    className="overflow-hidden rounded-none border border-zinc-800 light:border-zinc-200 bg-zinc-950 light:bg-white shadow-[0_6px_18px_rgba(0,0,0,0.35)] light:shadow-[0_6px_18px_rgba(0,0,0,0.10)]"
                   >
                     <div className="px-4 pt-4 text-center">
                       <div className="mx-auto flex items-center justify-center gap-2">
-                        <div className="h-9 w-9 overflow-hidden rounded-full border border-zinc-800 bg-zinc-950">
+                        <div className="h-9 w-9 overflow-hidden rounded-full border border-zinc-800 light:border-zinc-200 bg-zinc-950 light:bg-white">
                           {t.avatar ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
@@ -316,9 +316,9 @@ export default function RostersPage() {
                         </div>
 
                         <div className="min-w-0">
-                          <div className="truncate text-sm font-semibold text-zinc-100">{t.name}</div>
+                          <div className="truncate text-sm font-semibold text-zinc-100 light:text-zinc-900">{t.name}</div>
                           {t.ownerName ? (
-                            <div className="mt-0.5 truncate text-[11px] text-zinc-400">{t.ownerName}</div>
+                            <div className="mt-0.5 truncate text-[11px] text-zinc-400 light:text-zinc-600">{t.ownerName}</div>
                           ) : null}
                         </div>
                       </div>
@@ -328,7 +328,7 @@ export default function RostersPage() {
                       <SectionDivider />
                     </div>
 
-                    <div className="divide-y divide-zinc-800/70">
+                    <div className="divide-y divide-zinc-800/70 light:divide-zinc-200">
                       {t.starterRows.map((row) => (
                         <PlayerRow key={row.pid} pos={row.pos} playerId={row.pid} player={row.p} />
                       ))}
@@ -349,8 +349,8 @@ export default function RostersPage() {
                     </div>
 
                     {benchOpen ? (
-                      <div className="border-t border-zinc-800/70 bg-zinc-950">
-                        <div className="divide-y divide-zinc-800/70">
+                      <div className="border-t border-zinc-800/70 light:border-zinc-200 bg-zinc-950 light:bg-white">
+                        <div className="divide-y divide-zinc-800/70 light:divide-zinc-200">
                           {t.benchRows.map((row) => (
                             <PlayerRow
                               key={row.pid}
@@ -370,8 +370,8 @@ export default function RostersPage() {
         </div>
 
         {filteredTeams.length === 0 ? (
-          <div className="mt-6 rounded-none border border-zinc-800 bg-zinc-950 p-5 text-sm text-zinc-300">
-            No results for <span className="font-semibold text-zinc-100">{query}</span>.
+          <div className="mt-6 rounded-none border border-zinc-800 light:border-zinc-200 bg-zinc-950 light:bg-white p-5 text-sm text-zinc-300 light:text-zinc-700">
+            No results for <span className="font-semibold text-zinc-100 light:text-zinc-900">{query}</span>.
           </div>
         ) : null}
       </div>

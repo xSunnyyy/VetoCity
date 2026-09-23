@@ -67,7 +67,7 @@ function TeamAvatar({
   const s = `${size}px`;
   return (
     <div
-      className="relative shrink-0 overflow-hidden rounded-lg border border-zinc-800/80 bg-zinc-950/60 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
+      className="relative shrink-0 overflow-hidden rounded-lg border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] light:shadow-[inset_0_1px_0_rgba(0,0,0,0.04)]"
       style={{ width: s, height: s }}
       title={team}
     >
@@ -75,7 +75,7 @@ function TeamAvatar({
         // eslint-disable-next-line @next/next/no-img-element
         <img src={avatarUrl} alt={team} className="h-full w-full object-cover" loading="lazy" />
       ) : (
-        <div className="flex h-full w-full items-center justify-center text-[11px] font-semibold text-zinc-200">
+        <div className="flex h-full w-full items-center justify-center text-[11px] font-semibold text-zinc-200 light:text-zinc-800">
           {initials(team)}
         </div>
       )}
@@ -87,8 +87,8 @@ function TeamAvatar({
 
 function Icon({ kind }: { kind: CardKind }) {
   const base =
-    "h-10 w-10 rounded-xl border border-zinc-800/80 bg-zinc-950/60 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] flex items-center justify-center";
-  const glyph = "text-zinc-200";
+    "h-10 w-10 rounded-xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] light:shadow-[inset_0_1px_0_rgba(0,0,0,0.04)] flex items-center justify-center";
+  const glyph = "text-zinc-200 light:text-zinc-800";
   switch (kind) {
     case "waivers":
       return (
@@ -197,16 +197,16 @@ function CardShell({
   children: React.ReactNode;
 }) {
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[0_14px_40px_rgba(0,0,0,0.42)] backdrop-blur">
+    <div className="group relative overflow-hidden rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)] backdrop-blur">
       <div className="pointer-events-none absolute inset-0 opacity-0 transition group-hover:opacity-100">
-        <div className="absolute inset-0 bg-gradient-to-br from-zinc-800/20 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-zinc-800/20 light:from-zinc-300/30 via-transparent to-transparent" />
       </div>
 
       <div className="relative flex items-start gap-3 px-5 pt-5">
         <Icon kind={kind} />
         <div className="min-w-0 flex-1">
-          <div className="text-sm font-semibold tracking-wide text-zinc-100">{title}</div>
-          {subtitle ? <div className="mt-1 text-xs text-zinc-500">{subtitle}</div> : null}
+          <div className="text-sm font-semibold tracking-wide text-zinc-100 light:text-zinc-900">{title}</div>
+          {subtitle ? <div className="mt-1 text-xs text-zinc-500 light:text-zinc-500">{subtitle}</div> : null}
         </div>
       </div>
 
@@ -216,12 +216,12 @@ function CardShell({
 }
 
 function Divider() {
-  return <div className="h-px w-full bg-zinc-800/70" />;
+  return <div className="h-px w-full bg-zinc-800/70 light:bg-zinc-200" />;
 }
 
 function Pill({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center rounded-full border border-zinc-800 bg-zinc-950/60 px-2 py-0.5 text-[11px] font-medium text-zinc-300">
+    <span className="inline-flex items-center rounded-full border border-zinc-800 light:border-zinc-200 bg-zinc-950/60 light:bg-zinc-50 px-2 py-0.5 text-[11px] font-medium text-zinc-300 light:text-zinc-700">
       {children}
     </span>
   );
@@ -233,7 +233,7 @@ function Chips({ items }: { items: string[] }) {
       {items.map((s, i) => (
         <span
           key={`${s}-${i}`}
-          className="max-w-full truncate rounded-full border border-zinc-800 bg-zinc-950/70 px-2 py-0.5 text-[11px] text-zinc-300"
+          className="max-w-full truncate rounded-full border border-zinc-800 light:border-zinc-200 bg-zinc-950/70 light:bg-white/80 px-2 py-0.5 text-[11px] text-zinc-300 light:text-zinc-700"
           title={s}
         >
           {s}
@@ -258,9 +258,9 @@ function TeamRow({
     <div className="flex items-center justify-between gap-3">
       <div className="min-w-0 flex items-center gap-2">
         <TeamAvatar team={team} avatarUrl={avatarUrl} size={28} />
-        <div className="truncate text-sm font-semibold text-zinc-200">{team}</div>
+        <div className="truncate text-sm font-semibold text-zinc-200 light:text-zinc-800">{team}</div>
       </div>
-      <div className="text-lg font-semibold text-zinc-100">{scoreFmt(score)}</div>
+      <div className="text-lg font-semibold text-zinc-100 light:text-zinc-900">{scoreFmt(score)}</div>
     </div>
   );
 }
@@ -276,7 +276,7 @@ function TeamScoreBox({
   getAvatarUrl,
 }: WeeklyCard & { getAvatarUrl: (rid: number) => string | null }) {
   return (
-    <div className="rounded-xl border border-zinc-800/80 bg-zinc-950/60 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+    <div className="rounded-xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] light:shadow-[inset_0_1px_0_rgba(0,0,0,0.04)]">
       <TeamRow
         team={topTeam}
         rosterId={topRosterId}
@@ -284,7 +284,7 @@ function TeamScoreBox({
         avatarUrl={getAvatarUrl(topRosterId)}
       />
 
-      <div className="my-3 h-px w-full bg-zinc-800/70" />
+      <div className="my-3 h-px w-full bg-zinc-800/70 light:bg-zinc-200" />
 
       <TeamRow
         team={bottomTeam}
@@ -293,7 +293,7 @@ function TeamScoreBox({
         avatarUrl={getAvatarUrl(bottomRosterId)}
       />
 
-      {note ? <div className="mt-3 text-xs text-zinc-500">{note}</div> : null}
+      {note ? <div className="mt-3 text-xs text-zinc-500 light:text-zinc-500">{note}</div> : null}
     </div>
   );
 }
@@ -570,7 +570,7 @@ export function DashboardCards() {
   const content = useMemo(() => {
     if (error) {
       return (
-        <div className="rounded-2xl border border-red-900/60 bg-zinc-950/60 p-5 text-red-200 shadow-[0_14px_40px_rgba(0,0,0,0.42)]">
+        <div className="rounded-2xl border border-red-900/60 light:border-red-300 bg-zinc-950/60 light:bg-zinc-50 p-5 text-red-200 light:text-red-800 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)]">
           <div className="text-sm font-semibold">Load error</div>
           <div className="mt-2 text-sm opacity-90">{error}</div>
         </div>
@@ -583,13 +583,13 @@ export function DashboardCards() {
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
-              className="overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 p-5 shadow-[0_14px_40px_rgba(0,0,0,0.42)]"
+              className="overflow-hidden rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 p-5 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)]"
             >
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-xl border border-zinc-800/80 bg-zinc-950/60" />
-                <div className="h-4 w-40 rounded bg-zinc-900/50" />
+                <div className="h-10 w-10 rounded-xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50" />
+                <div className="h-4 w-40 rounded bg-zinc-900/50 light:bg-zinc-100" />
               </div>
-              <div className="mt-5 h-24 w-full rounded-xl bg-zinc-900/30" />
+              <div className="mt-5 h-24 w-full rounded-xl bg-zinc-900/30 light:bg-zinc-100/70" />
             </div>
           ))}
         </section>
@@ -605,13 +605,13 @@ export function DashboardCards() {
         <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <CardShell kind="waivers" title="Waiver Wire" subtitle="Season to date • latest pickups">
             {waiverRows.length ? (
-              <div className="overflow-hidden rounded-xl border border-zinc-800/80 bg-zinc-950/40">
+              <div className="overflow-hidden rounded-xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/40 light:bg-zinc-50">
                 {waiverRows.map((r, idx) => (
                   <div key={idx} className="px-4 py-3">
                     <div className="flex items-center justify-between gap-3">
                       <div className="min-w-0 flex items-center gap-2">
                         <TeamAvatar team={r.team} avatarUrl={getAvatarUrl(r.rosterId)} size={28} />
-                        <div className="truncate text-sm font-semibold text-zinc-200">{r.team}</div>
+                        <div className="truncate text-sm font-semibold text-zinc-200 light:text-zinc-800">{r.team}</div>
                       </div>
                       <Pill>{`+${Math.min(r.players.length, 4)}`}</Pill>
                     </div>
@@ -625,7 +625,7 @@ export function DashboardCards() {
                 ))}
               </div>
             ) : (
-              <div className="text-sm text-zinc-400">No waiver activity found.</div>
+              <div className="text-sm text-zinc-400 light:text-zinc-600">No waiver activity found.</div>
             )}
           </CardShell>
 
@@ -633,28 +633,28 @@ export function DashboardCards() {
             {tradeRows.length ? (
               <div className="space-y-3">
                 {tradeRows.map((t, idx) => (
-                  <div key={idx} className="rounded-xl border border-zinc-800/80 bg-zinc-950/40 p-4">
+                  <div key={idx} className="rounded-xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/40 light:bg-zinc-50 p-4">
                     <div className="flex items-center justify-between gap-3">
                       <div className="min-w-0 flex items-center gap-2">
                         <TeamAvatar team={t.aTeam} avatarUrl={getAvatarUrl(t.aRid)} size={28} />
-                        <span className="truncate text-sm font-semibold text-zinc-200">{t.aTeam}</span>
-                        <span className="text-zinc-500">↔</span>
+                        <span className="truncate text-sm font-semibold text-zinc-200 light:text-zinc-800">{t.aTeam}</span>
+                        <span className="text-zinc-500 light:text-zinc-500">↔</span>
                         <TeamAvatar team={t.bTeam} avatarUrl={getAvatarUrl(t.bRid)} size={28} />
-                        <span className="truncate text-sm font-semibold text-zinc-200">{t.bTeam}</span>
+                        <span className="truncate text-sm font-semibold text-zinc-200 light:text-zinc-800">{t.bTeam}</span>
                       </div>
                       <Pill>Trade</Pill>
                     </div>
 
-                    <div className="mt-3 space-y-2 text-xs text-zinc-400">
+                    <div className="mt-3 space-y-2 text-xs text-zinc-400 light:text-zinc-600">
                       <div>
-                        <span className="font-medium text-zinc-300">{t.aTeam}</span> gets
+                        <span className="font-medium text-zinc-300 light:text-zinc-700">{t.aTeam}</span> gets
                         <div className="mt-1">
                           <Chips items={t.aGets} />
                         </div>
                       </div>
 
                       <div className="pt-2">
-                        <span className="font-medium text-zinc-300">{t.bTeam}</span> gets
+                        <span className="font-medium text-zinc-300 light:text-zinc-700">{t.bTeam}</span> gets
                         <div className="mt-1">
                           <Chips items={t.bGets} />
                         </div>
@@ -664,23 +664,23 @@ export function DashboardCards() {
                 ))}
               </div>
             ) : (
-              <div className="text-sm text-zinc-400">No trades found.</div>
+              <div className="text-sm text-zinc-400 light:text-zinc-600">No trades found.</div>
             )}
           </CardShell>
 
           <CardShell kind="power" title="Power Rankings" subtitle="Top 5 right now">
             {powerRows.length ? (
-              <div className="overflow-hidden rounded-xl border border-zinc-800/80 bg-zinc-950/40">
+              <div className="overflow-hidden rounded-xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/40 light:bg-zinc-50">
                 {powerRows.map((r, idx) => (
                   <div key={r.rank} className="px-4 py-3">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-950/70 text-xs font-semibold text-zinc-200">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-800 light:border-zinc-200 bg-zinc-950/70 light:bg-white/80 text-xs font-semibold text-zinc-200 light:text-zinc-800">
                         {r.rank}
                       </div>
                       <TeamAvatar team={r.team} avatarUrl={getAvatarUrl(r.rosterId)} size={28} />
                       <div className="min-w-0 flex-1">
-                        <div className="truncate text-sm font-semibold text-zinc-200">{r.team}</div>
-                        <div className="mt-1 text-xs text-zinc-400">{r.note}</div>
+                        <div className="truncate text-sm font-semibold text-zinc-200 light:text-zinc-800">{r.team}</div>
+                        <div className="mt-1 text-xs text-zinc-400 light:text-zinc-600">{r.note}</div>
                       </div>
                     </div>
 
@@ -693,7 +693,7 @@ export function DashboardCards() {
                 ))}
               </div>
             ) : (
-              <div className="text-sm text-zinc-400">No data yet.</div>
+              <div className="text-sm text-zinc-400 light:text-zinc-600">No data yet.</div>
             )}
           </CardShell>
         </section>
@@ -708,8 +708,8 @@ export function DashboardCards() {
               className={cx(
                 "h-11 md:h-10 rounded-full border px-4 text-sm transition",
                 selectedWeek <= 1 || weeklyLoading
-                  ? "border-zinc-800 text-zinc-600"
-                  : "border-zinc-800 bg-zinc-950/60 text-zinc-200 hover:bg-zinc-900/50"
+                  ? "border-zinc-800 light:border-zinc-200 text-zinc-600 light:text-zinc-500"
+                  : "border-zinc-800 light:border-zinc-200 bg-zinc-950/60 light:bg-zinc-50 text-zinc-200 light:text-zinc-800 hover:bg-zinc-900/50 light:hover:bg-zinc-100"
               )}
             >
               ← Prev
@@ -719,15 +719,15 @@ export function DashboardCards() {
               <select
                 value={selectedWeek}
                 onChange={(e) => setSelectedWeek(Number(e.target.value))}
-                className="h-11 md:h-10 min-w-[120px] md:min-w-[110px] cursor-pointer appearance-none rounded-full border border-zinc-800 bg-zinc-950/60 px-4 pr-10 text-sm font-semibold text-zinc-200 outline-none transition hover:bg-zinc-900/50 focus:border-zinc-700"
+                className="h-11 md:h-10 min-w-[120px] md:min-w-[110px] cursor-pointer appearance-none rounded-full border border-zinc-800 light:border-zinc-200 bg-zinc-950/60 light:bg-zinc-50 px-4 pr-10 text-sm font-semibold text-zinc-200 light:text-zinc-800 outline-none transition hover:bg-zinc-900/50 light:hover:bg-zinc-100 focus:border-zinc-700 light:focus:border-zinc-400"
               >
                 {Array.from({ length: maxWeek }, (_, i) => i + 1).map((w) => (
-                  <option key={w} value={w} className="bg-zinc-950 text-zinc-200">
+                  <option key={w} value={w} className="bg-zinc-950 light:bg-white text-zinc-200 light:text-zinc-800">
                     Week {w}
                   </option>
                 ))}
               </select>
-              <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500">
+              <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 light:text-zinc-500">
                 ▾
               </div>
             </div>
@@ -739,8 +739,8 @@ export function DashboardCards() {
               className={cx(
                 "h-11 md:h-10 rounded-full border px-4 text-sm transition",
                 selectedWeek >= maxWeek || weeklyLoading
-                  ? "border-zinc-800 text-zinc-600"
-                  : "border-zinc-800 bg-zinc-950/60 text-zinc-200 hover:bg-zinc-900/50"
+                  ? "border-zinc-800 light:border-zinc-200 text-zinc-600 light:text-zinc-500"
+                  : "border-zinc-800 light:border-zinc-200 bg-zinc-950/60 light:bg-zinc-50 text-zinc-200 light:text-zinc-800 hover:bg-zinc-900/50 light:hover:bg-zinc-100"
               )}
             >
               Next →
@@ -752,31 +752,31 @@ export function DashboardCards() {
         <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <CardShell kind="motw" title="Matchup of the Week" subtitle={wk}>
             {weeklyLoading ? (
-              <div className="text-sm text-zinc-400">Loading week…</div>
+              <div className="text-sm text-zinc-400 light:text-zinc-600">Loading week…</div>
             ) : motw ? (
               <TeamScoreBox {...motw} getAvatarUrl={getAvatarUrl} />
             ) : (
-              <div className="text-sm text-zinc-400">No matchup pairs found for this week.</div>
+              <div className="text-sm text-zinc-400 light:text-zinc-600">No matchup pairs found for this week.</div>
             )}
           </CardShell>
 
           <CardShell kind="blowout" title="Biggest Blowout" subtitle={wk}>
             {weeklyLoading ? (
-              <div className="text-sm text-zinc-400">Loading week…</div>
+              <div className="text-sm text-zinc-400 light:text-zinc-600">Loading week…</div>
             ) : blowout ? (
               <TeamScoreBox {...blowout} getAvatarUrl={getAvatarUrl} />
             ) : (
-              <div className="text-sm text-zinc-400">No matchup pairs found for this week.</div>
+              <div className="text-sm text-zinc-400 light:text-zinc-600">No matchup pairs found for this week.</div>
             )}
           </CardShell>
 
           <CardShell kind="lucky" title="Luckiest Win" subtitle={wk}>
             {weeklyLoading ? (
-              <div className="text-sm text-zinc-400">Loading week…</div>
+              <div className="text-sm text-zinc-400 light:text-zinc-600">Loading week…</div>
             ) : lucky ? (
               <TeamScoreBox {...lucky} getAvatarUrl={getAvatarUrl} />
             ) : (
-              <div className="text-sm text-zinc-400">No matchup pairs found for this week.</div>
+              <div className="text-sm text-zinc-400 light:text-zinc-600">No matchup pairs found for this week.</div>
             )}
           </CardShell>
         </section>

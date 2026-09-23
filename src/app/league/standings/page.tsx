@@ -35,12 +35,12 @@ function initials(name: string) {
 
 function TeamAvatar({ name, avatarUrl }: { name: string; avatarUrl: string | null }) {
   return (
-    <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-lg border border-zinc-800/80 bg-zinc-950/60 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+    <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-lg border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] light:shadow-[inset_0_1px_0_rgba(0,0,0,0.04)]">
       {avatarUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={avatarUrl} alt={name} className="h-full w-full object-cover" loading="lazy" />
       ) : (
-        <div className="flex h-full w-full items-center justify-center text-[11px] font-semibold text-zinc-200">
+        <div className="flex h-full w-full items-center justify-center text-[11px] font-semibold text-zinc-200 light:text-zinc-800">
           {initials(name)}
         </div>
       )}
@@ -68,8 +68,8 @@ type SortKey =
 type SortDir = "asc" | "desc";
 
 function sortIcon(active: boolean, dir: SortDir) {
-  if (!active) return <span className="ml-1 text-zinc-600">↕</span>;
-  return <span className="ml-1 text-zinc-400">{dir === "asc" ? "↑" : "↓"}</span>;
+  if (!active) return <span className="ml-1 text-zinc-600 light:text-zinc-500">↕</span>;
+  return <span className="ml-1 text-zinc-400 light:text-zinc-600">{dir === "asc" ? "↑" : "↓"}</span>;
 }
 
 type Row = {
@@ -383,14 +383,14 @@ export default function StandingsPage() {
 
   // ✅ same font sizes as your original table
   // ✅ tighter columns: reduce horizontal padding ONLY (keep py the same)
-  const thBtn = "inline-flex items-center hover:text-zinc-200 transition-colors";
+  const thBtn = "inline-flex items-center hover:text-zinc-200 light:hover:text-zinc-800 transition-colors";
   const thTeam = "px-5 py-4";
   const thTight = "px-3 py-4"; // tighter header spacing (was px-5)
-  const tdNum = "px-3 py-4 text-sm font-semibold text-zinc-100"; // same font sizes
-  const tdSoft = "px-3 py-4 text-sm text-zinc-200"; // same font sizes
+  const tdNum = "px-3 py-4 text-sm font-semibold text-zinc-100 light:text-zinc-900"; // same font sizes
+  const tdSoft = "px-3 py-4 text-sm text-zinc-200 light:text-zinc-800"; // same font sizes
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-100">
+    <main className="min-h-screen bg-zinc-950 light:bg-white text-zinc-100 light:text-zinc-900">
       <FloatingNav />
 
       <div className="mx-auto max-w-7xl px-4 pb-12 pt-6 md:pt-24">
@@ -406,8 +406,8 @@ export default function StandingsPage() {
                 className={cx(
                   "h-11 md:h-9 rounded-full border px-4 text-sm transition",
                   isOldest || loading
-                    ? "border-zinc-800 text-zinc-600"
-                    : "border-zinc-800 bg-zinc-950/60 text-zinc-200 hover:bg-zinc-900/50"
+                    ? "border-zinc-800 light:border-zinc-200 text-zinc-600 light:text-zinc-500"
+                    : "border-zinc-800 light:border-zinc-200 bg-zinc-950/60 light:bg-zinc-50 text-zinc-200 light:text-zinc-800 hover:bg-zinc-900/50 light:hover:bg-zinc-100"
                 )}
               >
                 ← Older
@@ -418,15 +418,15 @@ export default function StandingsPage() {
                   value={data?.selectedLeagueId ?? ""}
                   onChange={(e) => setSelectedLeagueId(e.target.value)}
                   disabled={loading}
-                  className="h-11 md:h-9 min-w-[110px] cursor-pointer appearance-none rounded-full border border-zinc-800 bg-zinc-950/60 px-4 pr-9 text-sm font-semibold text-zinc-200 outline-none transition hover:bg-zinc-900/50 focus:border-zinc-700 disabled:opacity-60"
+                  className="h-11 md:h-9 min-w-[110px] cursor-pointer appearance-none rounded-full border border-zinc-800 light:border-zinc-200 bg-zinc-950/60 light:bg-zinc-50 px-4 pr-9 text-sm font-semibold text-zinc-200 light:text-zinc-800 outline-none transition hover:bg-zinc-900/50 light:hover:bg-zinc-100 focus:border-zinc-700 light:focus:border-zinc-400 disabled:opacity-60"
                 >
                   {seasons.map((s) => (
-                    <option key={s.leagueId} value={s.leagueId} className="bg-zinc-950 text-zinc-200">
+                    <option key={s.leagueId} value={s.leagueId} className="bg-zinc-950 light:bg-white text-zinc-200 light:text-zinc-800">
                       {s.season}
                     </option>
                   ))}
                 </select>
-                <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500">
+                <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 light:text-zinc-500">
                   ▾
                 </div>
               </div>
@@ -438,8 +438,8 @@ export default function StandingsPage() {
                 className={cx(
                   "h-11 md:h-9 rounded-full border px-4 text-sm transition",
                   isNewest || loading
-                    ? "border-zinc-800 text-zinc-600"
-                    : "border-zinc-800 bg-zinc-950/60 text-zinc-200 hover:bg-zinc-900/50"
+                    ? "border-zinc-800 light:border-zinc-200 text-zinc-600 light:text-zinc-500"
+                    : "border-zinc-800 light:border-zinc-200 bg-zinc-950/60 light:bg-zinc-50 text-zinc-200 light:text-zinc-800 hover:bg-zinc-900/50 light:hover:bg-zinc-100"
                 )}
               >
                 Newer →
@@ -448,15 +448,15 @@ export default function StandingsPage() {
           ) : null}
 
           <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-            <div className="text-sm text-zinc-400">
+            <div className="text-sm text-zinc-400 light:text-zinc-600">
               {data ? (
                 <>
                   {rangeLabel} •{" "}
                   {data.league?.status === "complete" ? (
-                    <span className="text-zinc-200">Final</span>
+                    <span className="text-zinc-200 light:text-zinc-800">Final</span>
                   ) : (
                     <>
-                      Current week: <span className="text-zinc-200">Week {data.currentWeek}</span>
+                      Current week: <span className="text-zinc-200 light:text-zinc-800">Week {data.currentWeek}</span>
                     </>
                   )}
                 </>
@@ -465,28 +465,28 @@ export default function StandingsPage() {
               )}
             </div>
 
-            <div className="inline-flex overflow-hidden rounded-full border border-zinc-800/80 bg-zinc-950/60">
+            <div className="inline-flex overflow-hidden rounded-full border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50">
               <button
                 type="button"
                 onClick={() => setMode("regular")}
                 className={cx(
                   "h-11 md:h-9 px-4 text-sm transition-colors",
                   mode === "regular"
-                    ? "bg-zinc-900/70 text-zinc-100"
-                    : "text-zinc-300 hover:bg-zinc-900/40"
+                    ? "bg-zinc-900/70 light:bg-zinc-200 text-zinc-100 light:text-zinc-900"
+                    : "text-zinc-300 light:text-zinc-700 hover:bg-zinc-900/40 light:hover:bg-zinc-100"
                 )}
               >
                 Regular Season
               </button>
-              <div className="w-px bg-zinc-800/80" />
+              <div className="w-px bg-zinc-800/80 light:bg-zinc-200" />
               <button
                 type="button"
                 onClick={() => setMode("playoffs")}
                 className={cx(
                   "h-11 md:h-9 px-4 text-sm transition-colors",
                   mode === "playoffs"
-                    ? "bg-zinc-900/70 text-zinc-100"
-                    : "text-zinc-300 hover:bg-zinc-900/40"
+                    ? "bg-zinc-900/70 light:bg-zinc-200 text-zinc-100 light:text-zinc-900"
+                    : "text-zinc-300 light:text-zinc-700 hover:bg-zinc-900/40 light:hover:bg-zinc-100"
                 )}
               >
                 Playoffs
@@ -496,27 +496,27 @@ export default function StandingsPage() {
         </div>
 
         {err ? (
-          <div className="rounded-2xl border border-red-900/60 bg-zinc-950/60 p-5 text-red-200 shadow-[0_14px_40px_rgba(0,0,0,0.42)]">
+          <div className="rounded-2xl border border-red-900/60 light:border-red-300 bg-zinc-950/60 light:bg-zinc-50 p-5 text-red-200 light:text-red-800 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)]">
             <div className="text-sm font-semibold">Load error</div>
             <div className="mt-2 text-sm opacity-90">{err}</div>
           </div>
         ) : null}
 
         {loading ? (
-          <div className="rounded-2xl border border-zinc-800/80 bg-zinc-950/60 p-6 shadow-[0_14px_40px_rgba(0,0,0,0.42)]">
-            <div className="h-4 w-44 rounded bg-zinc-900/40" />
-            <div className="mt-4 h-60 w-full rounded-xl bg-zinc-900/25" />
+          <div className="rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 p-6 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)]">
+            <div className="h-4 w-44 rounded bg-zinc-900/40 light:bg-zinc-100" />
+            <div className="mt-4 h-60 w-full rounded-xl bg-zinc-900/25 light:bg-zinc-100/60" />
           </div>
         ) : null}
 
         {!loading && !err ? (
           <>
             {/* Desktop Table View */}
-            <div className="hidden overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[0_14px_40px_rgba(0,0,0,0.42)] backdrop-blur md:block">
+            <div className="hidden overflow-hidden rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)] backdrop-blur md:block">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-zinc-950/60">
-                    <tr className="text-left text-xs font-semibold tracking-wide text-zinc-400">
+                  <thead className="bg-zinc-950/60 light:bg-zinc-50">
+                    <tr className="text-left text-xs font-semibold tracking-wide text-zinc-400 light:text-zinc-600">
                       <th className={thTeam}>Team</th>
 
                       <th className={thTight}>
@@ -591,17 +591,17 @@ export default function StandingsPage() {
                       return (
                         <tr
                           key={r.rosterId}
-                          className="border-t border-zinc-800/70 hover:bg-zinc-900/25"
+                          className="border-t border-zinc-800/70 light:border-zinc-200 hover:bg-zinc-900/25 light:hover:bg-zinc-100"
                         >
                           <td className={thTeam}>
                             <div className="flex items-center gap-3">
-                              <div className="w-6 text-xs font-semibold text-zinc-500">{idx + 1}</div>
+                              <div className="w-6 text-xs font-semibold text-zinc-500 light:text-zinc-500">{idx + 1}</div>
                               <TeamAvatar name={r.name} avatarUrl={r.avatarUrl} />
                               <div className="min-w-0">
-                                <div className="truncate text-sm font-semibold text-zinc-100">
+                                <div className="truncate text-sm font-semibold text-zinc-100 light:text-zinc-900">
                                   {r.name}
                                 </div>
-                                <div className="mt-1 text-xs text-zinc-500">
+                                <div className="mt-1 text-xs text-zinc-500 light:text-zinc-500">
                                   PF {scoreFmt(r.pf)} • PA {scoreFmt(r.pa)}
                                 </div>
                               </div>
@@ -619,7 +619,7 @@ export default function StandingsPage() {
                           <td className={tdSoft}>{scoreFmt(r.pa)}</td>
 
                           <td className="px-3 py-4">
-                            <span className="inline-flex items-center rounded-full border border-zinc-800 bg-zinc-950/60 px-2 py-0.5 text-xs font-semibold text-zinc-200">
+                            <span className="inline-flex items-center rounded-full border border-zinc-800 light:border-zinc-200 bg-zinc-950/60 light:bg-zinc-50 px-2 py-0.5 text-xs font-semibold text-zinc-200 light:text-zinc-800">
                               {r.streak}
                             </span>
                           </td>
@@ -631,7 +631,7 @@ export default function StandingsPage() {
               </div>
 
               {data?.fetchedAt ? (
-                <div className="border-t border-zinc-800/70 px-5 py-3 text-xs text-zinc-500">
+                <div className="border-t border-zinc-800/70 light:border-zinc-200 px-5 py-3 text-xs text-zinc-500 light:text-zinc-500">
                   Updated {new Date(data.fetchedAt).toLocaleString()} • Playoff week start:{" "}
                   {playoffStartWeek || "—"}
                 </div>
@@ -647,51 +647,51 @@ export default function StandingsPage() {
                 return (
                   <div
                     key={r.rosterId}
-                    className="overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[0_14px_40px_rgba(0,0,0,0.42)] backdrop-blur"
+                    className="overflow-hidden rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)] backdrop-blur"
                   >
-                    <div className="flex items-center gap-3 border-b border-zinc-800/70 p-4">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-950/70 text-sm font-semibold text-zinc-200">
+                    <div className="flex items-center gap-3 border-b border-zinc-800/70 light:border-zinc-200 p-4">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-800 light:border-zinc-200 bg-zinc-950/70 light:bg-white/80 text-sm font-semibold text-zinc-200 light:text-zinc-800">
                         {idx + 1}
                       </div>
                       <TeamAvatar name={r.name} avatarUrl={r.avatarUrl} />
                       <div className="min-w-0 flex-1">
-                        <div className="truncate text-base font-semibold text-zinc-100">
+                        <div className="truncate text-base font-semibold text-zinc-100 light:text-zinc-900">
                           {r.name}
                         </div>
                       </div>
-                      <span className="inline-flex items-center rounded-full border border-zinc-800 bg-zinc-950/60 px-2.5 py-1 text-xs font-semibold text-zinc-200">
+                      <span className="inline-flex items-center rounded-full border border-zinc-800 light:border-zinc-200 bg-zinc-950/60 light:bg-zinc-50 px-2.5 py-1 text-xs font-semibold text-zinc-200 light:text-zinc-800">
                         {r.streak}
                       </span>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4 p-4">
                       <div>
-                        <div className="text-xs font-medium text-zinc-500">Record</div>
-                        <div className="mt-1 text-lg font-semibold text-zinc-100">
+                        <div className="text-xs font-medium text-zinc-500 light:text-zinc-500">Record</div>
+                        <div className="mt-1 text-lg font-semibold text-zinc-100 light:text-zinc-900">
                           {r.wins}-{r.losses}
                         </div>
                       </div>
                       <div>
-                        <div className="text-xs font-medium text-zinc-500">Top 6</div>
-                        <div className="mt-1 text-lg font-semibold text-zinc-100">
+                        <div className="text-xs font-medium text-zinc-500 light:text-zinc-500">Top 6</div>
+                        <div className="mt-1 text-lg font-semibold text-zinc-100 light:text-zinc-900">
                           {r.top6Wins}-{r.top6Losses}
                         </div>
                       </div>
                       <div>
-                        <div className="text-xs font-medium text-zinc-500">Total</div>
-                        <div className="mt-1 text-lg font-semibold text-zinc-100">
+                        <div className="text-xs font-medium text-zinc-500 light:text-zinc-500">Total</div>
+                        <div className="mt-1 text-lg font-semibold text-zinc-100 light:text-zinc-900">
                           {totalW}-{totalL}
                         </div>
                       </div>
                       <div>
-                        <div className="text-xs font-medium text-zinc-500">Points For</div>
-                        <div className="mt-1 text-base font-semibold text-zinc-200">
+                        <div className="text-xs font-medium text-zinc-500 light:text-zinc-500">Points For</div>
+                        <div className="mt-1 text-base font-semibold text-zinc-200 light:text-zinc-800">
                           {scoreFmt(r.pf)}
                         </div>
                       </div>
                       <div className="col-span-2">
-                        <div className="text-xs font-medium text-zinc-500">Points Against</div>
-                        <div className="mt-1 text-base font-semibold text-zinc-200">
+                        <div className="text-xs font-medium text-zinc-500 light:text-zinc-500">Points Against</div>
+                        <div className="mt-1 text-base font-semibold text-zinc-200 light:text-zinc-800">
                           {scoreFmt(r.pa)}
                         </div>
                       </div>
@@ -701,7 +701,7 @@ export default function StandingsPage() {
               })}
 
               {data?.fetchedAt ? (
-                <div className="rounded-xl border border-zinc-800/70 bg-zinc-950/60 px-4 py-3 text-xs text-zinc-500">
+                <div className="rounded-xl border border-zinc-800/70 light:border-zinc-200 bg-zinc-950/60 light:bg-zinc-50 px-4 py-3 text-xs text-zinc-500 light:text-zinc-500">
                   Updated {new Date(data.fetchedAt).toLocaleString()} • Playoff week start:{" "}
                   {playoffStartWeek || "—"}
                 </div>

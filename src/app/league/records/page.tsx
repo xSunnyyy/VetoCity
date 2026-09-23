@@ -93,7 +93,7 @@ function Avatar({
   const s = `${size}px`;
   return (
     <div
-      className="relative shrink-0 overflow-hidden rounded-xl border border-zinc-800/80 bg-zinc-950/60 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
+      className="relative shrink-0 overflow-hidden rounded-xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] light:shadow-[inset_0_1px_0_rgba(0,0,0,0.04)]"
       style={{ width: s, height: s }}
       title={name}
     >
@@ -106,7 +106,7 @@ function Avatar({
           loading="lazy"
         />
       ) : (
-        <div className="flex h-full w-full items-center justify-center text-xs font-semibold text-zinc-200">
+        <div className="flex h-full w-full items-center justify-center text-xs font-semibold text-zinc-200 light:text-zinc-800">
           {initials(name)}
         </div>
       )}
@@ -117,7 +117,7 @@ function Avatar({
 function Card({
   title,
   subtitle,
-  accent = "from-zinc-800/25",
+  accent = "from-zinc-800/25 light:from-zinc-300/30",
   children,
 }: {
   title: string;
@@ -126,7 +126,7 @@ function Card({
   children: React.ReactNode;
 }) {
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[0_14px_40px_rgba(0,0,0,0.42)] backdrop-blur">
+    <div className="group relative overflow-hidden rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)] backdrop-blur">
       <div className="pointer-events-none absolute inset-0 opacity-0 transition group-hover:opacity-100">
         <div
           className={cx(
@@ -138,11 +138,11 @@ function Card({
       </div>
 
       <div className="relative px-5 pt-5">
-        <div className="text-sm font-semibold tracking-wide text-zinc-100">
+        <div className="text-sm font-semibold tracking-wide text-zinc-100 light:text-zinc-900">
           {title}
         </div>
         {subtitle ? (
-          <div className="mt-1 text-xs text-zinc-500">{subtitle}</div>
+          <div className="mt-1 text-xs text-zinc-500 light:text-zinc-500">{subtitle}</div>
         ) : null}
       </div>
 
@@ -178,7 +178,7 @@ function ListCard({
   const [open, setOpen] = useState(defaultOpen);
 
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[0_14px_40px_rgba(0,0,0,0.42)] backdrop-blur">
+    <div className="group relative overflow-hidden rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)] backdrop-blur">
       <div className="pointer-events-none absolute inset-0 opacity-0 transition group-hover:opacity-100">
         <div
           className={cx(
@@ -197,15 +197,15 @@ function ListCard({
         aria-controls={id}
       >
         <div className="min-w-0">
-          <div className="text-sm font-semibold tracking-wide text-zinc-100">
+          <div className="text-sm font-semibold tracking-wide text-zinc-100 light:text-zinc-900">
             {title}
           </div>
-          <div className="mt-1 text-xs text-zinc-500">{subtitle}</div>
+          <div className="mt-1 text-xs text-zinc-500 light:text-zinc-500">{subtitle}</div>
         </div>
 
         <div
           className={cx(
-            "flex h-9 w-9 items-center justify-center rounded-xl border border-zinc-800/80 bg-zinc-950/60 text-zinc-300 transition",
+            "flex h-9 w-9 items-center justify-center rounded-xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 text-zinc-300 light:text-zinc-700 transition",
             open ? "rotate-180" : "rotate-0"
           )}
           aria-hidden
@@ -230,7 +230,7 @@ function ListCard({
               </div>
             ))
           ) : (
-            <div className="text-sm text-zinc-400">No data yet.</div>
+            <div className="text-sm text-zinc-400 light:text-zinc-600">No data yet.</div>
           )}
         </div>
       </div>
@@ -261,12 +261,12 @@ function ManagerTable({
 
   const accent =
     view === "lineup"
-      ? "from-violet-500/14"
+      ? "from-violet-500/14 light:from-violet-200/50"
       : view === "wins"
-      ? "from-emerald-500/14"
+      ? "from-emerald-500/14 light:from-emerald-200/50"
       : view === "points"
-      ? "from-sky-500/14"
-      : "from-amber-500/14";
+      ? "from-sky-500/14 light:from-sky-200/50"
+      : "from-amber-500/14 light:from-amber-200/50";
 
   const columns =
     view === "lineup"
@@ -299,22 +299,22 @@ function ManagerTable({
           <select
             value={view}
             onChange={(e) => setView(e.target.value as ManagerView)}
-            className="h-10 min-w-[280px] cursor-pointer appearance-none rounded-full border border-zinc-800 bg-zinc-950/60 px-4 pr-10 text-sm font-semibold text-zinc-200 outline-none transition hover:bg-zinc-900/50 focus:border-zinc-700"
+            className="h-10 min-w-[280px] cursor-pointer appearance-none rounded-full border border-zinc-800 light:border-zinc-200 bg-zinc-950/60 light:bg-zinc-50 px-4 pr-10 text-sm font-semibold text-zinc-200 light:text-zinc-800 outline-none transition hover:bg-zinc-900/50 light:hover:bg-zinc-100 focus:border-zinc-700 light:focus:border-zinc-400"
           >
-            <option value="lineup" className="bg-zinc-950 text-zinc-200">
+            <option value="lineup" className="bg-zinc-950 light:bg-white text-zinc-200 light:text-zinc-800">
               Lineup IQ
             </option>
-            <option value="wins" className="bg-zinc-950 text-zinc-200">
+            <option value="wins" className="bg-zinc-950 light:bg-white text-zinc-200 light:text-zinc-800">
               Wins
             </option>
-            <option value="points" className="bg-zinc-950 text-zinc-200">
+            <option value="points" className="bg-zinc-950 light:bg-white text-zinc-200 light:text-zinc-800">
               Fantasy Points
             </option>
-            <option value="txns" className="bg-zinc-950 text-zinc-200">
+            <option value="txns" className="bg-zinc-950 light:bg-white text-zinc-200 light:text-zinc-800">
               Transactions
             </option>
           </select>
-          <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500">
+          <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 light:text-zinc-500">
             ▾
           </div>
         </div>
@@ -322,10 +322,10 @@ function ManagerTable({
 
       {/* table card */}
       <Card title={columns.join(" • ")} subtitle={undefined} accent={accent}>
-        <div className="overflow-hidden rounded-2xl border border-zinc-800/70 bg-zinc-950/40">
+        <div className="overflow-hidden rounded-2xl border border-zinc-800/70 light:border-zinc-200 bg-zinc-950/40 light:bg-zinc-50">
           <div
             className={cx(
-              "grid items-center gap-3 border-b border-zinc-800/70 bg-zinc-950/70 px-4 py-3 text-xs font-semibold text-zinc-400",
+              "grid items-center gap-3 border-b border-zinc-800/70 light:border-zinc-200 bg-zinc-950/70 light:bg-white/80 px-4 py-3 text-xs font-semibold text-zinc-400 light:text-zinc-600",
               "grid-cols-[1.4fr_0.6fr_0.6fr_0.6fr]"
             )}
           >
@@ -340,14 +340,14 @@ function ManagerTable({
               {Array.from({ length: 8 }).map((_, i) => (
                 <div
                   key={i}
-                  className="h-11 rounded-xl border border-zinc-800/60 bg-zinc-900/20"
+                  className="h-11 rounded-xl border border-zinc-800/60 light:border-zinc-200 bg-zinc-900/20 light:bg-zinc-100/60"
                 />
               ))}
             </div>
           ) : !sorted.length ? (
-            <div className="p-4 text-sm text-zinc-400">No managers found.</div>
+            <div className="p-4 text-sm text-zinc-400 light:text-zinc-600">No managers found.</div>
           ) : (
-            <div className="divide-y divide-zinc-800/60">
+            <div className="divide-y divide-zinc-800/60 light:divide-zinc-200">
               {sorted.map((m, i) => {
                 let c2 = "";
                 let c3 = "";
@@ -381,19 +381,19 @@ function ManagerTable({
                   >
                     <div className="min-w-0">
                       <div className="flex min-w-0 items-center gap-3">
-                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-950/70 text-[11px] font-semibold text-zinc-200">
+                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-zinc-800 light:border-zinc-200 bg-zinc-950/70 light:bg-white/80 text-[11px] font-semibold text-zinc-200 light:text-zinc-800">
                           {i + 1}
                         </div>
                         <Avatar name={m.managerName} avatar={m.avatar} size={34} />
-                        <div className="min-w-0 truncate text-sm font-semibold text-zinc-200">
+                        <div className="min-w-0 truncate text-sm font-semibold text-zinc-200 light:text-zinc-800">
                           {m.managerName}
                         </div>
                       </div>
                     </div>
 
-                    <div className="text-right text-sm font-semibold text-zinc-100">{c2}</div>
-                    <div className="text-right text-sm font-semibold text-zinc-100">{c3}</div>
-                    <div className="text-right text-sm font-semibold text-zinc-100">{c4}</div>
+                    <div className="text-right text-sm font-semibold text-zinc-100 light:text-zinc-900">{c2}</div>
+                    <div className="text-right text-sm font-semibold text-zinc-100 light:text-zinc-900">{c3}</div>
+                    <div className="text-right text-sm font-semibold text-zinc-100 light:text-zinc-900">{c4}</div>
                   </div>
                 );
               })}
@@ -422,7 +422,7 @@ function AllTimeCard({
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[0_14px_40px_rgba(0,0,0,0.42)] backdrop-blur">
+    <div className="group relative overflow-hidden rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)] backdrop-blur">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
@@ -430,17 +430,17 @@ function AllTimeCard({
         aria-expanded={open}
       >
         <div className="min-w-0">
-          <div className="text-sm font-semibold tracking-wide text-zinc-100">
+          <div className="text-sm font-semibold tracking-wide text-zinc-100 light:text-zinc-900">
             All-Time Rankings
           </div>
-          <div className="mt-1 text-xs text-zinc-500">
+          <div className="mt-1 text-xs text-zinc-500 light:text-zinc-500">
             Lineup IQ • Wins • Fantasy Points • Transactions
           </div>
         </div>
 
         <div
           className={cx(
-            "flex h-9 w-9 items-center justify-center rounded-xl border border-zinc-800/80 bg-zinc-950/60 text-zinc-300 transition",
+            "flex h-9 w-9 items-center justify-center rounded-xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 text-zinc-300 light:text-zinc-700 transition",
             open ? "rotate-180" : "rotate-0"
           )}
           aria-hidden
@@ -451,7 +451,7 @@ function AllTimeCard({
 
       <div className={cx("relative px-5 pb-5", open ? "block" : "hidden")}>
         {mgrErr ? (
-          <div className="mb-4 rounded-2xl border border-red-900/60 bg-zinc-950/60 p-5 text-red-200 shadow-[0_14px_40px_rgba(0,0,0,0.42)]">
+          <div className="mb-4 rounded-2xl border border-red-900/60 light:border-red-300 bg-zinc-950/60 light:bg-zinc-50 p-5 text-red-200 light:text-red-800 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)]">
             <div className="text-sm font-semibold">Load error</div>
             <div className="mt-2 text-sm opacity-90">{mgrErr}</div>
           </div>
@@ -543,7 +543,7 @@ export default function RecordsPage() {
   const managers = useMemo(() => mgrData?.rows ?? [], [mgrData]);
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-100">
+    <main className="min-h-screen bg-zinc-950 light:bg-white text-zinc-100 light:text-zinc-900">
       <FloatingNav />
 
       <div className="mx-auto w-full max-w-6xl px-4 pb-12 pt-6 md:pt-24">
@@ -552,7 +552,7 @@ export default function RecordsPage() {
         </div>
 
         {err ? (
-          <div className="rounded-2xl border border-red-900/60 bg-zinc-950/60 p-5 text-red-200 shadow-[0_14px_40px_rgba(0,0,0,0.42)]">
+          <div className="rounded-2xl border border-red-900/60 light:border-red-300 bg-zinc-950/60 light:bg-zinc-50 p-5 text-red-200 light:text-red-800 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)]">
             <div className="text-sm font-semibold">Load error</div>
             <div className="mt-2 text-sm opacity-90">{err}</div>
           </div>
@@ -563,19 +563,19 @@ export default function RecordsPage() {
             {Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
-                className="overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 p-6 shadow-[0_14px_40px_rgba(0,0,0,0.42)]"
+                className="overflow-hidden rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 p-6 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)]"
               >
-                <div className="h-4 w-52 rounded bg-zinc-900/50" />
+                <div className="h-4 w-52 rounded bg-zinc-900/50 light:bg-zinc-100" />
                 <div className="mt-4 space-y-2">
                   {Array.from({ length: 6 }).map((__, j) => (
-                    <div key={j} className="h-12 rounded-xl bg-zinc-900/30" />
+                    <div key={j} className="h-12 rounded-xl bg-zinc-900/30 light:bg-zinc-100/70" />
                   ))}
                 </div>
               </div>
             ))}
           </section>
         ) : !lists ? (
-          <div className="text-sm text-zinc-400">No records found.</div>
+          <div className="text-sm text-zinc-400 light:text-zinc-600">No records found.</div>
         ) : (
           <>
             <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -585,22 +585,22 @@ export default function RecordsPage() {
                 id="highest-week"
                 title="Highest Week Score"
                 subtitle="Top 10"
-                accent="from-amber-500/14"
+                accent="from-amber-500/14 light:from-amber-200/50"
                 items={lists.highestWeekScore}
                 defaultOpen={false}
                 renderRow={(it: TopEntry, idx) => (
-                  <div className="flex items-center justify-between gap-3 rounded-xl border border-zinc-800/70 bg-zinc-950/40 px-4 py-3">
+                  <div className="flex items-center justify-between gap-3 rounded-xl border border-zinc-800/70 light:border-zinc-200 bg-zinc-950/40 light:bg-zinc-50 px-4 py-3">
                     <div className="flex min-w-0 items-center gap-3">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-950/70 text-xs font-semibold text-zinc-200">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 light:border-zinc-200 bg-zinc-950/70 light:bg-white/80 text-xs font-semibold text-zinc-200 light:text-zinc-800">
                         {idx}
                       </div>
                       <Avatar name={it.team.teamName} avatar={it.team.avatar} size={34} />
                       <div className="min-w-0">
-                        <div className="truncate text-sm font-semibold text-zinc-200">{it.team.teamName}</div>
-                        <div className="mt-0.5 truncate text-xs text-zinc-500">{When(it.season, it.week)}</div>
+                        <div className="truncate text-sm font-semibold text-zinc-200 light:text-zinc-800">{it.team.teamName}</div>
+                        <div className="mt-0.5 truncate text-xs text-zinc-500 light:text-zinc-500">{When(it.season, it.week)}</div>
                       </div>
                     </div>
-                    <div className="shrink-0 text-sm font-semibold text-zinc-100">{it.label}</div>
+                    <div className="shrink-0 text-sm font-semibold text-zinc-100 light:text-zinc-900">{it.label}</div>
                   </div>
                 )}
               />
@@ -610,22 +610,22 @@ export default function RecordsPage() {
                 id="lowest-week"
                 title="Lowest Week Score"
                 subtitle="Top 10"
-                accent="from-zinc-500/16"
+                accent="from-zinc-500/16 light:from-zinc-400/10"
                 items={lists.lowestWeekScore}
                 defaultOpen={false}
                 renderRow={(it: TopEntry, idx) => (
-                  <div className="flex items-center justify-between gap-3 rounded-xl border border-zinc-800/70 bg-zinc-950/40 px-4 py-3">
+                  <div className="flex items-center justify-between gap-3 rounded-xl border border-zinc-800/70 light:border-zinc-200 bg-zinc-950/40 light:bg-zinc-50 px-4 py-3">
                     <div className="flex min-w-0 items-center gap-3">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-950/70 text-xs font-semibold text-zinc-200">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 light:border-zinc-200 bg-zinc-950/70 light:bg-white/80 text-xs font-semibold text-zinc-200 light:text-zinc-800">
                         {idx}
                       </div>
                       <Avatar name={it.team.teamName} avatar={it.team.avatar} size={34} />
                       <div className="min-w-0">
-                        <div className="truncate text-sm font-semibold text-zinc-200">{it.team.teamName}</div>
-                        <div className="mt-0.5 truncate text-xs text-zinc-500">{When(it.season, it.week)}</div>
+                        <div className="truncate text-sm font-semibold text-zinc-200 light:text-zinc-800">{it.team.teamName}</div>
+                        <div className="mt-0.5 truncate text-xs text-zinc-500 light:text-zinc-500">{When(it.season, it.week)}</div>
                       </div>
                     </div>
-                    <div className="shrink-0 text-sm font-semibold text-zinc-100">{it.label}</div>
+                    <div className="shrink-0 text-sm font-semibold text-zinc-100 light:text-zinc-900">{it.label}</div>
                   </div>
                 )}
               />
@@ -639,9 +639,9 @@ export default function RecordsPage() {
                 items={lists.biggestBlowout}
                 defaultOpen={false}
                 renderRow={(it: TopEntry, idx) => (
-                  <div className="flex items-center justify-between gap-3 rounded-xl border border-zinc-800/70 bg-zinc-950/40 px-4 py-3">
+                  <div className="flex items-center justify-between gap-3 rounded-xl border border-zinc-800/70 light:border-zinc-200 bg-zinc-950/40 light:bg-zinc-50 px-4 py-3">
                     <div className="flex min-w-0 items-center gap-3">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-950/70 text-xs font-semibold text-zinc-200">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 light:border-zinc-200 bg-zinc-950/70 light:bg-white/80 text-xs font-semibold text-zinc-200 light:text-zinc-800">
                         {idx}
                       </div>
                       <div className="flex items-center gap-2">
@@ -649,16 +649,16 @@ export default function RecordsPage() {
                         {it.opponent ? <Avatar name={it.opponent.teamName} avatar={it.opponent.avatar} size={30} /> : null}
                       </div>
                       <div className="min-w-0">
-                        <div className="truncate text-sm font-semibold text-zinc-200">
+                        <div className="truncate text-sm font-semibold text-zinc-200 light:text-zinc-800">
                           {it.team.teamName}
-                          {it.opponent ? <span className="text-zinc-500"> vs {it.opponent.teamName}</span> : null}
+                          {it.opponent ? <span className="text-zinc-500 light:text-zinc-500"> vs {it.opponent.teamName}</span> : null}
                         </div>
-                        <div className="mt-0.5 truncate text-xs text-zinc-500">
+                        <div className="mt-0.5 truncate text-xs text-zinc-500 light:text-zinc-500">
                           {When(it.season, it.week)}{it.note ? ` • ${it.note}` : ""}
                         </div>
                       </div>
                     </div>
-                    <div className="shrink-0 text-sm font-semibold text-zinc-100">{it.label}</div>
+                    <div className="shrink-0 text-sm font-semibold text-zinc-100 light:text-zinc-900">{it.label}</div>
                   </div>
                 )}
               />
@@ -667,13 +667,13 @@ export default function RecordsPage() {
                 id="closest"
                 title="Closest Wins"
                 subtitle="Top 10 smallest margins"
-                accent="from-emerald-500/14"
+                accent="from-emerald-500/14 light:from-emerald-200/50"
                 items={lists.closestWin}
                 defaultOpen={false}
                 renderRow={(it: TopEntry, idx) => (
-                  <div className="flex items-center justify-between gap-3 rounded-xl border border-zinc-800/70 bg-zinc-950/40 px-4 py-3">
+                  <div className="flex items-center justify-between gap-3 rounded-xl border border-zinc-800/70 light:border-zinc-200 bg-zinc-950/40 light:bg-zinc-50 px-4 py-3">
                     <div className="flex min-w-0 items-center gap-3">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-950/70 text-xs font-semibold text-zinc-200">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 light:border-zinc-200 bg-zinc-950/70 light:bg-white/80 text-xs font-semibold text-zinc-200 light:text-zinc-800">
                         {idx}
                       </div>
                       <div className="flex items-center gap-2">
@@ -681,16 +681,16 @@ export default function RecordsPage() {
                         {it.opponent ? <Avatar name={it.opponent.teamName} avatar={it.opponent.avatar} size={30} /> : null}
                       </div>
                       <div className="min-w-0">
-                        <div className="truncate text-sm font-semibold text-zinc-200">
+                        <div className="truncate text-sm font-semibold text-zinc-200 light:text-zinc-800">
                           {it.team.teamName}
-                          {it.opponent ? <span className="text-zinc-500"> vs {it.opponent.teamName}</span> : null}
+                          {it.opponent ? <span className="text-zinc-500 light:text-zinc-500"> vs {it.opponent.teamName}</span> : null}
                         </div>
-                        <div className="mt-0.5 truncate text-xs text-zinc-500">
+                        <div className="mt-0.5 truncate text-xs text-zinc-500 light:text-zinc-500">
                           {When(it.season, it.week)}{it.note ? ` • ${it.note}` : ""}
                         </div>
                       </div>
                     </div>
-                    <div className="shrink-0 text-sm font-semibold text-zinc-100">{it.label}</div>
+                    <div className="shrink-0 text-sm font-semibold text-zinc-100 light:text-zinc-900">{it.label}</div>
                   </div>
                 )}
               />
@@ -699,13 +699,13 @@ export default function RecordsPage() {
                 id="combined"
                 title="Highest Combined Scores"
                 subtitle="Top 10 totals"
-                accent="from-violet-500/16"
+                accent="from-violet-500/16 light:from-violet-200/50"
                 items={lists.highestCombined}
                 defaultOpen={false}
                 renderRow={(it: TopEntry, idx) => (
-                  <div className="flex items-center justify-between gap-3 rounded-xl border border-zinc-800/70 bg-zinc-950/40 px-4 py-3">
+                  <div className="flex items-center justify-between gap-3 rounded-xl border border-zinc-800/70 light:border-zinc-200 bg-zinc-950/40 light:bg-zinc-50 px-4 py-3">
                     <div className="flex min-w-0 items-center gap-3">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-950/70 text-xs font-semibold text-zinc-200">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 light:border-zinc-200 bg-zinc-950/70 light:bg-white/80 text-xs font-semibold text-zinc-200 light:text-zinc-800">
                         {idx}
                       </div>
                       <div className="flex items-center gap-2">
@@ -713,16 +713,16 @@ export default function RecordsPage() {
                         {it.opponent ? <Avatar name={it.opponent.teamName} avatar={it.opponent.avatar} size={30} /> : null}
                       </div>
                       <div className="min-w-0">
-                        <div className="truncate text-sm font-semibold text-zinc-200">
+                        <div className="truncate text-sm font-semibold text-zinc-200 light:text-zinc-800">
                           {it.team.teamName}
-                          {it.opponent ? <span className="text-zinc-500"> vs {it.opponent.teamName}</span> : null}
+                          {it.opponent ? <span className="text-zinc-500 light:text-zinc-500"> vs {it.opponent.teamName}</span> : null}
                         </div>
-                        <div className="mt-0.5 truncate text-xs text-zinc-500">
+                        <div className="mt-0.5 truncate text-xs text-zinc-500 light:text-zinc-500">
                           {When(it.season, it.week)}{it.note ? ` • ${it.note}` : ""}
                         </div>
                       </div>
                     </div>
-                    <div className="shrink-0 text-sm font-semibold text-zinc-100">{it.label}</div>
+                    <div className="shrink-0 text-sm font-semibold text-zinc-100 light:text-zinc-900">{it.label}</div>
                   </div>
                 )}
               />
@@ -731,24 +731,24 @@ export default function RecordsPage() {
                 id="most-pf"
                 title="Most Points For"
                 subtitle="Season totals"
-                accent="from-sky-500/14"
+                accent="from-sky-500/14 light:from-sky-200/50"
                 items={lists.mostSeasonPF}
                 defaultOpen={false}
                 renderRow={(it: TopEntry, idx) => (
-                  <div className="flex items-center justify-between gap-3 rounded-xl border border-zinc-800/70 bg-zinc-950/40 px-4 py-3">
+                  <div className="flex items-center justify-between gap-3 rounded-xl border border-zinc-800/70 light:border-zinc-200 bg-zinc-950/40 light:bg-zinc-50 px-4 py-3">
                     <div className="flex min-w-0 items-center gap-3">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-950/70 text-xs font-semibold text-zinc-200">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 light:border-zinc-200 bg-zinc-950/70 light:bg-white/80 text-xs font-semibold text-zinc-200 light:text-zinc-800">
                         {idx}
                       </div>
                       <Avatar name={it.team.teamName} avatar={it.team.avatar} size={34} />
                       <div className="min-w-0">
-                        <div className="truncate text-sm font-semibold text-zinc-200">{it.team.teamName}</div>
-                        <div className="mt-0.5 truncate text-xs text-zinc-500">
+                        <div className="truncate text-sm font-semibold text-zinc-200 light:text-zinc-800">{it.team.teamName}</div>
+                        <div className="mt-0.5 truncate text-xs text-zinc-500 light:text-zinc-500">
                           {When(it.season)}{it.note ? ` • ${it.note}` : ""}
                         </div>
                       </div>
                     </div>
-                    <div className="shrink-0 text-sm font-semibold text-zinc-100">{it.label}</div>
+                    <div className="shrink-0 text-sm font-semibold text-zinc-100 light:text-zinc-900">{it.label}</div>
                   </div>
                 )}
               />
@@ -757,24 +757,24 @@ export default function RecordsPage() {
                 id="least-pa"
                 title="Least Points Against"
                 subtitle="Season totals"
-                accent="from-emerald-500/14"
+                accent="from-emerald-500/14 light:from-emerald-200/50"
                 items={lists.leastSeasonPA}
                 defaultOpen={false}
                 renderRow={(it: TopEntry, idx) => (
-                  <div className="flex items-center justify-between gap-3 rounded-xl border border-zinc-800/70 bg-zinc-950/40 px-4 py-3">
+                  <div className="flex items-center justify-between gap-3 rounded-xl border border-zinc-800/70 light:border-zinc-200 bg-zinc-950/40 light:bg-zinc-50 px-4 py-3">
                     <div className="flex min-w-0 items-center gap-3">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-950/70 text-xs font-semibold text-zinc-200">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 light:border-zinc-200 bg-zinc-950/70 light:bg-white/80 text-xs font-semibold text-zinc-200 light:text-zinc-800">
                         {idx}
                       </div>
                       <Avatar name={it.team.teamName} avatar={it.team.avatar} size={34} />
                       <div className="min-w-0">
-                        <div className="truncate text-sm font-semibold text-zinc-200">{it.team.teamName}</div>
-                        <div className="mt-0.5 truncate text-xs text-zinc-500">
+                        <div className="truncate text-sm font-semibold text-zinc-200 light:text-zinc-800">{it.team.teamName}</div>
+                        <div className="mt-0.5 truncate text-xs text-zinc-500 light:text-zinc-500">
                           {When(it.season)}{it.note ? ` • ${it.note}` : ""}
                         </div>
                       </div>
                     </div>
-                    <div className="shrink-0 text-sm font-semibold text-zinc-100">{it.label}</div>
+                    <div className="shrink-0 text-sm font-semibold text-zinc-100 light:text-zinc-900">{it.label}</div>
                   </div>
                 )}
               />
@@ -787,20 +787,20 @@ export default function RecordsPage() {
                 items={lists.mostSeasonPA}
                 defaultOpen={false}
                 renderRow={(it: TopEntry, idx) => (
-                  <div className="flex items-center justify-between gap-3 rounded-xl border border-zinc-800/70 bg-zinc-950/40 px-4 py-3">
+                  <div className="flex items-center justify-between gap-3 rounded-xl border border-zinc-800/70 light:border-zinc-200 bg-zinc-950/40 light:bg-zinc-50 px-4 py-3">
                     <div className="flex min-w-0 items-center gap-3">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-950/70 text-xs font-semibold text-zinc-200">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 light:border-zinc-200 bg-zinc-950/70 light:bg-white/80 text-xs font-semibold text-zinc-200 light:text-zinc-800">
                         {idx}
                       </div>
                       <Avatar name={it.team.teamName} avatar={it.team.avatar} size={34} />
                       <div className="min-w-0">
-                        <div className="truncate text-sm font-semibold text-zinc-200">{it.team.teamName}</div>
-                        <div className="mt-0.5 truncate text-xs text-zinc-500">
+                        <div className="truncate text-sm font-semibold text-zinc-200 light:text-zinc-800">{it.team.teamName}</div>
+                        <div className="mt-0.5 truncate text-xs text-zinc-500 light:text-zinc-500">
                           {When(it.season)}{it.note ? ` • ${it.note}` : ""}
                         </div>
                       </div>
                     </div>
-                    <div className="shrink-0 text-sm font-semibold text-zinc-100">{it.label}</div>
+                    <div className="shrink-0 text-sm font-semibold text-zinc-100 light:text-zinc-900">{it.label}</div>
                   </div>
                 )}
               />
@@ -809,24 +809,24 @@ export default function RecordsPage() {
                 id="best"
                 title="Best Records"
                 subtitle="Season win% (Top 10)"
-                accent="from-amber-500/14"
+                accent="from-amber-500/14 light:from-amber-200/50"
                 items={lists.bestSeasonRecord}
                 defaultOpen={false}
                 renderRow={(it: TopEntry, idx) => (
-                  <div className="flex items-center justify-between gap-3 rounded-xl border border-zinc-800/70 bg-zinc-950/40 px-4 py-3">
+                  <div className="flex items-center justify-between gap-3 rounded-xl border border-zinc-800/70 light:border-zinc-200 bg-zinc-950/40 light:bg-zinc-50 px-4 py-3">
                     <div className="flex min-w-0 items-center gap-3">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-950/70 text-xs font-semibold text-zinc-200">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 light:border-zinc-200 bg-zinc-950/70 light:bg-white/80 text-xs font-semibold text-zinc-200 light:text-zinc-800">
                         {idx}
                       </div>
                       <Avatar name={it.team.teamName} avatar={it.team.avatar} size={34} />
                       <div className="min-w-0">
-                        <div className="truncate text-sm font-semibold text-zinc-200">{it.team.teamName}</div>
-                        <div className="mt-0.5 truncate text-xs text-zinc-500">
+                        <div className="truncate text-sm font-semibold text-zinc-200 light:text-zinc-800">{it.team.teamName}</div>
+                        <div className="mt-0.5 truncate text-xs text-zinc-500 light:text-zinc-500">
                           {When(it.season)}{it.note ? ` • ${it.note}` : ""}
                         </div>
                       </div>
                     </div>
-                    <div className="shrink-0 text-sm font-semibold text-zinc-100">{it.label}</div>
+                    <div className="shrink-0 text-sm font-semibold text-zinc-100 light:text-zinc-900">{it.label}</div>
                   </div>
                 )}
               />
@@ -835,24 +835,24 @@ export default function RecordsPage() {
                 id="worst"
                 title="Worst Records"
                 subtitle="Season win% (Bottom 10)"
-                accent="from-zinc-500/14"
+                accent="from-zinc-500/14 light:from-zinc-400/10"
                 items={lists.worstSeasonRecord}
                 defaultOpen={false}
                 renderRow={(it: TopEntry, idx) => (
-                  <div className="flex items-center justify-between gap-3 rounded-xl border border-zinc-800/70 bg-zinc-950/40 px-4 py-3">
+                  <div className="flex items-center justify-between gap-3 rounded-xl border border-zinc-800/70 light:border-zinc-200 bg-zinc-950/40 light:bg-zinc-50 px-4 py-3">
                     <div className="flex min-w-0 items-center gap-3">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-950/70 text-xs font-semibold text-zinc-200">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 light:border-zinc-200 bg-zinc-950/70 light:bg-white/80 text-xs font-semibold text-zinc-200 light:text-zinc-800">
                         {idx}
                       </div>
                       <Avatar name={it.team.teamName} avatar={it.team.avatar} size={34} />
                       <div className="min-w-0">
-                        <div className="truncate text-sm font-semibold text-zinc-200">{it.team.teamName}</div>
-                        <div className="mt-0.5 truncate text-xs text-zinc-500">
+                        <div className="truncate text-sm font-semibold text-zinc-200 light:text-zinc-800">{it.team.teamName}</div>
+                        <div className="mt-0.5 truncate text-xs text-zinc-500 light:text-zinc-500">
                           {When(it.season)}{it.note ? ` • ${it.note}` : ""}
                         </div>
                       </div>
                     </div>
-                    <div className="shrink-0 text-sm font-semibold text-zinc-100">{it.label}</div>
+                    <div className="shrink-0 text-sm font-semibold text-zinc-100 light:text-zinc-900">{it.label}</div>
                   </div>
                 )}
               />

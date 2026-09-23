@@ -64,7 +64,7 @@ function cx(...parts: Array<string | false | null | undefined>) {
 function ChevronIcon({ expanded }: { expanded: boolean }) {
   return (
     <svg
-      className={cx("h-4 w-4 shrink-0 text-zinc-500 transition-transform", expanded && "rotate-90")}
+      className={cx("h-4 w-4 shrink-0 text-zinc-500 light:text-zinc-500 transition-transform", expanded && "rotate-90")}
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -146,8 +146,8 @@ function WinnerButton({
       className={cx(
         "flex-1 truncate rounded-xl border px-3 py-2 text-center text-sm font-medium transition",
         active
-          ? "border-red-800/60 bg-red-950/40 text-red-100"
-          : "border-zinc-800 bg-zinc-950/60 text-zinc-300 hover:bg-zinc-900/50"
+          ? "border-red-800/60 light:border-red-400 bg-red-950/40 light:bg-red-100 text-red-100 light:text-red-800"
+          : "border-zinc-800 light:border-zinc-200 bg-zinc-950/60 light:bg-zinc-50 text-zinc-300 light:text-zinc-700 hover:bg-zinc-900/50 light:hover:bg-zinc-100"
       )}
     >
       {label}
@@ -157,19 +157,19 @@ function WinnerButton({
 
 function RosterList({ starters, players }: { starters: string[]; players: PlayerMap | null }) {
   if (!starters.length) {
-    return <div className="rounded-xl border border-zinc-800 bg-zinc-950/60 p-3 text-xs text-zinc-500">No starting lineup set for this week yet.</div>;
+    return <div className="rounded-xl border border-zinc-800 light:border-zinc-200 bg-zinc-950/60 light:bg-zinc-50 p-3 text-xs text-zinc-500 light:text-zinc-500">No starting lineup set for this week yet.</div>;
   }
 
   return (
-    <div className="divide-y divide-zinc-800/70 overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950/60">
+    <div className="divide-y divide-zinc-800/70 light:divide-zinc-200 overflow-hidden rounded-xl border border-zinc-800 light:border-zinc-200 bg-zinc-950/60 light:bg-zinc-50">
       {starters.map((pid) => {
         const p = players?.[pid];
         const name = p?.full_name || [p?.first_name, p?.last_name].filter(Boolean).join(" ") || pid;
         const meta = [p?.position, p?.team].filter(Boolean).join(" · ");
         return (
           <div key={pid} className="flex items-center justify-between gap-3 px-3 py-1.5 text-xs">
-            <span className="truncate font-medium text-zinc-200">{name}</span>
-            <span className="shrink-0 text-zinc-500">{meta}</span>
+            <span className="truncate font-medium text-zinc-200 light:text-zinc-800">{name}</span>
+            <span className="shrink-0 text-zinc-500 light:text-zinc-500">{meta}</span>
           </div>
         );
       })}
@@ -247,26 +247,26 @@ function LegacyReportForm({
   return (
     <form
       onSubmit={submit}
-      className="mb-6 space-y-4 rounded-2xl border border-zinc-800/80 bg-zinc-950/60 p-5 shadow-[0_14px_40px_rgba(0,0,0,0.42)]"
+      className="mb-6 space-y-4 rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 p-5 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)]"
     >
-      <div className="text-xs text-zinc-500">
+      <div className="text-xs text-zinc-500 light:text-zinc-500">
         This report predates auto-populated matchups, so it&apos;s edited as free text.
       </div>
 
       <div>
-        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-zinc-500">
+        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-zinc-500 light:text-zinc-500">
           Title
         </label>
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Week 1"
-          className="w-full max-w-xs rounded-xl border border-zinc-800 bg-zinc-950/60 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 outline-none focus:border-zinc-700"
+          className="w-full max-w-xs rounded-xl border border-zinc-800 light:border-zinc-200 bg-zinc-950/60 light:bg-zinc-50 px-3 py-2 text-sm text-zinc-100 light:text-zinc-900 placeholder:text-zinc-600 light:placeholder:text-zinc-400 outline-none focus:border-zinc-700 light:focus:border-zinc-400"
         />
       </div>
 
       <div>
-        <div className="mb-1.5 grid grid-cols-[1fr_1fr_36px] gap-2 px-1 text-xs font-semibold uppercase tracking-wide text-zinc-500">
+        <div className="mb-1.5 grid grid-cols-[1fr_1fr_36px] gap-2 px-1 text-xs font-semibold uppercase tracking-wide text-zinc-500 light:text-zinc-500">
           <span>Matchup</span>
           <span>Report</span>
           <span />
@@ -279,19 +279,19 @@ function LegacyReportForm({
                 value={r.matchup}
                 onChange={(e) => updateRow(r.key, "matchup", e.target.value)}
                 placeholder={`Matchup ${i + 1} (e.g. Kingpin vs Allen Bhai)`}
-                className="w-full rounded-xl border border-zinc-800 bg-zinc-950/60 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 outline-none focus:border-zinc-700"
+                className="w-full rounded-xl border border-zinc-800 light:border-zinc-200 bg-zinc-950/60 light:bg-zinc-50 px-3 py-2 text-sm text-zinc-100 light:text-zinc-900 placeholder:text-zinc-600 light:placeholder:text-zinc-400 outline-none focus:border-zinc-700 light:focus:border-zinc-400"
               />
               <textarea
                 value={r.report}
                 onChange={(e) => updateRow(r.key, "report", e.target.value)}
                 placeholder="Billy's take..."
                 rows={1}
-                className="w-full resize-y rounded-xl border border-zinc-800 bg-zinc-950/60 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 outline-none focus:border-zinc-700"
+                className="w-full resize-y rounded-xl border border-zinc-800 light:border-zinc-200 bg-zinc-950/60 light:bg-zinc-50 px-3 py-2 text-sm text-zinc-100 light:text-zinc-900 placeholder:text-zinc-600 light:placeholder:text-zinc-400 outline-none focus:border-zinc-700 light:focus:border-zinc-400"
               />
               <button
                 type="button"
                 onClick={() => removeRow(r.key)}
-                className="flex h-9 w-9 items-center justify-center rounded-full text-zinc-500 transition hover:bg-zinc-900/60 hover:text-red-300"
+                className="flex h-9 w-9 items-center justify-center rounded-full text-zinc-500 light:text-zinc-500 transition hover:bg-zinc-900/60 light:hover:bg-zinc-100 hover:text-red-300 light:hover:text-red-700"
                 aria-label="Remove row"
               >
                 ✕
@@ -303,27 +303,27 @@ function LegacyReportForm({
         <button
           type="button"
           onClick={addRow}
-          className="mt-3 inline-flex h-9 items-center gap-1.5 rounded-full border border-zinc-800 bg-zinc-950/60 px-4 text-sm font-medium text-zinc-300 transition hover:bg-zinc-900/50"
+          className="mt-3 inline-flex h-9 items-center gap-1.5 rounded-full border border-zinc-800 light:border-zinc-200 bg-zinc-950/60 light:bg-zinc-50 px-4 text-sm font-medium text-zinc-300 light:text-zinc-700 transition hover:bg-zinc-900/50 light:hover:bg-zinc-100"
         >
           <span className="text-base leading-none">+</span> Add Matchup
         </button>
       </div>
 
-      {err ? <div className="text-sm text-red-300">{err}</div> : null}
+      {err ? <div className="text-sm text-red-300 light:text-red-700">{err}</div> : null}
 
       <div className="flex items-center justify-end gap-2">
         <button
           type="button"
           onClick={onCancel}
           disabled={saving}
-          className="h-10 rounded-full border border-zinc-800 bg-zinc-950/60 px-4 text-sm font-medium text-zinc-300 transition hover:bg-zinc-900/50 disabled:opacity-50"
+          className="h-10 rounded-full border border-zinc-800 light:border-zinc-200 bg-zinc-950/60 light:bg-zinc-50 px-4 text-sm font-medium text-zinc-300 light:text-zinc-700 transition hover:bg-zinc-900/50 light:hover:bg-zinc-100 disabled:opacity-50"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={saving}
-          className="h-10 rounded-full border border-red-800/60 bg-red-950/40 px-5 text-sm font-semibold text-red-200 transition hover:bg-red-900/40 disabled:opacity-50"
+          className="h-10 rounded-full border border-red-800/60 light:border-red-400 bg-red-950/40 light:bg-red-100 px-5 text-sm font-semibold text-red-200 light:text-red-800 transition hover:bg-red-900/40 light:hover:bg-red-200 disabled:opacity-50"
         >
           {saving ? "Saving…" : "Save Changes"}
         </button>
@@ -487,14 +487,14 @@ function ReportForm({
   return (
     <form
       onSubmit={submit}
-      className="mb-6 space-y-4 rounded-2xl border border-zinc-800/80 bg-zinc-950/60 p-5 shadow-[0_14px_40px_rgba(0,0,0,0.42)]"
+      className="mb-6 space-y-4 rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 p-5 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)]"
     >
       <div>
-        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-zinc-500">
+        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-zinc-500 light:text-zinc-500">
           Week
         </label>
         {mode === "edit" ? (
-          <div className="text-sm font-semibold text-zinc-100">
+          <div className="text-sm font-semibold text-zinc-100 light:text-zinc-900">
             Week {week}
             {season ? ` (${season})` : ""}
           </div>
@@ -502,10 +502,10 @@ function ReportForm({
           <select
             value={week}
             onChange={(e) => changeWeek(Number(e.target.value))}
-            className="h-10 w-40 cursor-pointer rounded-xl border border-zinc-800 bg-zinc-950/60 px-3 text-sm text-zinc-100 outline-none focus:border-zinc-700"
+            className="h-10 w-40 cursor-pointer rounded-xl border border-zinc-800 light:border-zinc-200 bg-zinc-950/60 light:bg-zinc-50 px-3 text-sm text-zinc-100 light:text-zinc-900 outline-none focus:border-zinc-700 light:focus:border-zinc-400"
           >
             {Array.from({ length: maxWeek }, (_, i) => i + 1).map((w) => (
-              <option key={w} value={w} className="bg-zinc-950 text-zinc-200">
+              <option key={w} value={w} className="bg-zinc-950 light:bg-white text-zinc-200 light:text-zinc-800">
                 Week {w}
               </option>
             ))}
@@ -514,11 +514,11 @@ function ReportForm({
       </div>
 
       {leagueQuery.isLoading ? (
-        <div className="text-sm text-zinc-400">Loading matchups…</div>
+        <div className="text-sm text-zinc-400 light:text-zinc-600">Loading matchups…</div>
       ) : leagueQuery.error ? (
-        <div className="text-sm text-red-300">Couldn&apos;t load matchups for that week.</div>
+        <div className="text-sm text-red-300 light:text-red-700">Couldn&apos;t load matchups for that week.</div>
       ) : !pairs.length ? (
-        <div className="text-sm text-zinc-400">No matchups found for this week yet.</div>
+        <div className="text-sm text-zinc-400 light:text-zinc-600">No matchups found for this week yet.</div>
       ) : (
         <div className="space-y-3">
           {pairs.map((p) => {
@@ -531,14 +531,14 @@ function ReportForm({
             const rostersOpen = expandedRosters.has(p.matchupId);
 
             return (
-              <div key={p.matchupId} className="rounded-xl border border-zinc-800 bg-zinc-950/40 p-4">
+              <div key={p.matchupId} className="rounded-xl border border-zinc-800 light:border-zinc-200 bg-zinc-950/40 light:bg-zinc-50 p-4">
                 <div className="mb-1.5 flex items-center justify-between gap-2">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Who wins?</div>
+                  <div className="text-xs font-semibold uppercase tracking-wide text-zinc-500 light:text-zinc-500">Who wins?</div>
                   <button
                     type="button"
                     onClick={() => toggleRoster(p.matchupId)}
                     aria-expanded={rostersOpen}
-                    className="inline-flex items-center gap-1 text-xs font-medium text-zinc-400 transition hover:text-zinc-200"
+                    className="inline-flex items-center gap-1 text-xs font-medium text-zinc-400 light:text-zinc-600 transition hover:text-zinc-200 light:hover:text-zinc-800"
                   >
                     <ChevronIcon expanded={rostersOpen} />
                     {rostersOpen ? "Hide rosters" : "View rosters"}
@@ -571,7 +571,7 @@ function ReportForm({
                   onChange={(e) => setPick(p.matchupId, { report: e.target.value })}
                   placeholder="Billy's take..."
                   rows={2}
-                  className="mt-3 w-full resize-y rounded-xl border border-zinc-800 bg-zinc-950/60 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 outline-none focus:border-zinc-700"
+                  className="mt-3 w-full resize-y rounded-xl border border-zinc-800 light:border-zinc-200 bg-zinc-950/60 light:bg-zinc-50 px-3 py-2 text-sm text-zinc-100 light:text-zinc-900 placeholder:text-zinc-600 light:placeholder:text-zinc-400 outline-none focus:border-zinc-700 light:focus:border-zinc-400"
                 />
               </div>
             );
@@ -579,21 +579,21 @@ function ReportForm({
         </div>
       )}
 
-      {err ? <div className="text-sm text-red-300">{err}</div> : null}
+      {err ? <div className="text-sm text-red-300 light:text-red-700">{err}</div> : null}
 
       <div className="flex items-center justify-end gap-2">
         <button
           type="button"
           onClick={onCancel}
           disabled={saving}
-          className="h-10 rounded-full border border-zinc-800 bg-zinc-950/60 px-4 text-sm font-medium text-zinc-300 transition hover:bg-zinc-900/50 disabled:opacity-50"
+          className="h-10 rounded-full border border-zinc-800 light:border-zinc-200 bg-zinc-950/60 light:bg-zinc-50 px-4 text-sm font-medium text-zinc-300 light:text-zinc-700 transition hover:bg-zinc-900/50 light:hover:bg-zinc-100 disabled:opacity-50"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={saving || leagueQuery.isLoading}
-          className="h-10 rounded-full border border-red-800/60 bg-red-950/40 px-5 text-sm font-semibold text-red-200 transition hover:bg-red-900/40 disabled:opacity-50"
+          className="h-10 rounded-full border border-red-800/60 light:border-red-400 bg-red-950/40 light:bg-red-100 px-5 text-sm font-semibold text-red-200 light:text-red-800 transition hover:bg-red-900/40 light:hover:bg-red-200 disabled:opacity-50"
         >
           {saving ? "Saving…" : mode === "edit" ? "Save Changes" : "Save Report"}
         </button>
@@ -691,21 +691,21 @@ export default function BillysReportPage() {
   }
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-100">
+    <main className="min-h-screen bg-zinc-950 light:bg-white text-zinc-100 light:text-zinc-900">
       <FloatingNav />
 
       <div className="mx-auto w-full max-w-5xl px-4 pb-12 pt-6 md:pt-24">
         <div className="mb-8 flex flex-col items-center gap-4 text-center">
           <div>
             <h1 className="text-3xl font-semibold tracking-tight md:text-5xl">Billy&apos;s Report</h1>
-            <div className="mt-2 text-sm text-zinc-400">The weekly word, matchup by matchup</div>
+            <div className="mt-2 text-sm text-zinc-400 light:text-zinc-600">The weekly word, matchup by matchup</div>
           </div>
 
           {formMode === "closed" ? (
             <button
               type="button"
               onClick={() => setFormMode("add")}
-              className="inline-flex h-11 md:h-10 items-center justify-center gap-1.5 rounded-full border border-red-800/60 bg-red-950/40 px-6 text-sm font-semibold text-red-200 transition hover:bg-red-900/40"
+              className="inline-flex h-11 md:h-10 items-center justify-center gap-1.5 rounded-full border border-red-800/60 light:border-red-400 bg-red-950/40 light:bg-red-100 px-6 text-sm font-semibold text-red-200 light:text-red-800 transition hover:bg-red-900/40 light:hover:bg-red-200"
             >
               <span className="text-base leading-none">+</span> Add Report
             </button>
@@ -729,24 +729,24 @@ export default function BillysReportPage() {
         ) : null}
 
         {deleteErr ? (
-          <div className="mb-4 rounded-2xl border border-red-900/60 bg-zinc-950/60 p-4 text-sm text-red-200 shadow-[0_14px_40px_rgba(0,0,0,0.42)]">
+          <div className="mb-4 rounded-2xl border border-red-900/60 light:border-red-300 bg-zinc-950/60 light:bg-zinc-50 p-4 text-sm text-red-200 light:text-red-800 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)]">
             {deleteErr}
           </div>
         ) : null}
 
         {err ? (
-          <div className="rounded-2xl border border-red-900/60 bg-zinc-950/60 p-5 text-red-200 shadow-[0_14px_40px_rgba(0,0,0,0.42)]">
+          <div className="rounded-2xl border border-red-900/60 light:border-red-300 bg-zinc-950/60 light:bg-zinc-50 p-5 text-red-200 light:text-red-800 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)]">
             <div className="text-sm font-semibold">Load error</div>
             <div className="mt-2 text-sm opacity-90">{err}</div>
           </div>
         ) : loading ? (
           <div className="space-y-4">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="h-40 animate-pulse rounded-2xl border border-zinc-800/80 bg-zinc-950/60" />
+              <div key={i} className="h-40 animate-pulse rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50" />
             ))}
           </div>
         ) : !rows.length ? (
-          <div className="rounded-2xl border border-zinc-800/80 bg-zinc-950/60 p-8 text-center text-sm text-zinc-400 shadow-[0_14px_40px_rgba(0,0,0,0.42)]">
+          <div className="rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 p-8 text-center text-sm text-zinc-400 light:text-zinc-600 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)]">
             No reports yet. Add the first one.
           </div>
         ) : (
@@ -757,36 +757,36 @@ export default function BillysReportPage() {
               return (
                 <div
                   key={entry.id}
-                  className="overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[0_14px_40px_rgba(0,0,0,0.42)]"
+                  className="overflow-hidden rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)]"
                 >
                   <div
                     className={cx(
-                      "flex items-center justify-between bg-zinc-900/40 px-5 py-3",
-                      expanded && "border-b border-zinc-800/70"
+                      "flex items-center justify-between bg-zinc-900/40 light:bg-zinc-100 px-5 py-3",
+                      expanded && "border-b border-zinc-800/70 light:border-zinc-200"
                     )}
                   >
                     <button
                       type="button"
                       onClick={() => toggleExpanded(entry.id)}
                       aria-expanded={expanded}
-                      className="flex flex-1 items-center gap-2 rounded-lg py-1 text-left transition hover:text-zinc-50"
+                      className="flex flex-1 items-center gap-2 rounded-lg py-1 text-left transition hover:text-zinc-50 light:hover:text-zinc-950"
                     >
                       <ChevronIcon expanded={expanded} />
-                      <span className="text-sm font-semibold tracking-wide text-zinc-100">{entry.title}</span>
-                      <span className="text-xs text-zinc-500">
+                      <span className="text-sm font-semibold tracking-wide text-zinc-100 light:text-zinc-900">{entry.title}</span>
+                      <span className="text-xs text-zinc-500 light:text-zinc-500">
                         ({entry.matchups.length} matchup{entry.matchups.length === 1 ? "" : "s"})
                       </span>
                     </button>
 
                     <div className="flex items-center gap-3">
-                      <div className="text-xs text-zinc-500">{fmtDate(entry.createdAt)}</div>
+                      <div className="text-xs text-zinc-500 light:text-zinc-500">{fmtDate(entry.createdAt)}</div>
                       <button
                         type="button"
                         onClick={() => {
                           setEditingEntry(entry);
                           setFormMode("edit");
                         }}
-                        className="flex h-7 w-7 items-center justify-center rounded-full text-zinc-500 transition hover:bg-zinc-900/60 hover:text-zinc-200"
+                        className="flex h-7 w-7 items-center justify-center rounded-full text-zinc-500 light:text-zinc-500 transition hover:bg-zinc-900/60 light:hover:bg-zinc-100 hover:text-zinc-200 light:hover:text-zinc-800"
                         aria-label={`Edit ${entry.title}`}
                         title={`Edit ${entry.title}`}
                       >
@@ -796,7 +796,7 @@ export default function BillysReportPage() {
                         type="button"
                         onClick={() => handleDelete(entry)}
                         disabled={deletingId === entry.id}
-                        className="flex h-7 w-7 items-center justify-center rounded-full text-zinc-500 transition hover:bg-red-950/40 hover:text-red-300 disabled:opacity-50"
+                        className="flex h-7 w-7 items-center justify-center rounded-full text-zinc-500 light:text-zinc-500 transition hover:bg-red-950/40 light:hover:bg-red-200 hover:text-red-300 light:hover:text-red-700 disabled:opacity-50"
                         aria-label={`Delete ${entry.title}`}
                         title={`Delete ${entry.title}`}
                       >
@@ -820,7 +820,7 @@ export default function BillysReportPage() {
                     <div>
                       <table className="w-full table-fixed text-left text-sm">
                         <thead>
-                          <tr className="border-b border-zinc-800/70 text-xs text-zinc-500">
+                          <tr className="border-b border-zinc-800/70 light:border-zinc-200 text-xs text-zinc-500 light:text-zinc-500">
                             <th className="w-2/5 px-5 py-2 font-medium">Matchup</th>
                             <th className="px-5 py-2 font-medium">Report</th>
                           </tr>
@@ -829,13 +829,13 @@ export default function BillysReportPage() {
                           {entry.matchups.map((m) => {
                             const winner = winnerName(m);
                             return (
-                              <tr key={m.id} className="border-b border-zinc-800/50 last:border-b-0">
-                                <td className="whitespace-pre-wrap break-words px-5 py-3 align-top font-medium text-zinc-100">
+                              <tr key={m.id} className="border-b border-zinc-800/50 light:border-zinc-200 last:border-b-0">
+                                <td className="whitespace-pre-wrap break-words px-5 py-3 align-top font-medium text-zinc-100 light:text-zinc-900">
                                   {m.matchup || "—"}
                                 </td>
-                                <td className="whitespace-pre-wrap break-words px-5 py-3 align-top leading-relaxed text-zinc-300">
+                                <td className="whitespace-pre-wrap break-words px-5 py-3 align-top leading-relaxed text-zinc-300 light:text-zinc-700">
                                   {winner ? (
-                                    <div className="mb-1 break-words text-xs font-semibold uppercase tracking-wide text-red-300">
+                                    <div className="mb-1 break-words text-xs font-semibold uppercase tracking-wide text-red-300 light:text-red-700">
                                       Winner: {winner}
                                     </div>
                                   ) : null}

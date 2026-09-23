@@ -45,7 +45,7 @@ function TeamAvatar({ team, avatarUrl, size = 34 }: { team: string; avatarUrl?: 
   const s = `${size}px`;
   return (
     <div
-      className="relative shrink-0 overflow-hidden rounded-xl border border-zinc-800/80 bg-zinc-950/60 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
+      className="relative shrink-0 overflow-hidden rounded-xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] light:shadow-[inset_0_1px_0_rgba(0,0,0,0.04)]"
       style={{ width: s, height: s }}
       title={team}
     >
@@ -53,7 +53,7 @@ function TeamAvatar({ team, avatarUrl, size = 34 }: { team: string; avatarUrl?: 
         // eslint-disable-next-line @next/next/no-img-element
         <img src={avatarUrl} alt={team} className="h-full w-full object-cover" loading="lazy" />
       ) : (
-        <div className="flex h-full w-full items-center justify-center text-xs font-semibold text-zinc-200">
+        <div className="flex h-full w-full items-center justify-center text-xs font-semibold text-zinc-200 light:text-zinc-800">
           {initials(team)}
         </div>
       )}
@@ -66,9 +66,9 @@ function TeamRow({ name, avatarUrl, score, win }: { name: string; avatarUrl?: st
     <div className="flex items-center justify-between gap-3">
       <div className="min-w-0 flex items-center gap-3">
         <TeamAvatar team={name} avatarUrl={avatarUrl} />
-        <div className={cx("truncate text-sm font-semibold", win ? "text-zinc-100" : "text-zinc-300")}>{name}</div>
+        <div className={cx("truncate text-sm font-semibold", win ? "text-zinc-100 light:text-zinc-900" : "text-zinc-300 light:text-zinc-700")}>{name}</div>
       </div>
-      <div className={cx("shrink-0 text-lg font-semibold", win ? "text-zinc-100" : "text-zinc-400")}>
+      <div className={cx("shrink-0 text-lg font-semibold", win ? "text-zinc-100 light:text-zinc-900" : "text-zinc-400 light:text-zinc-600")}>
         {scoreFmt(score)}
       </div>
     </div>
@@ -88,17 +88,17 @@ function MatchupCard({
   const bWin = b.score > a.score;
 
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[0_14px_40px_rgba(0,0,0,0.42)] backdrop-blur">
+    <div className="group relative overflow-hidden rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)] backdrop-blur">
       <div className="pointer-events-none absolute inset-0 opacity-0 transition group-hover:opacity-100">
-        <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 light:from-red-200/50 via-transparent to-transparent" />
       </div>
 
       <div className="relative px-5 py-4">
         <TeamRow name={a.name} avatarUrl={a.avatarUrl} score={a.score} win={aWin} />
-        <div className="my-3 h-px w-full bg-zinc-800/70" />
+        <div className="my-3 h-px w-full bg-zinc-800/70 light:bg-zinc-200" />
         <TeamRow name={b.name} avatarUrl={b.avatarUrl} score={b.score} win={bWin} />
 
-        {note ? <div className="mt-3 text-xs text-zinc-500">{note}</div> : null}
+        {note ? <div className="mt-3 text-xs text-zinc-500 light:text-zinc-500">{note}</div> : null}
       </div>
     </div>
   );
@@ -248,7 +248,7 @@ export function WeeklyMatchups() {
 
   return (
     <section className="mb-10">
-      <div className="mb-4 text-center text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500">
+      <div className="mb-4 text-center text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500 light:text-zinc-500">
         This Week&apos;s Matchups
       </div>
 
@@ -261,8 +261,8 @@ export function WeeklyMatchups() {
             className={cx(
               "h-11 md:h-9 rounded-xl border px-4 text-sm transition",
               selectedWeek <= WEEK_MIN || weeklyLoading || loading
-                ? "border-zinc-800 text-zinc-600"
-                : "border-zinc-800 bg-zinc-950/60 text-zinc-200 hover:bg-zinc-900/50"
+                ? "border-zinc-800 light:border-zinc-200 text-zinc-600 light:text-zinc-500"
+                : "border-zinc-800 light:border-zinc-200 bg-zinc-950/60 light:bg-zinc-50 text-zinc-200 light:text-zinc-800 hover:bg-zinc-900/50 light:hover:bg-zinc-100"
             )}
           >
             ← Prev
@@ -273,15 +273,15 @@ export function WeeklyMatchups() {
               value={selectedWeek}
               onChange={(e) => setSelectedWeek(Number(e.target.value))}
               disabled={loading}
-              className="h-11 md:h-9 min-w-[130px] cursor-pointer appearance-none rounded-xl border border-zinc-800 bg-zinc-950/60 px-4 pr-9 text-sm font-semibold text-zinc-200 outline-none transition hover:bg-zinc-900/50 focus:border-zinc-700 disabled:opacity-60"
+              className="h-11 md:h-9 min-w-[130px] cursor-pointer appearance-none rounded-xl border border-zinc-800 light:border-zinc-200 bg-zinc-950/60 light:bg-zinc-50 px-4 pr-9 text-sm font-semibold text-zinc-200 light:text-zinc-800 outline-none transition hover:bg-zinc-900/50 light:hover:bg-zinc-100 focus:border-zinc-700 light:focus:border-zinc-400 disabled:opacity-60"
             >
               {Array.from({ length: WEEK_MAX }, (_, i) => i + 1).map((w) => (
-                <option key={w} value={w} className="bg-zinc-950 text-zinc-200">
+                <option key={w} value={w} className="bg-zinc-950 light:bg-white text-zinc-200 light:text-zinc-800">
                   Week {w}
                 </option>
               ))}
             </select>
-            <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500">▾</div>
+            <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 light:text-zinc-500">▾</div>
           </div>
 
           <button
@@ -291,8 +291,8 @@ export function WeeklyMatchups() {
             className={cx(
               "h-11 md:h-9 rounded-xl border px-4 text-sm transition",
               selectedWeek >= WEEK_MAX || weeklyLoading || loading
-                ? "border-zinc-800 text-zinc-600"
-                : "border-zinc-800 bg-zinc-950/60 text-zinc-200 hover:bg-zinc-900/50"
+                ? "border-zinc-800 light:border-zinc-200 text-zinc-600 light:text-zinc-500"
+                : "border-zinc-800 light:border-zinc-200 bg-zinc-950/60 light:bg-zinc-50 text-zinc-200 light:text-zinc-800 hover:bg-zinc-900/50 light:hover:bg-zinc-100"
             )}
           >
             Next →
@@ -301,20 +301,20 @@ export function WeeklyMatchups() {
       </div>
 
       {err ? (
-        <div className="rounded-2xl border border-red-900/60 bg-zinc-950/60 p-5 text-red-200 shadow-[0_14px_40px_rgba(0,0,0,0.42)]">
+        <div className="rounded-2xl border border-red-900/60 light:border-red-300 bg-zinc-950/60 light:bg-zinc-50 p-5 text-red-200 light:text-red-800 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)]">
           <div className="text-sm font-semibold">Load error</div>
           <div className="mt-2 text-sm opacity-90">{err}</div>
         </div>
       ) : loading ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-32 animate-pulse rounded-2xl border border-zinc-800/80 bg-zinc-950/60" />
+            <div key={i} className="h-32 animate-pulse rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50" />
           ))}
         </div>
       ) : weeklyLoading ? (
-        <div className="text-center text-sm text-zinc-400">Loading week…</div>
+        <div className="text-center text-sm text-zinc-400 light:text-zinc-600">Loading week…</div>
       ) : !matchupCards.length ? (
-        <div className="rounded-2xl border border-zinc-800/80 bg-zinc-950/60 p-8 text-center text-sm text-zinc-400 shadow-[0_14px_40px_rgba(0,0,0,0.42)]">
+        <div className="rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 p-8 text-center text-sm text-zinc-400 light:text-zinc-600 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)]">
           No matchups found for Week {selectedWeek}.
         </div>
       ) : (

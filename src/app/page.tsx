@@ -7,7 +7,7 @@ import { LeagueHistory } from "./components/LeagueHistory";
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-100">
+    <main className="min-h-screen bg-zinc-950 light:bg-white text-zinc-100 light:text-zinc-900">
       <FloatingNav />
 
       {/* leave space for floating nav */}

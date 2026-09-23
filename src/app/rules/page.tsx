@@ -79,9 +79,9 @@ function perYardLabel(pts: number) {
 
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="grid grid-cols-[1fr_1.4fr] gap-3 border-b border-zinc-800/60 px-4 py-3 last:border-b-0 sm:grid-cols-[180px_1fr]">
-      <div className="text-sm text-zinc-500">{label}</div>
-      <div className="text-sm font-medium text-zinc-100">{value}</div>
+    <div className="grid grid-cols-[1fr_1.4fr] gap-3 border-b border-zinc-800/60 light:border-zinc-200 px-4 py-3 last:border-b-0 sm:grid-cols-[180px_1fr]">
+      <div className="text-sm text-zinc-500 light:text-zinc-500">{label}</div>
+      <div className="text-sm font-medium text-zinc-100 light:text-zinc-900">{value}</div>
     </div>
   );
 }
@@ -96,10 +96,10 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[0_14px_40px_rgba(0,0,0,0.42)] backdrop-blur">
-      <div className="border-b border-zinc-800/70 bg-zinc-900/40 px-5 py-4">
-        <div className="text-sm font-semibold tracking-wide text-zinc-100">{title}</div>
-        {subtitle ? <div className="mt-1 text-xs text-zinc-500">{subtitle}</div> : null}
+    <div className="overflow-hidden rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)] backdrop-blur">
+      <div className="border-b border-zinc-800/70 light:border-zinc-200 bg-zinc-900/40 light:bg-zinc-100 px-5 py-4">
+        <div className="text-sm font-semibold tracking-wide text-zinc-100 light:text-zinc-900">{title}</div>
+        {subtitle ? <div className="mt-1 text-xs text-zinc-500 light:text-zinc-500">{subtitle}</div> : null}
       </div>
       <div>{children}</div>
     </div>
@@ -148,24 +148,24 @@ export default function RulesPage() {
   }, [data]);
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-100">
+    <main className="min-h-screen bg-zinc-950 light:bg-white text-zinc-100 light:text-zinc-900">
       <FloatingNav />
 
       <div className="mx-auto w-full max-w-4xl px-4 pb-12 pt-6 md:pt-24">
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-semibold tracking-tight md:text-5xl">League Rules</h1>
-          <div className="mt-2 text-sm text-zinc-400">Rules, scoring, and the fine print</div>
+          <div className="mt-2 text-sm text-zinc-400 light:text-zinc-600">Rules, scoring, and the fine print</div>
         </div>
 
         {err ? (
-          <div className="rounded-2xl border border-red-900/60 bg-zinc-950/60 p-5 text-red-200 shadow-[0_14px_40px_rgba(0,0,0,0.42)]">
+          <div className="rounded-2xl border border-red-900/60 light:border-red-300 bg-zinc-950/60 light:bg-zinc-50 p-5 text-red-200 light:text-red-800 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)]">
             <div className="text-sm font-semibold">Load error</div>
             <div className="mt-2 text-sm opacity-90">{err}</div>
           </div>
         ) : loading || !data ? (
           <div className="space-y-4">
             {Array.from({ length: 2 }).map((_, i) => (
-              <div key={i} className="h-64 animate-pulse rounded-2xl border border-zinc-800/80 bg-zinc-950/60" />
+              <div key={i} className="h-64 animate-pulse rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50" />
             ))}
           </div>
         ) : (

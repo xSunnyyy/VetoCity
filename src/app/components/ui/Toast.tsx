@@ -108,10 +108,10 @@ function ToastContainer({ toasts, onRemove }: { toasts: Toast[]; onRemove: (id: 
 
 function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) => void }) {
   const typeStyles = {
-    success: "border-emerald-900/50 bg-emerald-950/90 text-emerald-100",
-    error: "border-red-900/50 bg-red-950/90 text-red-100",
-    info: "border-sky-900/50 bg-sky-950/90 text-sky-100",
-    warning: "border-amber-900/50 bg-amber-950/90 text-amber-100",
+    success: "border-emerald-900/50 light:border-emerald-300 bg-emerald-950/90 light:bg-emerald-100 text-emerald-100 light:text-emerald-800",
+    error: "border-red-900/50 light:border-red-300 bg-red-950/90 light:bg-red-100 text-red-100 light:text-red-800",
+    info: "border-sky-900/50 light:border-sky-300 bg-sky-950/90 light:bg-sky-100 text-sky-100 light:text-sky-800",
+    warning: "border-amber-900/50 light:border-amber-300 bg-amber-950/90 light:bg-amber-100 text-amber-100 light:text-amber-800",
   };
 
   const icons = {

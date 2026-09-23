@@ -33,7 +33,7 @@ export function Card({ children, className, hover = true, animation = "fade-in-u
   return (
     <div
       className={cx(
-        "relative overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[0_14px_40px_rgba(0,0,0,0.42)] backdrop-blur transition-transform duration-300",
+        "relative overflow-hidden rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)] backdrop-blur transition-transform duration-300",
         hover && "group hover:scale-[1.02]",
         animationClasses[animation],
         className
@@ -41,7 +41,7 @@ export function Card({ children, className, hover = true, animation = "fade-in-u
     >
       {hover && (
         <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-          <div className="absolute inset-0 bg-gradient-to-br from-zinc-800/20 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-br from-zinc-800/20 light:from-zinc-300/30 via-transparent to-transparent" />
         </div>
       )}
       <div className="relative">{children}</div>
@@ -76,8 +76,8 @@ export function CardHeader({ title, subtitle, icon, className }: CardHeaderProps
     <div className={cx("flex items-start gap-3 px-5 pt-5", className)}>
       {icon}
       <div className="min-w-0 flex-1">
-        <div className="text-sm font-semibold tracking-wide text-zinc-100">{title}</div>
-        {subtitle && <div className="mt-1 text-xs text-zinc-500">{subtitle}</div>}
+        <div className="text-sm font-semibold tracking-wide text-zinc-100 light:text-zinc-900">{title}</div>
+        {subtitle && <div className="mt-1 text-xs text-zinc-500 light:text-zinc-500">{subtitle}</div>}
       </div>
     </div>
   );
@@ -108,7 +108,7 @@ export function CardBox({ children, className }: { children: React.ReactNode; cl
   return (
     <div
       className={cx(
-        "rounded-xl border border-zinc-800/80 bg-zinc-950/60 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]",
+        "rounded-xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] light:shadow-[inset_0_1px_0_rgba(0,0,0,0.04)]",
         className
       )}
     >

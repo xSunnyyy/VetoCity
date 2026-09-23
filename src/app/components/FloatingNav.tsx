@@ -195,14 +195,14 @@ export default function FloatingNav() {
   );
 
   const pill =
-    "h-9 min-w-[120px] inline-flex items-center justify-center rounded-full border border-zinc-800/80 bg-zinc-950/70 px-4 text-sm font-medium text-zinc-200 hover:bg-zinc-900/70 transition-colors";
-  const pillActive = "border-zinc-700 bg-zinc-900/70 text-zinc-100";
+    "h-9 min-w-[120px] inline-flex items-center justify-center rounded-full border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/70 light:bg-white/80 px-4 text-sm font-medium text-zinc-200 light:text-zinc-800 hover:bg-zinc-900/70 light:hover:bg-zinc-200 transition-colors";
+  const pillActive = "border-zinc-700 light:border-zinc-300 bg-zinc-900/70 light:bg-zinc-200 text-zinc-100 light:text-zinc-900";
 
   return (
     <>
       {/* Desktop Navigation */}
       <header className="pointer-events-none fixed left-0 right-0 top-4 z-50 hidden md:block">
-        <div className="pointer-events-auto mx-auto flex w-fit items-center gap-2 rounded-full border border-zinc-800/70 bg-zinc-950/70 p-2 shadow-[0_8px_30px_rgba(0,0,0,0.45)] backdrop-blur">
+        <div className="pointer-events-auto mx-auto flex w-fit items-center gap-2 rounded-full border border-zinc-800/70 light:border-zinc-200 bg-zinc-950/70 light:bg-white/80 p-2 shadow-[0_8px_30px_rgba(0,0,0,0.45)] light:shadow-[0_8px_30px_rgba(0,0,0,0.10)] backdrop-blur">
           {primaryItems.map((it) => (
             <Link key={it.href} href={it.href} className={cx(pill, isActive(it.href) && pillActive)}>
               {it.label}
@@ -224,11 +224,11 @@ export default function FloatingNav() {
             </button>
 
             {open ? (
-              <div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950 shadow-[0_16px_50px_rgba(0,0,0,0.6)]">
-                <div className="px-3 py-2 text-xs font-semibold tracking-wide text-zinc-500">
+              <div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-zinc-800 light:border-zinc-200 bg-zinc-950 light:bg-white shadow-[0_16px_50px_rgba(0,0,0,0.6)] light:shadow-[0_16px_50px_rgba(0,0,0,0.12)]">
+                <div className="px-3 py-2 text-xs font-semibold tracking-wide text-zinc-500 light:text-zinc-500">
                   League Info
                 </div>
-                <div className="h-px bg-zinc-800/70" />
+                <div className="h-px bg-zinc-800/70 light:bg-zinc-200" />
                 <div className="py-1">
                   {secondaryItems.map((it) => (
                     <Link
@@ -236,13 +236,13 @@ export default function FloatingNav() {
                       href={it.href}
                       onClick={() => setOpen(false)}
                       className={cx(
-                        "flex items-center justify-between px-3 py-2.5 text-sm text-zinc-200 hover:bg-zinc-900/60 transition-colors",
-                        isActive(it.href) && "bg-zinc-900/50 text-zinc-100"
+                        "flex items-center justify-between px-3 py-2.5 text-sm text-zinc-200 light:text-zinc-800 hover:bg-zinc-900/60 light:hover:bg-zinc-100 transition-colors",
+                        isActive(it.href) && "bg-zinc-900/50 light:bg-zinc-100 text-zinc-100 light:text-zinc-900"
                       )}
                     >
                       <span>{it.label}</span>
                       {isActive(it.href) ? (
-                        <span className="text-xs text-zinc-500">●</span>
+                        <span className="text-xs text-zinc-500 light:text-zinc-500">●</span>
                       ) : null}
                     </Link>
                   ))}
@@ -255,7 +255,7 @@ export default function FloatingNav() {
 
       {/* Mobile Navigation — icon bar fixed to the bottom, out of the way of page titles */}
       <nav
-        className="fixed inset-x-0 bottom-0 z-50 border-t border-zinc-800/70 bg-zinc-950/95 backdrop-blur md:hidden"
+        className="fixed inset-x-0 bottom-0 z-50 border-t border-zinc-800/70 light:border-zinc-200 bg-zinc-950/95 light:bg-white/95 backdrop-blur md:hidden"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
         aria-label="Primary"
       >
@@ -269,10 +269,10 @@ export default function FloatingNav() {
                 onClick={() => setMoreOpen(false)}
                 className={cx(
                   "flex flex-1 flex-col items-center gap-1 rounded-xl px-2 py-1.5 text-center transition-colors",
-                  active ? "text-zinc-100" : "text-zinc-500 hover:text-zinc-300"
+                  active ? "text-zinc-100 light:text-zinc-900" : "text-zinc-500 light:text-zinc-500 hover:text-zinc-300 light:hover:text-zinc-700"
                 )}
               >
-                <NavIcon icon={it.icon} className={cx("h-5 w-5", active && "text-red-400")} />
+                <NavIcon icon={it.icon} className={cx("h-5 w-5", active && "text-red-400 light:text-red-600")} />
                 <span className="text-[10px] font-medium leading-none">{it.label}</span>
               </Link>
             );
@@ -285,10 +285,10 @@ export default function FloatingNav() {
             aria-expanded={moreOpen}
             className={cx(
               "flex flex-1 flex-col items-center gap-1 rounded-xl px-2 py-1.5 text-center transition-colors",
-              moreOpen || moreActive ? "text-zinc-100" : "text-zinc-500 hover:text-zinc-300"
+              moreOpen || moreActive ? "text-zinc-100 light:text-zinc-900" : "text-zinc-500 light:text-zinc-500 hover:text-zinc-300 light:hover:text-zinc-700"
             )}
           >
-            <NavIcon icon="more" className={cx("h-5 w-5", (moreOpen || moreActive) && "text-red-400")} />
+            <NavIcon icon="more" className={cx("h-5 w-5", (moreOpen || moreActive) && "text-red-400 light:text-red-600")} />
             <span className="text-[10px] font-medium leading-none">More</span>
           </button>
         </div>
@@ -299,17 +299,17 @@ export default function FloatingNav() {
         <div className="fixed inset-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMoreOpen(false)} />
           <div
-            className="absolute inset-x-0 bottom-0 rounded-t-2xl border-t border-zinc-800 bg-zinc-950 shadow-[0_-16px_50px_rgba(0,0,0,0.6)]"
+            className="absolute inset-x-0 bottom-0 rounded-t-2xl border-t border-zinc-800 light:border-zinc-200 bg-zinc-950 light:bg-white shadow-[0_-16px_50px_rgba(0,0,0,0.6)] light:shadow-[0_-16px_50px_rgba(0,0,0,0.12)]"
             style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
             role="dialog"
             aria-label="More navigation"
           >
-            <div className="flex items-center justify-between border-b border-zinc-800/70 px-5 py-4">
-              <span className="text-sm font-semibold tracking-wide text-zinc-100">More</span>
+            <div className="flex items-center justify-between border-b border-zinc-800/70 light:border-zinc-200 px-5 py-4">
+              <span className="text-sm font-semibold tracking-wide text-zinc-100 light:text-zinc-900">More</span>
               <button
                 type="button"
                 onClick={() => setMoreOpen(false)}
-                className="flex h-8 w-8 items-center justify-center rounded-full text-zinc-400 hover:bg-zinc-900/50 hover:text-zinc-200"
+                className="flex h-8 w-8 items-center justify-center rounded-full text-zinc-400 light:text-zinc-600 hover:bg-zinc-900/50 light:hover:bg-zinc-100 hover:text-zinc-200 light:hover:text-zinc-800"
                 aria-label="Close"
               >
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -328,10 +328,10 @@ export default function FloatingNav() {
                     onClick={() => setMoreOpen(false)}
                     className={cx(
                       "flex flex-col items-center gap-1.5 rounded-xl px-2 py-3 text-center transition-colors",
-                      active ? "bg-zinc-900/60 text-zinc-100" : "text-zinc-400 hover:bg-zinc-900/40 hover:text-zinc-200"
+                      active ? "bg-zinc-900/60 light:bg-zinc-100 text-zinc-100 light:text-zinc-900" : "text-zinc-400 light:text-zinc-600 hover:bg-zinc-900/40 light:hover:bg-zinc-100 hover:text-zinc-200 light:hover:text-zinc-800"
                     )}
                   >
-                    <NavIcon icon={it.icon} className={cx("h-6 w-6", active && "text-red-400")} />
+                    <NavIcon icon={it.icon} className={cx("h-6 w-6", active && "text-red-400 light:text-red-600")} />
                     <span className="text-[11px] font-medium leading-none">{it.label}</span>
                   </Link>
                 );

@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* Light/dark theme toggle. Dark is the site's original, untouched default
+   (no class needed on <html>) — adding `.light` to <html> activates the
+   `light:` variant used throughout the app to override colors for a white
+   background. See components/ThemeToggle.tsx. */
+@custom-variant light (&:where(.light, .light *));
+
 /* Theme variables */
 :root {
   --background: #ffffff;
@@ -88,6 +94,14 @@ body {
 
 .themed-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: rgb(220 38 38 / 0.8); /* red-600/80 */
+}
+
+.light .themed-scrollbar {
+  scrollbar-color: rgb(185 28 28 / 0.6) rgb(228 228 231 / 0.8); /* red-700/60 thumb, zinc-200/80 track */
+}
+
+.light .themed-scrollbar::-webkit-scrollbar-track {
+  background: rgb(228 228 231 / 0.8);
 }
 
 /* Fully hidden scrollbar for sections that scroll by drag/touch instead */

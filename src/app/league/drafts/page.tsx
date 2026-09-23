@@ -68,18 +68,18 @@ function posFill(pos?: string) {
     case "QB":
       return "bg-fuchsia-500/18";
     case "RB":
-      return "bg-emerald-500/18";
+      return "bg-emerald-500/18 light:bg-emerald-100/70";
     case "WR":
-      return "bg-sky-500/18";
+      return "bg-sky-500/18 light:bg-sky-100/70";
     case "TE":
-      return "bg-amber-500/18";
+      return "bg-amber-500/18 light:bg-amber-100/70";
     case "K":
-      return "bg-zinc-400/12";
+      return "bg-zinc-400/12 light:bg-zinc-900/5";
     case "DEF":
     case "DST":
       return "bg-indigo-500/18";
     default:
-      return "bg-zinc-950/10";
+      return "bg-zinc-950/10 light:bg-zinc-900/5";
   }
 }
 
@@ -88,18 +88,18 @@ function posText(pos?: string) {
     case "QB":
       return "text-fuchsia-100";
     case "RB":
-      return "text-emerald-100";
+      return "text-emerald-100 light:text-emerald-800";
     case "WR":
-      return "text-sky-100";
+      return "text-sky-100 light:text-sky-800";
     case "TE":
-      return "text-amber-100";
+      return "text-amber-100 light:text-amber-800";
     case "K":
-      return "text-zinc-100";
+      return "text-zinc-100 light:text-zinc-900";
     case "DEF":
     case "DST":
       return "text-indigo-100";
     default:
-      return "text-zinc-100";
+      return "text-zinc-100 light:text-zinc-900";
   }
 }
 
@@ -108,7 +108,7 @@ function LegendChip({ label, pos }: { label: string; pos: string }) {
     <span
       className={cx(
         "rounded-full border px-2 py-1 text-xs font-semibold",
-        "border-zinc-800/70 text-zinc-200",
+        "border-zinc-800/70 light:border-zinc-200 text-zinc-200 light:text-zinc-800",
         posFill(pos)
       )}
     >
@@ -310,7 +310,7 @@ export default function DraftboardPage() {
   const seasonLabel = active?.league?.season ? String(active.league.season) : "—";
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-100">
+    <main className="min-h-screen bg-zinc-950 light:bg-white text-zinc-100 light:text-zinc-900">
       <FloatingNav />
 
       <div className="mx-auto w-full max-w-[2600px] px-0 pb-12 pt-6 md:pt-24">
@@ -323,7 +323,7 @@ export default function DraftboardPage() {
               <select
                 value={idx}
                 onChange={(e) => setIdx(Number(e.target.value))}
-                className="h-11 md:h-9 rounded-full border border-zinc-800 bg-zinc-950/60 px-3 text-sm font-medium text-zinc-200 outline-none transition hover:bg-zinc-900/40 focus:border-zinc-700"
+                className="h-11 md:h-9 rounded-full border border-zinc-800 light:border-zinc-200 bg-zinc-950/60 light:bg-zinc-50 px-3 text-sm font-medium text-zinc-200 light:text-zinc-800 outline-none transition hover:bg-zinc-900/40 light:hover:bg-zinc-100 focus:border-zinc-700 light:focus:border-zinc-400"
               >
                 {draftsAll.map((d, i) => {
                   const season = d?.league?.season ? String(d.league.season) : "—";
@@ -344,14 +344,14 @@ export default function DraftboardPage() {
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Search team or player…"
-              className="h-11 md:h-10 w-full sm:w-[360px] rounded-full border border-zinc-800 bg-zinc-950/60 px-4 text-sm text-zinc-200 outline-none transition placeholder:text-zinc-600 hover:bg-zinc-900/40 focus:border-zinc-700"
+              className="h-11 md:h-10 w-full sm:w-[360px] rounded-full border border-zinc-800 light:border-zinc-200 bg-zinc-950/60 light:bg-zinc-50 px-4 text-sm text-zinc-200 light:text-zinc-800 outline-none transition placeholder:text-zinc-600 light:placeholder:text-zinc-400 hover:bg-zinc-900/40 light:hover:bg-zinc-100 focus:border-zinc-700 light:focus:border-zinc-400"
             />
           </div>
         </div>
 
         <div className="mx-auto max-w-6xl px-4">
           {err ? (
-            <div className="rounded-2xl border border-red-900/60 bg-zinc-950/60 p-5 text-red-200 shadow-[0_14px_40px_rgba(0,0,0,0.42)]">
+            <div className="rounded-2xl border border-red-900/60 light:border-red-300 bg-zinc-950/60 light:bg-zinc-50 p-5 text-red-200 light:text-red-800 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)]">
               <div className="text-sm font-semibold">Load error</div>
               <div className="mt-2 text-sm opacity-90">{err}</div>
             </div>
@@ -360,43 +360,43 @@ export default function DraftboardPage() {
 
         {loading ? (
           <div className="mx-auto max-w-6xl px-4">
-            <div className="overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 p-6 shadow-[0_14px_40px_rgba(0,0,0,0.42)]">
-              <div className="h-4 w-48 rounded bg-zinc-900/50" />
+            <div className="overflow-hidden rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 p-6 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)]">
+              <div className="h-4 w-48 rounded bg-zinc-900/50 light:bg-zinc-100" />
               <div className="mt-4 space-y-3">
                 {Array.from({ length: 8 }).map((_, i) => (
-                  <div key={i} className="h-12 rounded-xl bg-zinc-900/30" />
+                  <div key={i} className="h-12 rounded-xl bg-zinc-900/30 light:bg-zinc-100/70" />
                 ))}
               </div>
             </div>
           </div>
         ) : !active?.draft ? (
-          <div className="mx-auto max-w-6xl px-4 text-sm text-zinc-400">
+          <div className="mx-auto max-w-6xl px-4 text-sm text-zinc-400 light:text-zinc-600">
             No draft found for this season.
           </div>
         ) : missingSettings ? (
           <div className="mx-auto max-w-6xl px-4">
-            <div className="rounded-2xl border border-zinc-800/80 bg-zinc-950/60 p-5 text-zinc-200 shadow-[0_14px_40px_rgba(0,0,0,0.42)]">
+            <div className="rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 p-5 text-zinc-200 light:text-zinc-800 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)]">
               <div className="text-sm font-semibold">Draft settings missing</div>
-              <div className="mt-2 text-sm text-zinc-400">
+              <div className="mt-2 text-sm text-zinc-400 light:text-zinc-600">
                 Draft payload didn’t include rounds/slots, and league fallback is empty too.
               </div>
             </div>
           </div>
         ) : !board ? (
-          <div className="mx-auto max-w-6xl px-4 text-sm text-zinc-400">
+          <div className="mx-auto max-w-6xl px-4 text-sm text-zinc-400 light:text-zinc-600">
             Draftboard data not ready.
           </div>
         ) : (
           <div className="w-full overflow-x-auto px-2 md:flex md:justify-center">
             <div className="inline-block min-w-full md:min-w-0">
               <div
-                className="overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[0_14px_40px_rgba(0,0,0,0.42)] backdrop-blur"
+                className="overflow-hidden rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)] backdrop-blur"
                 style={{ width: gridExactWidth + 24 }}
               >
-                <div className="flex flex-col gap-3 border-b border-zinc-800/70 px-4 py-3 md:flex-row md:items-center md:justify-between">
-                  <div className="text-sm font-semibold text-zinc-100">
+                <div className="flex flex-col gap-3 border-b border-zinc-800/70 light:border-zinc-200 px-4 py-3 md:flex-row md:items-center md:justify-between">
+                  <div className="text-sm font-semibold text-zinc-100 light:text-zinc-900">
                     Draft Board{" "}
-                    <span className="text-zinc-500 font-normal">
+                    <span className="text-zinc-500 light:text-zinc-500 font-normal">
                       • {board.rounds}R • {board.slots}T •{" "}
                       {board.rounds * board.slots}P
                     </span>
@@ -420,11 +420,11 @@ export default function DraftboardPage() {
                       gridTemplateColumns: `${leftW}px repeat(${board.columns.length}, ${cellW}px)`,
                     }}
                   >
-                    <div className="sticky left-0 z-10 bg-zinc-950/60 backdrop-blur">
+                    <div className="sticky left-0 z-10 bg-zinc-950/60 light:bg-zinc-50 backdrop-blur">
                       <div
                         className={cx(
                           headerH,
-                          "flex items-center justify-center rounded-md border border-zinc-800/70 bg-zinc-950/40 text-[10px] font-semibold text-zinc-400"
+                          "flex items-center justify-center rounded-md border border-zinc-800/70 light:border-zinc-200 bg-zinc-950/40 light:bg-zinc-50 text-[10px] font-semibold text-zinc-400 light:text-zinc-600"
                         )}
                       >
                         R
@@ -436,11 +436,11 @@ export default function DraftboardPage() {
                         <div
                           className={cx(
                             headerH,
-                            "rounded-md border border-zinc-800/70 bg-zinc-950/40"
+                            "rounded-md border border-zinc-800/70 light:border-zinc-200 bg-zinc-950/40 light:bg-zinc-50"
                           )}
                         >
                           <div className="flex h-full items-center gap-2 px-2">
-                            <div className="h-7 w-7 shrink-0 overflow-hidden rounded-md border border-zinc-800 bg-zinc-950/70">
+                            <div className="h-7 w-7 shrink-0 overflow-hidden rounded-md border border-zinc-800 light:border-zinc-200 bg-zinc-950/70 light:bg-white/80">
                               {c.teamAvatar ? (
                                 // eslint-disable-next-line @next/next/no-img-element
                                 <img
@@ -454,10 +454,10 @@ export default function DraftboardPage() {
                             </div>
 
                             <div className="min-w-0 flex-1">
-                              <div className="truncate text-[11px] font-semibold text-zinc-200">
+                              <div className="truncate text-[11px] font-semibold text-zinc-200 light:text-zinc-800">
                                 {c.teamName}
                               </div>
-                              <div className="truncate text-[10px] text-zinc-500">
+                              <div className="truncate text-[10px] text-zinc-500 light:text-zinc-500">
                                 Slot {c.slot}
                               </div>
                             </div>
@@ -478,11 +478,11 @@ export default function DraftboardPage() {
                           marginBottom: `${gapPx}px`,
                         }}
                       >
-                        <div className="sticky left-0 z-10 bg-zinc-950/60 backdrop-blur">
+                        <div className="sticky left-0 z-10 bg-zinc-950/60 light:bg-zinc-50 backdrop-blur">
                           <div
                             className={cx(
                               cellH,
-                              "flex items-center justify-center rounded-md border border-zinc-800/70 bg-zinc-950/40 text-[11px] font-semibold text-zinc-400"
+                              "flex items-center justify-center rounded-md border border-zinc-800/70 light:border-zinc-200 bg-zinc-950/40 light:bg-zinc-50 text-[11px] font-semibold text-zinc-400 light:text-zinc-600"
                             )}
                           >
                             {row.round}
@@ -490,8 +490,8 @@ export default function DraftboardPage() {
                         </div>
 
                         {row.cells.map((cell) => {
-                          const fill = cell.isPicked ? posFill(cell.playerPos) : "bg-zinc-950/10";
-                          const text = cell.isPicked ? posText(cell.playerPos) : "text-zinc-100";
+                          const fill = cell.isPicked ? posFill(cell.playerPos) : "bg-zinc-950/10 light:bg-zinc-900/5";
+                          const text = cell.isPicked ? posText(cell.playerPos) : "text-zinc-100 light:text-zinc-900";
                           const dim = q.trim() && !cell.isMatch ? "opacity-25" : "opacity-100";
 
                           return (
@@ -499,7 +499,7 @@ export default function DraftboardPage() {
                               <div
                                 className={cx(
                                   cellH,
-                                  "rounded-md border border-zinc-800/60",
+                                  "rounded-md border border-zinc-800/60 light:border-zinc-200",
                                   fill,
                                   text,
                                   "transition",
@@ -509,7 +509,7 @@ export default function DraftboardPage() {
                                 title={`#${cell.pickNo}`}
                               >
                                 <div className="h-full px-2 py-1.5">
-                                  <div className="text-[10px] font-semibold text-zinc-100/70">
+                                  <div className="text-[10px] font-semibold text-zinc-100/70 light:text-zinc-900/70">
                                     {cell.pickLabel}
                                   </div>
 
@@ -517,13 +517,13 @@ export default function DraftboardPage() {
                                     <div className="mt-1">
                                       <div className="truncate text-[12px] font-semibold leading-tight">
                                         {cell.playerName}{" "}
-                                        <span className="font-medium text-zinc-100/70">
+                                        <span className="font-medium text-zinc-100/70 light:text-zinc-900/70">
                                           {cell.playerSub}
                                         </span>
                                       </div>
                                     </div>
                                   ) : (
-                                    <div className="mt-3 text-[11px] text-zinc-100/40">—</div>
+                                    <div className="mt-3 text-[11px] text-zinc-100/40 light:text-zinc-900/40">—</div>
                                   )}
                                 </div>
                               </div>
@@ -536,7 +536,7 @@ export default function DraftboardPage() {
                 </div>
               </div>
 
-              <div className="mt-2 text-center text-xs text-zinc-600">
+              <div className="mt-2 text-center text-xs text-zinc-600 light:text-zinc-500">
                 Showing season {seasonLabel} • {active?.league?.league_id}
               </div>
             </div>

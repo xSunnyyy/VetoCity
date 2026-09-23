@@ -55,7 +55,7 @@ function Avatar({
   const url = sleeperAvatarThumb(avatar);
   return (
     <div
-      className="relative shrink-0 overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
+      className="relative shrink-0 overflow-hidden rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] light:shadow-[inset_0_1px_0_rgba(0,0,0,0.04)]"
       style={{ width: s, height: s }}
       title={name}
     >
@@ -68,7 +68,7 @@ function Avatar({
           loading="lazy"
         />
       ) : (
-        <div className="flex h-full w-full items-center justify-center text-sm font-semibold text-zinc-200">
+        <div className="flex h-full w-full items-center justify-center text-sm font-semibold text-zinc-200 light:text-zinc-800">
           {initials(name)}
         </div>
       )}
@@ -79,8 +79,8 @@ function Avatar({
 function Card({
   title,
   subtitle,
-  accent = "from-zinc-800/25",
-  borderAccent = "border-zinc-800/80",
+  accent = "from-zinc-800/25 light:from-zinc-300/30",
+  borderAccent = "border-zinc-800/80 light:border-zinc-300",
   children,
 }: {
   title: string;
@@ -92,7 +92,7 @@ function Card({
   return (
     <div
       className={cx(
-        "group relative overflow-hidden rounded-2xl border bg-zinc-950/60 shadow-[0_14px_40px_rgba(0,0,0,0.42)] backdrop-blur",
+        "group relative overflow-hidden rounded-2xl border bg-zinc-950/60 light:bg-zinc-50 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)] backdrop-blur",
         borderAccent
       )}
     >
@@ -107,11 +107,11 @@ function Card({
       </div>
 
       <div className="relative px-5 pt-5">
-        <div className="text-sm font-semibold tracking-wide text-zinc-100">
+        <div className="text-sm font-semibold tracking-wide text-zinc-100 light:text-zinc-900">
           {title}
         </div>
         {subtitle ? (
-          <div className="mt-1 text-xs text-zinc-500">{subtitle}</div>
+          <div className="mt-1 text-xs text-zinc-500 light:text-zinc-500">{subtitle}</div>
         ) : null}
       </div>
 
@@ -123,18 +123,18 @@ function Card({
 function WinnerRow({
   label,
   w,
-  tone = "text-zinc-500",
+  tone = "text-zinc-500 light:text-zinc-500",
 }: {
   label: string;
   w: Winner;
   tone?: string;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-zinc-800/70 bg-zinc-950/40 p-4">
+    <div className="flex items-center gap-3 rounded-xl border border-zinc-800/70 light:border-zinc-200 bg-zinc-950/40 light:bg-zinc-50 p-4">
       <Avatar name={w.name} avatar={w.avatar} size={40} />
       <div className="min-w-0 flex-1">
         <div className={cx("text-xs font-semibold", tone)}>{label}</div>
-        <div className="mt-0.5 truncate text-sm font-semibold text-zinc-200">
+        <div className="mt-0.5 truncate text-sm font-semibold text-zinc-200 light:text-zinc-800">
           {w?.name || "—"}
         </div>
       </div>
@@ -204,19 +204,19 @@ export default function AwardsPage() {
   }, [seasons]);
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-100">
+    <main className="min-h-screen bg-zinc-950 light:bg-white text-zinc-100 light:text-zinc-900">
       <FloatingNav />
 
       <div className="mx-auto w-full max-w-6xl px-4 pb-12 pt-6 md:pt-24">
         <div className="mb-6">
           <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">Awards</h1>
-          <div className="mt-1 text-sm text-zinc-400">
+          <div className="mt-1 text-sm text-zinc-400 light:text-zinc-600">
             Season awards for every year
           </div>
         </div>
 
         {err ? (
-          <div className="rounded-2xl border border-red-900/60 bg-zinc-950/60 p-5 text-red-200 shadow-[0_14px_40px_rgba(0,0,0,0.42)]">
+          <div className="rounded-2xl border border-red-900/60 light:border-red-300 bg-zinc-950/60 light:bg-zinc-50 p-5 text-red-200 light:text-red-800 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)]">
             <div className="text-sm font-semibold">Load error</div>
             <div className="mt-2 text-sm opacity-90">{err}</div>
           </div>
@@ -227,19 +227,19 @@ export default function AwardsPage() {
             {Array.from({ length: 3 }).map((_, i) => (
               <div
                 key={i}
-                className="overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 p-6 shadow-[0_14px_40px_rgba(0,0,0,0.42)]"
+                className="overflow-hidden rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 p-6 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)]"
               >
-                <div className="h-4 w-40 rounded bg-zinc-900/50" />
+                <div className="h-4 w-40 rounded bg-zinc-900/50 light:bg-zinc-100" />
                 <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
-                  <div className="h-24 rounded-2xl bg-zinc-900/30" />
-                  <div className="h-24 rounded-2xl bg-zinc-900/30" />
-                  <div className="h-24 rounded-2xl bg-zinc-900/30" />
+                  <div className="h-24 rounded-2xl bg-zinc-900/30 light:bg-zinc-100/70" />
+                  <div className="h-24 rounded-2xl bg-zinc-900/30 light:bg-zinc-100/70" />
+                  <div className="h-24 rounded-2xl bg-zinc-900/30 light:bg-zinc-100/70" />
                 </div>
               </div>
             ))}
           </div>
         ) : !seasonsSorted.length ? (
-          <div className="text-sm text-zinc-400">No seasons found.</div>
+          <div className="text-sm text-zinc-400 light:text-zinc-600">No seasons found.</div>
         ) : (
           <div className="space-y-4">
             {seasonsSorted.map((s) => {
@@ -250,7 +250,7 @@ export default function AwardsPage() {
               return (
                 <section
                   key={s.leagueId}
-                  className="overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/35 shadow-[0_14px_40px_rgba(0,0,0,0.35)] backdrop-blur"
+                  className="overflow-hidden rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/35 light:bg-zinc-50 shadow-[0_14px_40px_rgba(0,0,0,0.35)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)] backdrop-blur"
                 >
                   {/* Collapsed header */}
                   <button
@@ -260,13 +260,13 @@ export default function AwardsPage() {
                   >
                     <div className="flex items-center justify-between gap-3 px-5 py-4">
                       <div className="min-w-0">
-                        <div className="text-base font-semibold text-zinc-100">
+                        <div className="text-base font-semibold text-zinc-100 light:text-zinc-900">
                           {seasonTitle}
                         </div>
-                        <div className="mt-1 truncate text-xs text-zinc-500">
+                        <div className="mt-1 truncate text-xs text-zinc-500 light:text-zinc-500">
                           {leagueSub}
                           {s.status ? (
-                            <span className="text-zinc-700"> • {s.status}</span>
+                            <span className="text-zinc-700 light:text-zinc-400"> • {s.status}</span>
                           ) : null}
                         </div>
                       </div>
@@ -279,7 +279,7 @@ export default function AwardsPage() {
                             avatar={s.champion.avatar}
                             size={32}
                           />
-                          <div className="max-w-[180px] truncate text-sm font-semibold text-amber-200/90">
+                          <div className="max-w-[180px] truncate text-sm font-semibold text-amber-200/90 light:text-amber-800/90">
                             {s.champion.name || "—"}
                           </div>
                         </div>
@@ -288,8 +288,8 @@ export default function AwardsPage() {
                           className={cx(
                             "flex h-9 w-9 items-center justify-center rounded-full border text-sm transition",
                             isOpen
-                              ? "border-zinc-700 bg-zinc-900/50 text-zinc-200"
-                              : "border-zinc-800 bg-zinc-950/40 text-zinc-400"
+                              ? "border-zinc-700 light:border-zinc-300 bg-zinc-900/50 light:bg-zinc-100 text-zinc-200 light:text-zinc-800"
+                              : "border-zinc-800 light:border-zinc-200 bg-zinc-950/40 light:bg-zinc-50 text-zinc-400 light:text-zinc-600"
                           )}
                           aria-hidden
                         >
@@ -306,21 +306,21 @@ export default function AwardsPage() {
                       <div className="flex justify-center">
                         <div className="w-full max-w-3xl">
                           <div className="relative">
-                            <div className="pointer-events-none absolute -inset-6 rounded-[28px] bg-gradient-to-r from-amber-500/10 via-yellow-400/10 to-amber-500/10 blur-2xl" />
+                            <div className="pointer-events-none absolute -inset-6 rounded-[28px] bg-gradient-to-r from-amber-500/10 light:from-amber-200/50 via-yellow-400/10 to-amber-500/10 light:to-amber-200/50 blur-2xl" />
                             <Card
                               title="Champion"
                               subtitle="League winner"
-                              accent="from-amber-500/22"
-                              borderAccent="border-amber-500/30"
+                              accent="from-amber-500/22 light:from-amber-200/60"
+                              borderAccent="border-amber-500/30 light:border-amber-400"
                             >
                               <div className="mb-4 flex justify-center">
-                                <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/25 bg-zinc-950/55 px-4 py-1.5 text-xs font-semibold text-amber-200 shadow-[0_10px_30px_rgba(0,0,0,0.35)]">
+                                <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/25 light:border-amber-300 bg-zinc-950/55 light:bg-zinc-50 px-4 py-1.5 text-xs font-semibold text-amber-200 light:text-amber-800 shadow-[0_10px_30px_rgba(0,0,0,0.35)] light:shadow-[0_10px_30px_rgba(0,0,0,0.10)]">
                                   <span aria-hidden>🏆</span>
                                   Champion
                                 </div>
                               </div>
 
-                              <div className="rounded-2xl border border-amber-500/15 bg-zinc-950/40 p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+                              <div className="rounded-2xl border border-amber-500/15 light:border-amber-300 bg-zinc-950/40 light:bg-zinc-50 p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] light:shadow-[inset_0_1px_0_rgba(0,0,0,0.05)]">
                                 <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:text-left">
                                   <Avatar
                                     name={s.champion.name}
@@ -328,18 +328,18 @@ export default function AwardsPage() {
                                     size={68}
                                   />
                                   <div className="min-w-0 flex-1">
-                                    <div className="text-xs font-semibold text-amber-200/80">
+                                    <div className="text-xs font-semibold text-amber-200/80 light:text-amber-800/80">
                                       {seasonTitle} Champion
                                     </div>
-                                    <div className="mt-1 truncate text-2xl font-semibold text-zinc-100">
+                                    <div className="mt-1 truncate text-2xl font-semibold text-zinc-100 light:text-zinc-900">
                                       {s.champion.name || "—"}
                                     </div>
                                     {s.champion.rosterId ? (
-                                      <div className="mt-1 text-xs text-zinc-500">
+                                      <div className="mt-1 text-xs text-zinc-500 light:text-zinc-500">
                                         Roster {s.champion.rosterId}
                                       </div>
                                     ) : (
-                                      <div className="mt-1 text-xs text-zinc-600">—</div>
+                                      <div className="mt-1 text-xs text-zinc-600 light:text-zinc-500">—</div>
                                     )}
                                   </div>
                                 </div>
@@ -353,39 +353,39 @@ export default function AwardsPage() {
                         <Card
                           title="Regular Season Champ"
                           subtitle="Best record"
-                          accent="from-emerald-500/16"
-                          borderAccent="border-emerald-500/20"
+                          accent="from-emerald-500/16 light:from-emerald-200/50"
+                          borderAccent="border-emerald-500/20 light:border-emerald-300"
                         >
                           <WinnerRow
                             label="Regular Season Champ"
                             w={s.regSeason}
-                            tone="text-emerald-200/70"
+                            tone="text-emerald-200/70 light:text-emerald-800/70"
                           />
                         </Card>
 
                         <Card
                           title="Best Manager"
                           subtitle="Highest points for"
-                          accent="from-sky-500/16"
-                          borderAccent="border-violet-500/20"
+                          accent="from-sky-500/16 light:from-sky-200/50"
+                          borderAccent="border-violet-500/20 light:border-violet-300"
                         >
                           <WinnerRow
                             label="Best Manager"
                             w={s.bestManager}
-                            tone="text-sky-200/70"
+                            tone="text-sky-200/70 light:text-sky-800/70"
                           />
                         </Card>
 
                         <Card
                           title="Toilet Bowl Champ"
                           subtitle="Losers bracket winner"
-                          accent="from-red-500/10"
-                          borderAccent="border-zinc-700/80"
+                          accent="from-red-500/10 light:from-red-200/50"
+                          borderAccent="border-zinc-700/80 light:border-zinc-300"
                         >
                           <WinnerRow
                             label="Toilet Bowl Champ"
                             w={s.toiletBowl}
-                            tone="text-zinc-400"
+                            tone="text-zinc-400 light:text-zinc-600"
                           />
                         </Card>
                       </div>
@@ -398,7 +398,7 @@ export default function AwardsPage() {
         )}
 
         {data?.fetchedAt ? (
-          <div className="mt-8 text-center text-xs text-zinc-600">
+          <div className="mt-8 text-center text-xs text-zinc-600 light:text-zinc-500">
             Updated {new Date(data.fetchedAt).toLocaleString()}
           </div>
         ) : null}

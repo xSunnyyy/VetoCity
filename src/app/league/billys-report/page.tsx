@@ -155,34 +155,6 @@ function WinnerButton({
   );
 }
 
-function RosterToggleButton({
-  expanded,
-  onClick,
-  label,
-}: {
-  expanded: boolean;
-  onClick: () => void;
-  label: string;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-expanded={expanded}
-      aria-label={`${expanded ? "Hide" : "View"} ${label}'s starting lineup`}
-      title={`${expanded ? "Hide" : "View"} starting lineup`}
-      className={cx(
-        "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border transition",
-        expanded
-          ? "border-zinc-600 bg-zinc-900/70 text-zinc-100"
-          : "border-zinc-800 bg-zinc-950/60 text-zinc-400 hover:bg-zinc-900/50"
-      )}
-    >
-      <ChevronIcon expanded={expanded} />
-    </button>
-  );
-}
-
 function RosterList({ starters, players }: { starters: string[]; players: PlayerMap | null }) {
   if (!starters.length) {
     return <div className="rounded-xl border border-zinc-800 bg-zinc-950/60 p-3 text-xs text-zinc-500">No starting lineup set for this week yet.</div>;
@@ -385,10 +357,11 @@ function ReportForm({
   const [err, setErr] = useState<string | null>(null);
   const seededRef = useRef(false);
 
-  // Which teams' starting lineups are expanded, keyed by `${matchupId}-A|B`.
-  const [expandedRosters, setExpandedRosters] = useState<Set<string>>(new Set());
+  // Which matchups have both starting lineups expanded — one toggle opens
+  // or closes both sides together, since you're always comparing the pair.
+  const [expandedRosters, setExpandedRosters] = useState<Set<number>>(new Set());
 
-  function toggleRoster(key: string) {
+  function toggleRoster(key: number) {
     setExpandedRosters((prev) => {
       const next = new Set(prev);
       if (next.has(key)) next.delete(key);
@@ -555,39 +528,44 @@ function ReportForm({
               { key: "B", rosterId: p.rosterIdB, name: p.teamB, starters: p.startersB },
             ] as const;
 
+            const rostersOpen = expandedRosters.has(p.matchupId);
+
             return (
               <div key={p.matchupId} className="rounded-xl border border-zinc-800 bg-zinc-950/40 p-4">
-                <div className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                  Who wins?
+                <div className="mb-1.5 flex items-center justify-between gap-2">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Who wins?</div>
+                  <button
+                    type="button"
+                    onClick={() => toggleRoster(p.matchupId)}
+                    aria-expanded={rostersOpen}
+                    className="inline-flex items-center gap-1 text-xs font-medium text-zinc-400 transition hover:text-zinc-200"
+                  >
+                    <ChevronIcon expanded={rostersOpen} />
+                    {rostersOpen ? "Hide rosters" : "View rosters"}
+                  </button>
                 </div>
-                <div className="grid grid-cols-2 gap-2">
-                  {sides.map((side) => {
-                    const rosterKey = `${p.matchupId}-${side.key}`;
-                    const rosterOpen = expandedRosters.has(rosterKey);
 
-                    return (
-                      <div key={side.key} className="min-w-0">
-                        <div className="flex items-center gap-1.5">
-                          <WinnerButton
-                            label={side.name}
-                            active={pick.winnerRosterId === side.rosterId}
-                            onClick={() => setPick(p.matchupId, { winnerRosterId: side.rosterId })}
-                          />
-                          <RosterToggleButton
-                            expanded={rosterOpen}
-                            label={side.name}
-                            onClick={() => toggleRoster(rosterKey)}
-                          />
-                        </div>
-                        {rosterOpen ? (
-                          <div className="mt-2">
-                            <RosterList starters={side.starters} players={playersQuery.data ?? null} />
-                          </div>
-                        ) : null}
-                      </div>
-                    );
-                  })}
+                <div className="flex gap-2">
+                  {sides.map((side) => (
+                    <WinnerButton
+                      key={side.key}
+                      label={side.name}
+                      active={pick.winnerRosterId === side.rosterId}
+                      onClick={() => setPick(p.matchupId, { winnerRosterId: side.rosterId })}
+                    />
+                  ))}
                 </div>
+
+                {rostersOpen ? (
+                  <div className="mt-2 grid grid-cols-2 gap-2">
+                    {sides.map((side) => (
+                      <div key={side.key} className="min-w-0">
+                        <RosterList starters={side.starters} players={playersQuery.data ?? null} />
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+
                 <textarea
                   value={pick.report}
                   onChange={(e) => setPick(p.matchupId, { report: e.target.value })}

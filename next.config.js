@@ -35,4 +35,15 @@ module.exports = {
 
   // Power-only mode for static optimization
   poweredByHeader: false,
+
+  // Service worker must never be served stale, or clients get stuck on an
+  // old cache/offline page after a deploy.
+  async headers() {
+    return [
+      {
+        source: "/sw.js",
+        headers: [{ key: "Cache-Control", value: "no-cache, must-revalidate" }],
+      },
+    ];
+  },
 };

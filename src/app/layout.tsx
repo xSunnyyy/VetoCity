@@ -4,6 +4,7 @@ import "./globals.css";
 import { QueryProvider } from "./components/QueryProvider";
 import { ToastProvider } from "./components/ui";
 import ThemeToggle from "./components/ThemeToggle";
+import ServiceWorkerRegister from "./components/ServiceWorkerRegister";
 
 // Runs before hydration so a returning visitor's saved light-mode choice
 // applies before first paint — otherwise the page would flash dark (the
@@ -37,7 +38,7 @@ export const metadata: Metadata = {
       { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
     ],
     apple: [
-      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
     ],
   },
 };
@@ -62,6 +63,7 @@ export default function RootLayout({
           {THEME_INIT_SCRIPT}
         </Script>
         <ThemeToggle />
+        <ServiceWorkerRegister />
         <QueryProvider>
           <ToastProvider>{children}</ToastProvider>
         </QueryProvider>

@@ -72,5 +72,75 @@
       }
     ],
     "createdAt": "2026-09-23T19:50:14.789Z"
+  },
+  {
+    "id": "1790194235681-oau8pu",
+    "title": "Week 4 (2026)",
+    "matchups": [
+      {
+        "id": "1790194235681-0",
+        "matchup": "Kingpin vs Silver",
+        "report": "",
+        "rosterIdA": 10,
+        "rosterIdB": 12,
+        "teamA": "Kingpin",
+        "teamB": "Silver",
+        "winnerRosterId": 12
+      },
+      {
+        "id": "1790194235681-1",
+        "matchup": "Kurta Pajama vs Duddu Paaaji",
+        "report": "",
+        "rosterIdA": 3,
+        "rosterIdB": 8,
+        "teamA": "Kurta Pajama",
+        "teamB": "Duddu Paaaji",
+        "winnerRosterId": 3
+      },
+      {
+        "id": "1790194235681-2",
+        "matchup": "Haramdami vs Sacko Bhai",
+        "report": "",
+        "rosterIdA": 7,
+        "rosterIdB": 11,
+        "teamA": "Haramdami",
+        "teamB": "Sacko Bhai",
+        "winnerRosterId": 7
+      },
+      {
+        "id": "1790194235681-3",
+        "matchup": "Regular Season Q vs Allen Bhai",
+        "report": "",
+        "rosterIdA": 5,
+        "rosterIdB": 9,
+        "teamA": "Regular Season Q",
+        "teamB": "Allen Bhai",
+        "winnerRosterId": 9
+      },
+      {
+        "id": "1790194235681-4",
+        "matchup": "Purdy Cocky vs General Mcnaughty",
+        "report": "",
+        "rosterIdA": 4,
+        "rosterIdB": 6,
+        "teamA": "Purdy Cocky",
+        "teamB": "General Mcnaughty",
+        "winnerRosterId": 4
+      },
+      {
+        "id": "1790194235681-5",
+        "matchup": "Barista Bhaijaan vs Abbyyzz",
+        "report": "",
+        "rosterIdA": 1,
+        "rosterIdB": 2,
+        "teamA": "Barista Bhaijaan",
+        "teamB": "Abbyyzz",
+        "winnerRosterId": 2
+      }
+    ],
+    "createdAt": "2026-09-23T20:10:35.681Z",
+    "season": "2026",
+    "week": 4,
+    "leagueId": "1388938159638708224"
   }
 ]

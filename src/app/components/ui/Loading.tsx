@@ -36,14 +36,14 @@ export function Skeleton({ width, height, rounded = "md", className }: SkeletonP
   return (
     <div
       className={cx(
-        "relative overflow-hidden bg-zinc-900/50",
+        "relative overflow-hidden bg-zinc-900/50 light:bg-zinc-100",
         roundedClasses[rounded],
         className
       )}
       style={{ width, height }}
     >
       <div
-        className="absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-zinc-800/30 to-transparent"
+        className="absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-zinc-800/30 light:via-zinc-200/30 to-transparent"
         style={{
           backgroundSize: "1000px 100%",
         }}
@@ -72,7 +72,7 @@ export function LoadingCard({ count = 6, className }: LoadingCardProps) {
       {Array.from({ length: count }).map((_, i) => (
         <div
           key={i}
-          className="overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 p-5 shadow-[0_14px_40px_rgba(0,0,0,0.42)]"
+          className="overflow-hidden rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 p-5 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)]"
         >
           <div className="flex items-center gap-3">
             <Skeleton width="40px" height="40px" rounded="xl" />
@@ -105,7 +105,7 @@ export function LoadingState({ message = "Loading...", className }: LoadingState
   return (
     <div className={cx("flex flex-col items-center justify-center gap-4 py-12", className)}>
       <LoadingSpinner />
-      <div className="text-sm text-zinc-400">{message}</div>
+      <div className="text-sm text-zinc-400 light:text-zinc-600">{message}</div>
     </div>
   );
 }
@@ -117,7 +117,7 @@ export function LoadingSpinner({ className }: { className?: string }) {
   return (
     <div
       className={cx(
-        "h-8 w-8 animate-spin rounded-full border-2 border-zinc-800 border-t-zinc-400",
+        "h-8 w-8 animate-spin rounded-full border-2 border-zinc-800 light:border-zinc-200 border-t-zinc-400",
         className
       )}
       role="status"
@@ -154,16 +154,16 @@ export function ErrorState({ title = "Error", message, onRetry, className }: Err
   return (
     <div
       className={cx(
-        "rounded-2xl border border-red-900/60 bg-zinc-950/60 p-5 shadow-[0_14px_40px_rgba(0,0,0,0.42)]",
+        "rounded-2xl border border-red-900/60 light:border-red-300 bg-zinc-950/60 light:bg-zinc-50 p-5 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)]",
         className
       )}
     >
-      <div className="text-sm font-semibold text-red-200">{title}</div>
-      <div className="mt-2 text-sm text-red-200/90">{message}</div>
+      <div className="text-sm font-semibold text-red-200 light:text-red-800">{title}</div>
+      <div className="mt-2 text-sm text-red-200/90 light:text-red-800/90">{message}</div>
       {onRetry && (
         <button
           onClick={onRetry}
-          className="mt-4 rounded-lg border border-red-900/60 bg-red-950/40 px-4 py-2 text-sm font-medium text-red-200 transition hover:bg-red-900/40"
+          className="mt-4 rounded-lg border border-red-900/60 light:border-red-300 bg-red-950/40 light:bg-red-100 px-4 py-2 text-sm font-medium text-red-200 light:text-red-800 transition hover:bg-red-900/40 light:hover:bg-red-200"
         >
           Try Again
         </button>

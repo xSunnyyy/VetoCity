@@ -28,7 +28,7 @@ export function Avatar({ name, avatarUrl, size = 32, className = "" }: AvatarPro
 
   return (
     <div
-      className={`relative shrink-0 overflow-hidden rounded-lg border border-zinc-800/80 bg-zinc-950/60 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] ${className}`}
+      className={`relative shrink-0 overflow-hidden rounded-lg border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] light:shadow-[inset_0_1px_0_rgba(0,0,0,0.04)] ${className}`}
       style={{ width: s, height: s }}
       title={name}
     >
@@ -36,7 +36,7 @@ export function Avatar({ name, avatarUrl, size = 32, className = "" }: AvatarPro
         // eslint-disable-next-line @next/next/no-img-element
         <img src={avatarUrl} alt={name} className="h-full w-full object-cover" loading="lazy" />
       ) : (
-        <div className="flex h-full w-full items-center justify-center text-[11px] font-semibold text-zinc-200">
+        <div className="flex h-full w-full items-center justify-center text-[11px] font-semibold text-zinc-200 light:text-zinc-800">
           {initials(name)}
         </div>
       )}

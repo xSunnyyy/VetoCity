@@ -1,7 +1,22 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import "./globals.css";
 import { QueryProvider } from "./components/QueryProvider";
 import { ToastProvider } from "./components/ui";
+import ThemeToggle from "./components/ThemeToggle";
+
+// Runs before hydration so a returning visitor's saved light-mode choice
+// applies before first paint — otherwise the page would flash dark (the
+// default) and then snap to light a moment later.
+const THEME_INIT_SCRIPT = `
+(function () {
+  try {
+    if (localStorage.getItem("vetocity-theme") === "light") {
+      document.documentElement.classList.add("light");
+    }
+  } catch (e) {}
+})();
+`;
 
 export const metadata: Metadata = {
   title: "Veto City - Fantasy Football Hub",
@@ -42,7 +57,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" data-layout="SRC_APP_LAYOUT">
-      <body className="bg-zinc-950 text-zinc-100">
+      <body className="bg-zinc-950 light:bg-white text-zinc-100 light:text-zinc-900">
+        <Script id="theme-init" strategy="beforeInteractive">
+          {THEME_INIT_SCRIPT}
+        </Script>
+        <ThemeToggle />
         <QueryProvider>
           <ToastProvider>{children}</ToastProvider>
         </QueryProvider>

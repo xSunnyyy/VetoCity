@@ -44,10 +44,10 @@ type RecordsPayload = {
 function TableSection({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
   const dragRef = useDragScroll<HTMLDivElement>();
   return (
-    <div className="overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[0_14px_40px_rgba(0,0,0,0.42)] backdrop-blur">
-      <div className="border-b border-zinc-800/70 bg-zinc-900/40 px-4 py-3">
-        <div className="text-sm font-semibold tracking-wide text-zinc-100">{title}</div>
-        {subtitle ? <div className="mt-0.5 text-xs text-zinc-500">{subtitle}</div> : null}
+    <div className="overflow-hidden rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)] backdrop-blur">
+      <div className="border-b border-zinc-800/70 light:border-zinc-200 bg-zinc-900/40 light:bg-zinc-100 px-4 py-3">
+        <div className="text-sm font-semibold tracking-wide text-zinc-100 light:text-zinc-900">{title}</div>
+        {subtitle ? <div className="mt-0.5 text-xs text-zinc-500 light:text-zinc-500">{subtitle}</div> : null}
       </div>
       <div ref={dragRef} className="no-scrollbar cursor-grab overflow-x-auto">
         {children}
@@ -57,11 +57,11 @@ function TableSection({ title, subtitle, children }: { title: string; subtitle?:
 }
 
 function PodiumCell({ w }: { w: Winner }) {
-  if (w?.rosterId == null) return <span className="text-zinc-600">—</span>;
+  if (w?.rosterId == null) return <span className="text-zinc-600 light:text-zinc-500">—</span>;
   return (
     <div className="min-w-0">
-      <div className="truncate text-sm font-medium text-zinc-200">{w.name}</div>
-      {w.ownerName ? <div className="truncate text-xs text-zinc-500">{w.ownerName}</div> : null}
+      <div className="truncate text-sm font-medium text-zinc-200 light:text-zinc-800">{w.name}</div>
+      {w.ownerName ? <div className="truncate text-xs text-zinc-500 light:text-zinc-500">{w.ownerName}</div> : null}
     </div>
   );
 }
@@ -172,14 +172,14 @@ export function LeagueHistory() {
 
   return (
     <section className="mb-10">
-      <div className="mb-4 text-center text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500">
+      <div className="mb-4 text-center text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500 light:text-zinc-500">
         League History
       </div>
 
       {loading ? (
         <div className="space-y-4">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="h-48 animate-pulse rounded-2xl border border-zinc-800/80 bg-zinc-950/60" />
+            <div key={i} className="h-48 animate-pulse rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50" />
           ))}
         </div>
       ) : (
@@ -187,8 +187,8 @@ export function LeagueHistory() {
           <TableSection title="Year-by-Year Podium">
             <div className="no-scrollbar max-h-[24rem] overflow-y-auto">
               <table className="w-full min-w-[560px] text-left text-sm">
-                <thead className="sticky top-0 z-10 bg-zinc-950">
-                  <tr className="border-b border-zinc-800/70 text-xs text-zinc-500">
+                <thead className="sticky top-0 z-10 bg-zinc-950 light:bg-white">
+                  <tr className="border-b border-zinc-800/70 light:border-zinc-200 text-xs text-zinc-500 light:text-zinc-500">
                     <th className="px-4 py-2 font-medium">Yr</th>
                     <th className="px-4 py-2 font-medium">Champion</th>
                     <th className="px-4 py-2 font-medium">Runner-Up</th>
@@ -197,8 +197,8 @@ export function LeagueHistory() {
                 </thead>
                 <tbody>
                   {podiumSeasons.map((s) => (
-                    <tr key={s.season} className="border-b border-zinc-800/50 last:border-b-0">
-                      <td className="px-4 py-2.5 align-top text-xs font-semibold text-zinc-400">{s.season}</td>
+                    <tr key={s.season} className="border-b border-zinc-800/50 light:border-zinc-200 last:border-b-0">
+                      <td className="px-4 py-2.5 align-top text-xs font-semibold text-zinc-400 light:text-zinc-600">{s.season}</td>
                       <td className="px-4 py-2.5 align-top">
                         <PodiumCell w={s.champion} />
                       </td>
@@ -217,60 +217,60 @@ export function LeagueHistory() {
 
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <TableSection title="History Superlatives">
-              <div className="divide-y divide-zinc-800/60">
+              <div className="divide-y divide-zinc-800/60 light:divide-zinc-200">
                 <div className="flex items-center justify-between px-4 py-2.5 text-sm">
-                  <span className="text-zinc-500">Most Titles</span>
-                  <span className="font-medium text-zinc-100">
+                  <span className="text-zinc-500 light:text-zinc-500">Most Titles</span>
+                  <span className="font-medium text-zinc-100 light:text-zinc-900">
                     {mostTitles ? `${mostTitles.label} — ${mostTitles.titles}` : "—"}
                   </span>
                 </div>
                 <div className="flex items-center justify-between px-4 py-2.5 text-sm">
-                  <span className="text-zinc-500">Back-to-Back</span>
-                  <span className="font-medium text-zinc-100">
+                  <span className="text-zinc-500 light:text-zinc-500">Back-to-Back</span>
+                  <span className="font-medium text-zinc-100 light:text-zinc-900">
                     {backToBack ? `${backToBack.label} — ${backToBack.years.join(" & ")}` : "—"}
                   </span>
                 </div>
                 <div className="flex items-center justify-between px-4 py-2.5 text-sm">
-                  <span className="text-zinc-500">Most Playoff Wins</span>
-                  <span className="font-medium text-zinc-100">
+                  <span className="text-zinc-500 light:text-zinc-500">Most Playoff Wins</span>
+                  <span className="font-medium text-zinc-100 light:text-zinc-900">
                     {mostPlayoffWins
                       ? `${mostPlayoffWins.ownerName || mostPlayoffWins.managerName} — ${mostPlayoffWins.playoffs.wins}`
                       : "—"}
                   </span>
                 </div>
                 <div className="flex items-center justify-between px-4 py-2.5 text-sm">
-                  <span className="text-zinc-500">Best Win %</span>
-                  <span className="font-medium text-zinc-100">
+                  <span className="text-zinc-500 light:text-zinc-500">Best Win %</span>
+                  <span className="font-medium text-zinc-100 light:text-zinc-900">
                     {bestWinPct
                       ? `${bestWinPct.ownerName || bestWinPct.managerName} — ${(bestWinPct.record.winPct * 100).toFixed(1)}%`
                       : "—"}
                   </span>
                 </div>
                 <div className="flex items-center justify-between px-4 py-2.5 text-sm">
-                  <span className="text-zinc-500">Highest Career PPG</span>
-                  <span className="font-medium text-zinc-100">
+                  <span className="text-zinc-500 light:text-zinc-500">Highest Career PPG</span>
+                  <span className="font-medium text-zinc-100 light:text-zinc-900">
                     {bestPPG ? `${bestPPG.ownerName || bestPPG.managerName} — ${bestPPG.pointsPerGame.toFixed(1)}` : "—"}
                   </span>
                 </div>
                 <div className="flex items-center justify-between px-4 py-2.5 text-sm">
-                  <span className="text-zinc-500">Best Reg. Season</span>
-                  <span className="font-medium text-zinc-100">
+                  <span className="text-zinc-500 light:text-zinc-500">Best Reg. Season</span>
+                  <span className="font-medium text-zinc-100 light:text-zinc-900">
                     {bestRegSeason ? `${bestRegSeason.team.teamName} ${bestRegSeason.label} (${bestRegSeason.season})` : "—"}
                   </span>
                 </div>
                 <div className="flex items-center justify-between px-4 py-2.5 text-sm">
-                  <span className="text-zinc-500">Highest-Scoring Season</span>
-                  <span className="font-medium text-zinc-100">
+                  <span className="text-zinc-500 light:text-zinc-500">Highest-Scoring Season</span>
+                  <span className="font-medium text-zinc-100 light:text-zinc-900">
                     {bestScoringSeason
                       ? `${bestScoringSeason.team.teamName} — ${bestScoringSeason.label} (${bestScoringSeason.season})`
                       : "—"}
                   </span>
                 </div>
               </div>
-              <div className="flex justify-center border-t border-zinc-800/60 px-4 pt-24 pb-4">
+              <div className="flex justify-center border-t border-zinc-800/60 light:border-zinc-200 px-4 pt-24 pb-4">
                 <Link
                   href="/league/drafts"
-                  className="inline-flex h-11 md:h-10 items-center justify-center rounded-full border border-zinc-800 bg-zinc-900/70 px-6 text-sm font-medium hover:bg-zinc-800 transition-colors"
+                  className="inline-flex h-11 md:h-10 items-center justify-center rounded-full border border-zinc-800 light:border-zinc-200 bg-zinc-900/70 light:bg-zinc-200 px-6 text-sm font-medium hover:bg-zinc-800 light:hover:bg-zinc-200 transition-colors"
                 >
                   View Previous Drafts
                 </Link>
@@ -280,8 +280,8 @@ export function LeagueHistory() {
             <TableSection title="Wall of Shame" subtitle="Worst record, by year">
               <div className="no-scrollbar max-h-[24rem] overflow-y-auto">
                 <table className="w-full text-left text-sm">
-                  <thead className="sticky top-0 z-10 bg-zinc-950">
-                    <tr className="border-b border-zinc-800/70 text-xs text-zinc-500">
+                  <thead className="sticky top-0 z-10 bg-zinc-950 light:bg-white">
+                    <tr className="border-b border-zinc-800/70 light:border-zinc-200 text-xs text-zinc-500 light:text-zinc-500">
                       <th className="px-4 py-2 font-medium">Yr</th>
                       <th className="px-4 py-2 font-medium">Team</th>
                       <th className="px-4 py-2 font-medium text-right">Record</th>
@@ -289,12 +289,12 @@ export function LeagueHistory() {
                   </thead>
                   <tbody>
                     {podiumSeasons.map((s) => (
-                      <tr key={s.season} className="border-b border-zinc-800/50 last:border-b-0">
-                        <td className="px-4 py-2.5 align-top text-xs font-semibold text-zinc-400">{s.season}</td>
+                      <tr key={s.season} className="border-b border-zinc-800/50 light:border-zinc-200 last:border-b-0">
+                        <td className="px-4 py-2.5 align-top text-xs font-semibold text-zinc-400 light:text-zinc-600">{s.season}</td>
                         <td className="px-4 py-2.5 align-top">
                           <PodiumCell w={s.lastPlace} />
                         </td>
-                        <td className="px-4 py-2.5 align-top text-right text-sm font-medium text-zinc-300">
+                        <td className="px-4 py-2.5 align-top text-right text-sm font-medium text-zinc-300 light:text-zinc-700">
                           {s.lastPlace?.record
                             ? s.lastPlace.record.ties
                               ? `${s.lastPlace.record.wins}-${s.lastPlace.record.losses}-${s.lastPlace.record.ties}`

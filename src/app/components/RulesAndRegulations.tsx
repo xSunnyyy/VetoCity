@@ -92,8 +92,8 @@ function BylawList({ items }: { items: BylawItem[] }) {
       {items.map((item, i) => {
         if (typeof item === "string") {
           return (
-            <li key={i} className="flex gap-2.5 text-sm leading-relaxed text-zinc-300">
-              <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-zinc-600" />
+            <li key={i} className="flex gap-2.5 text-sm leading-relaxed text-zinc-300 light:text-zinc-700">
+              <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-zinc-600 light:bg-zinc-300" />
               <span>{item}</span>
             </li>
           );
@@ -101,13 +101,13 @@ function BylawList({ items }: { items: BylawItem[] }) {
 
         return (
           <li key={i}>
-            <div className="flex gap-2.5 text-sm font-medium leading-relaxed text-zinc-200">
-              <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-zinc-600" />
+            <div className="flex gap-2.5 text-sm font-medium leading-relaxed text-zinc-200 light:text-zinc-800">
+              <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-zinc-600 light:bg-zinc-300" />
               <span>{item.label}</span>
             </div>
-            <ul className="ml-3.5 mt-1.5 space-y-1.5 border-l border-zinc-800/70 pl-4">
+            <ul className="ml-3.5 mt-1.5 space-y-1.5 border-l border-zinc-800/70 light:border-zinc-200 pl-4">
               {item.sub.map((s, j) => (
-                <li key={j} className="text-sm leading-relaxed text-zinc-400">
+                <li key={j} className="text-sm leading-relaxed text-zinc-400 light:text-zinc-600">
                   {s}
                 </li>
               ))}
@@ -121,15 +121,15 @@ function BylawList({ items }: { items: BylawItem[] }) {
 
 export function RulesAndRegulations() {
   return (
-    <div className="overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[0_14px_40px_rgba(0,0,0,0.42)] backdrop-blur">
-      <div className="border-b border-zinc-800/70 bg-zinc-900/40 px-5 py-4 text-center">
-        <div className="text-sm font-semibold tracking-wide text-zinc-100">Rules &amp; Regulations</div>
+    <div className="overflow-hidden rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)] backdrop-blur">
+      <div className="border-b border-zinc-800/70 light:border-zinc-200 bg-zinc-900/40 light:bg-zinc-100 px-5 py-4 text-center">
+        <div className="text-sm font-semibold tracking-wide text-zinc-100 light:text-zinc-900">Rules &amp; Regulations</div>
       </div>
 
       <div>
         {SECTIONS.map((s) => (
-          <div key={s.number} className="border-b border-zinc-800/60 px-5 py-4 last:border-b-0">
-            <div className="mb-3 text-sm font-semibold text-zinc-100">
+          <div key={s.number} className="border-b border-zinc-800/60 light:border-zinc-200 px-5 py-4 last:border-b-0">
+            <div className="mb-3 text-sm font-semibold text-zinc-100 light:text-zinc-900">
               {s.number}. {s.title}
             </div>
             <BylawList items={s.items} />

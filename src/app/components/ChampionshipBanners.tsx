@@ -41,9 +41,9 @@ function Banner({
   return (
     <div className="relative flex shrink-0 flex-col items-center" style={{ width: 168 }}>
       {/* ring hanging on the rafter */}
-      <div className="-mt-[7px] h-3.5 w-3.5 rounded-full border-2 border-zinc-500 bg-zinc-800 shadow-[0_1px_2px_rgba(0,0,0,0.6)]" />
+      <div className="-mt-[7px] h-3.5 w-3.5 rounded-full border-2 border-zinc-500 light:border-zinc-400 bg-zinc-800 light:bg-zinc-200 shadow-[0_1px_2px_rgba(0,0,0,0.6)] light:shadow-[0_1px_2px_rgba(0,0,0,0.15)]" />
       {/* strap */}
-      <div className="h-5 w-[2px] bg-zinc-600/70" />
+      <div className="h-5 w-[2px] bg-zinc-600/70 light:bg-zinc-300" />
 
       <div
         className={
@@ -52,7 +52,7 @@ function Banner({
         }
       >
         {/* banner body — text lives here, never clipped */}
-        <div className="relative overflow-hidden bg-gradient-to-b from-zinc-800 to-zinc-950 px-3 pb-4 pt-5 shadow-[0_18px_34px_rgba(0,0,0,0.55)] ring-1 ring-inset ring-red-500/30">
+        <div className="relative overflow-hidden bg-gradient-to-b from-zinc-800 light:from-zinc-200/60 to-zinc-950 light:to-white px-3 pb-4 pt-5 shadow-[0_18px_34px_rgba(0,0,0,0.55)] light:shadow-[0_18px_34px_rgba(0,0,0,0.12)] ring-1 ring-inset ring-red-500/30 light:ring-red-400/40">
           {/* subtle cloth ridges */}
           <div
             className="pointer-events-none absolute inset-0 opacity-[0.06]"
@@ -62,20 +62,20 @@ function Banner({
             }}
           />
           {/* top trim */}
-          <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-red-700/70 via-red-400/90 to-red-700/70" />
+          <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-red-700/70 light:from-red-500/60 via-red-400/90 light:via-red-500/80 to-red-700/70 light:to-red-500/60" />
 
           <div className="relative">
             <div className="text-lg leading-none">🏆</div>
-            <div className="mt-1.5 text-[10px] font-bold tracking-[0.22em] text-red-400">
+            <div className="mt-1.5 text-[10px] font-bold tracking-[0.22em] text-red-400 light:text-red-600">
               CHAMPIONS
             </div>
-            <div className="mt-2 line-clamp-2 min-h-[2.5rem] text-sm font-semibold leading-tight text-zinc-50">
+            <div className="mt-2 line-clamp-2 min-h-[2.5rem] text-sm font-semibold leading-tight text-zinc-50 light:text-zinc-950">
               {name}
             </div>
-            <div className="mt-2 text-2xl font-black tracking-tight text-zinc-100">{season}</div>
+            <div className="mt-2 text-2xl font-black tracking-tight text-zinc-100 light:text-zinc-900">{season}</div>
             <div
               className={
-                "mt-2 inline-flex items-center rounded-full border border-red-500/40 bg-red-500/10 px-2.5 py-0.5 text-[11px] font-semibold text-red-300" +
+                "mt-2 inline-flex items-center rounded-full border border-red-500/40 light:border-red-400 bg-red-500/10 light:bg-red-100/70 px-2.5 py-0.5 text-[11px] font-semibold text-red-300 light:text-red-700" +
                 (record ? "" : " invisible")
               }
             >
@@ -86,7 +86,7 @@ function Banner({
 
         {/* pennant tail — purely decorative, can never eat into text */}
         <div
-          className="h-6 w-full bg-zinc-950 ring-1 ring-inset ring-red-500/30"
+          className="h-6 w-full bg-zinc-950 light:bg-white ring-1 ring-inset ring-red-500/30 light:ring-red-400/40"
           style={{ clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 50% 40%, 0% 100%)" }}
         />
       </div>
@@ -137,19 +137,19 @@ export function ChampionshipBanners() {
 
   return (
     <section className="mb-10">
-      <div className="mb-4 text-center text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500">
+      <div className="mb-4 text-center text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500 light:text-zinc-500">
         Championship Banners
       </div>
 
       <div ref={scrollerRef} className="no-scrollbar cursor-grab overflow-x-auto pb-4">
-        <div className="mx-auto flex w-max items-start gap-7 border-t-[3px] border-zinc-700/80 px-6 pt-0">
+        <div className="mx-auto flex w-max items-start gap-7 border-t-[3px] border-zinc-700/80 light:border-zinc-300 px-6 pt-0">
           {loading
             ? Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} className="flex shrink-0 flex-col items-center" style={{ width: 168 }}>
-                  <div className="-mt-[7px] h-3.5 w-3.5 rounded-full border-2 border-zinc-700 bg-zinc-800" />
-                  <div className="h-5 w-[2px] bg-zinc-700/70" />
+                  <div className="-mt-[7px] h-3.5 w-3.5 rounded-full border-2 border-zinc-700 light:border-zinc-300 bg-zinc-800 light:bg-zinc-200" />
+                  <div className="h-5 w-[2px] bg-zinc-700/70 light:bg-zinc-300" />
                   <div
-                    className="h-[170px] w-full animate-pulse bg-zinc-900/50"
+                    className="h-[170px] w-full animate-pulse bg-zinc-900/50 light:bg-zinc-100"
                     style={{ clipPath: "polygon(0% 0%, 100% 0%, 100% 88%, 50% 74%, 0% 88%)" }}
                   />
                 </div>

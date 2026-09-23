@@ -11,5 +11,5 @@ export interface DividerProps {
  * Horizontal divider line
  */
 export function Divider({ className }: DividerProps) {
-  return <div className={cx("h-px w-full bg-zinc-800/70", className)} />;
+  return <div className={cx("h-px w-full bg-zinc-800/70 light:bg-zinc-200", className)} />;
 }

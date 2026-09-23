@@ -80,7 +80,7 @@ function Avatar({
   const s = `${size}px`;
   return (
     <div
-      className="relative shrink-0 overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
+      className="relative shrink-0 overflow-hidden rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] light:shadow-[inset_0_1px_0_rgba(0,0,0,0.04)]"
       style={{ width: s, height: s }}
       title={name}
     >
@@ -88,7 +88,7 @@ function Avatar({
         // eslint-disable-next-line @next/next/no-img-element
         <img src={avatar} alt={name} className="h-full w-full object-cover" loading="lazy" />
       ) : (
-        <div className="flex h-full w-full items-center justify-center text-sm font-semibold text-zinc-200">
+        <div className="flex h-full w-full items-center justify-center text-sm font-semibold text-zinc-200 light:text-zinc-800">
           {initials(name)}
         </div>
       )}
@@ -98,9 +98,9 @@ function Avatar({
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-zinc-800/70 bg-zinc-950/40 px-3 py-2.5">
-      <div className="text-base font-semibold text-zinc-100">{value}</div>
-      <div className="mt-0.5 text-[11px] uppercase tracking-wide text-zinc-500">{label}</div>
+    <div className="rounded-xl border border-zinc-800/70 light:border-zinc-200 bg-zinc-950/40 light:bg-zinc-50 px-3 py-2.5">
+      <div className="text-base font-semibold text-zinc-100 light:text-zinc-900">{value}</div>
+      <div className="mt-0.5 text-[11px] uppercase tracking-wide text-zinc-500 light:text-zinc-500">{label}</div>
     </div>
   );
 }
@@ -113,9 +113,9 @@ function ManagerCardView({ m }: { m: ManagerCard }) {
   ].filter(Boolean);
 
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[0_14px_40px_rgba(0,0,0,0.42)] backdrop-blur">
+    <div className="group relative overflow-hidden rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)] backdrop-blur">
       <div className="pointer-events-none absolute inset-0 opacity-0 transition group-hover:opacity-100">
-        <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 light:from-amber-200/50 via-transparent to-transparent" />
       </div>
 
       <div className="relative p-5">
@@ -123,12 +123,12 @@ function ManagerCardView({ m }: { m: ManagerCard }) {
           <Avatar name={m.managerName} avatar={m.avatar} />
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <div className="truncate text-base font-semibold text-zinc-100">{m.managerName}</div>
+              <div className="truncate text-base font-semibold text-zinc-100 light:text-zinc-900">{m.managerName}</div>
             </div>
             {m.handle ? (
-              <div className="mt-0.5 truncate text-xs text-zinc-500">{m.handle}</div>
+              <div className="mt-0.5 truncate text-xs text-zinc-500 light:text-zinc-500">{m.handle}</div>
             ) : null}
-            <div className="mt-1 truncate text-[11px] text-zinc-500">{tenureBits.join(" • ")}</div>
+            <div className="mt-1 truncate text-[11px] text-zinc-500 light:text-zinc-500">{tenureBits.join(" • ")}</div>
           </div>
         </div>
 
@@ -137,7 +137,7 @@ function ManagerCardView({ m }: { m: ManagerCard }) {
             {m.championSeasons.map((s) => (
               <span
                 key={`champ-${s}`}
-                className="inline-flex items-center gap-1 rounded-full border border-amber-900/50 bg-amber-950/30 px-2 py-0.5 text-[11px] font-medium text-amber-200"
+                className="inline-flex items-center gap-1 rounded-full border border-amber-900/50 light:border-amber-300 bg-amber-950/30 light:bg-amber-100 px-2 py-0.5 text-[11px] font-medium text-amber-200 light:text-amber-800"
               >
                 🏆 {s}
               </span>
@@ -145,7 +145,7 @@ function ManagerCardView({ m }: { m: ManagerCard }) {
             {m.lastPlaceSeasons.map((s) => (
               <span
                 key={`last-${s}`}
-                className="inline-flex items-center gap-1 rounded-full border border-zinc-700/60 bg-zinc-900/40 px-2 py-0.5 text-[11px] font-medium text-zinc-300"
+                className="inline-flex items-center gap-1 rounded-full border border-zinc-700/60 light:border-zinc-300 bg-zinc-900/40 light:bg-zinc-100 px-2 py-0.5 text-[11px] font-medium text-zinc-300 light:text-zinc-700"
               >
                 💀 {s}
               </span>
@@ -179,18 +179,18 @@ function ManagerCardView({ m }: { m: ManagerCard }) {
           />
         </div>
 
-        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-500">
+        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-500 light:text-zinc-500">
           <div>
-            Weekly highs: <span className="font-semibold text-zinc-300">{m.weeklyHighs}</span>
+            Weekly highs: <span className="font-semibold text-zinc-300 light:text-zinc-700">{m.weeklyHighs}</span>
           </div>
           <div>
             Longest win streak:{" "}
-            <span className="font-semibold text-zinc-300">{m.longestWinStreak}</span>
+            <span className="font-semibold text-zinc-300 light:text-zinc-700">{m.longestWinStreak}</span>
           </div>
         </div>
 
         {m.recentTeamNames.length ? (
-          <div className="mt-2 truncate text-[11px] text-zinc-600">
+          <div className="mt-2 truncate text-[11px] text-zinc-600 light:text-zinc-500">
             Recent team names:{" "}
             {m.recentTeamNames.map((t, i) => (
               <span key={`${t.season}-${i}`}>
@@ -224,13 +224,13 @@ export default function ManagersPage() {
   }, [rows, query]);
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-100">
+    <main className="min-h-screen bg-zinc-950 light:bg-white text-zinc-100 light:text-zinc-900">
       <FloatingNav />
 
       <div className="mx-auto w-full max-w-6xl px-4 pb-12 pt-6 md:pt-24">
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-semibold tracking-tight md:text-5xl">Managers</h1>
-          <div className="mt-2 text-sm text-zinc-400">Manager cards — all-time stats, badges, and history</div>
+          <div className="mt-2 text-sm text-zinc-400 light:text-zinc-600">Manager cards — all-time stats, badges, and history</div>
         </div>
 
         <div className="mb-6 flex justify-center">
@@ -238,12 +238,12 @@ export default function ManagersPage() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search managers…"
-            className="w-full max-w-sm rounded-full border border-zinc-800 bg-zinc-950/60 px-4 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 outline-none focus:border-zinc-700"
+            className="w-full max-w-sm rounded-full border border-zinc-800 light:border-zinc-200 bg-zinc-950/60 light:bg-zinc-50 px-4 py-2 text-sm text-zinc-100 light:text-zinc-900 placeholder:text-zinc-500 light:placeholder:text-zinc-400 outline-none focus:border-zinc-700 light:focus:border-zinc-400"
           />
         </div>
 
         {err ? (
-          <div className="rounded-2xl border border-red-900/60 bg-zinc-950/60 p-5 text-red-200 shadow-[0_14px_40px_rgba(0,0,0,0.42)]">
+          <div className="rounded-2xl border border-red-900/60 light:border-red-300 bg-zinc-950/60 light:bg-zinc-50 p-5 text-red-200 light:text-red-800 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)]">
             <div className="text-sm font-semibold">Load error</div>
             <div className="mt-2 text-sm opacity-90">{err}</div>
           </div>
@@ -252,22 +252,22 @@ export default function ManagersPage() {
             {Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
-                className="overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 p-5 shadow-[0_14px_40px_rgba(0,0,0,0.42)]"
+                className="overflow-hidden rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 p-5 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)]"
               >
                 <div className="flex items-center gap-3">
-                  <div className="h-14 w-14 rounded-2xl bg-zinc-900/50" />
-                  <div className="h-4 w-40 rounded bg-zinc-900/50" />
+                  <div className="h-14 w-14 rounded-2xl bg-zinc-900/50 light:bg-zinc-100" />
+                  <div className="h-4 w-40 rounded bg-zinc-900/50 light:bg-zinc-100" />
                 </div>
                 <div className="mt-5 grid grid-cols-3 gap-2">
                   {Array.from({ length: 6 }).map((__, j) => (
-                    <div key={j} className="h-14 rounded-xl bg-zinc-900/30" />
+                    <div key={j} className="h-14 rounded-xl bg-zinc-900/30 light:bg-zinc-100/70" />
                   ))}
                 </div>
               </div>
             ))}
           </section>
         ) : !filtered.length ? (
-          <div className="text-sm text-zinc-400">No managers found.</div>
+          <div className="text-sm text-zinc-400 light:text-zinc-600">No managers found.</div>
         ) : (
           <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             {filtered.map((m) => (

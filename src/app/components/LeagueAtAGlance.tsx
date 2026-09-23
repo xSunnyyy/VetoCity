@@ -53,9 +53,9 @@ function fmtDraftDate(ms: number | null) {
 
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="grid grid-cols-[110px_1fr] gap-3 border-b border-zinc-800/60 px-4 py-2.5 last:border-b-0 sm:grid-cols-[140px_1fr]">
-      <div className="text-xs text-zinc-500">{label}</div>
-      <div className="text-sm font-medium text-zinc-100">{value}</div>
+    <div className="grid grid-cols-[110px_1fr] gap-3 border-b border-zinc-800/60 light:border-zinc-200 px-4 py-2.5 last:border-b-0 sm:grid-cols-[140px_1fr]">
+      <div className="text-xs text-zinc-500 light:text-zinc-500">{label}</div>
+      <div className="text-sm font-medium text-zinc-100 light:text-zinc-900">{value}</div>
     </div>
   );
 }
@@ -127,18 +127,18 @@ export function LeagueAtAGlance() {
 
   return (
     <section className="mb-10">
-      <div className="mb-4 text-center text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500">
+      <div className="mb-4 text-center text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500 light:text-zinc-500">
         League at a Glance
       </div>
 
       {loading || !rules ? (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.3fr_1fr]">
-          <div className="h-72 animate-pulse rounded-2xl border border-zinc-800/80 bg-zinc-950/60" />
-          <div className="h-72 animate-pulse rounded-2xl border border-zinc-800/80 bg-zinc-950/60" />
+          <div className="h-72 animate-pulse rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50" />
+          <div className="h-72 animate-pulse rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50" />
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.3fr_1fr]">
-          <div className="overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[0_14px_40px_rgba(0,0,0,0.42)] backdrop-blur">
+          <div className="overflow-hidden rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)] backdrop-blur">
             <Row label="League" value={`${rules.leagueName}${rules.season ? ` (${rules.season})` : ""}`} />
             <Row label="Teams / Scoring" value={`${rules.numTeams} · Head-to-Head, ${rules.scoringType}`} />
             <Row label="Lineup" value={rules.lineup.join(", ") || "—"} />
@@ -159,27 +159,27 @@ export function LeagueAtAGlance() {
           </div>
 
           <div className="flex flex-col gap-4">
-            <div className="overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/60 shadow-[0_14px_40px_rgba(0,0,0,0.42)] backdrop-blur">
-              <div className="border-b border-zinc-800/70 bg-zinc-900/40 px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-400">
+            <div className="overflow-hidden rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950/60 light:bg-zinc-50 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)] backdrop-blur">
+              <div className="border-b border-zinc-800/70 light:border-zinc-200 bg-zinc-900/40 light:bg-zinc-100 px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-400 light:text-zinc-600">
                 Manager · Titles
               </div>
               {titleLeaders.length ? (
                 titleLeaders.map((m) => (
                   <div
                     key={m.label}
-                    className="flex items-center justify-between border-b border-zinc-800/60 px-4 py-2 text-sm last:border-b-0"
+                    className="flex items-center justify-between border-b border-zinc-800/60 light:border-zinc-200 px-4 py-2 text-sm last:border-b-0"
                   >
-                    <span className="truncate text-zinc-200">{m.label}</span>
-                    <span className="font-semibold text-red-300">{m.titles}</span>
+                    <span className="truncate text-zinc-200 light:text-zinc-800">{m.label}</span>
+                    <span className="font-semibold text-red-300 light:text-red-700">{m.titles}</span>
                   </div>
                 ))
               ) : (
-                <div className="px-4 py-3 text-sm text-zinc-500">No champions yet.</div>
+                <div className="px-4 py-3 text-sm text-zinc-500 light:text-zinc-500">No champions yet.</div>
               )}
             </div>
 
             {reigning?.champion?.rosterId != null ? (
-              <div className="rounded-2xl border border-red-900/50 bg-red-950/20 p-4 text-sm text-red-100 shadow-[0_14px_40px_rgba(0,0,0,0.42)]">
+              <div className="rounded-2xl border border-red-900/50 light:border-red-300 bg-red-950/20 light:bg-red-100/70 p-4 text-sm text-red-100 light:text-red-800 shadow-[0_14px_40px_rgba(0,0,0,0.42)] light:shadow-[0_14px_40px_rgba(0,0,0,0.10)]">
                 <span className="font-semibold">★ Reigning Champion:</span> {reigning.champion.name}
                 {reigning.champion.ownerName ? ` — ${reigning.champion.ownerName}` : ""} ({reigning.season})
               </div>

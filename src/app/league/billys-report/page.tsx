@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import FloatingNav from "@/app/components/FloatingNav";
 import { useLeagueDataQuery } from "@/app/hooks/useLeagueDataQuery";
+import { usePlayersQuery, type PlayerMap } from "@/app/hooks/usePlayersQuery";
 import { buildTeams } from "@/app/lib/league";
 
 type MatchupRow = {
@@ -37,6 +38,8 @@ type MatchupPair = {
   rosterIdB: number;
   teamA: string;
   teamB: string;
+  startersA: string[];
+  startersB: string[];
 };
 
 type Pick = { winnerRosterId: number | null; report: string };
@@ -118,6 +121,10 @@ function pairMatchupsByWeek(matchups: any[], teams: Map<number, any>): MatchupPa
         rosterIdB,
         teamA: teams.get(rosterIdA)?.name ?? `Team ${rosterIdA}`,
         teamB: teams.get(rosterIdB)?.name ?? `Team ${rosterIdB}`,
+        // That week's actual starting lineup (not the roster's current one) —
+        // Sleeper includes this per matchup entry.
+        startersA: Array.isArray(a.starters) ? a.starters : [],
+        startersB: Array.isArray(b.starters) ? b.starters : [],
       };
     });
 }
@@ -145,6 +152,56 @@ function WinnerButton({
     >
       {label}
     </button>
+  );
+}
+
+function RosterToggleButton({
+  expanded,
+  onClick,
+  label,
+}: {
+  expanded: boolean;
+  onClick: () => void;
+  label: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-expanded={expanded}
+      aria-label={`${expanded ? "Hide" : "View"} ${label}'s starting lineup`}
+      title={`${expanded ? "Hide" : "View"} starting lineup`}
+      className={cx(
+        "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border transition",
+        expanded
+          ? "border-zinc-600 bg-zinc-900/70 text-zinc-100"
+          : "border-zinc-800 bg-zinc-950/60 text-zinc-400 hover:bg-zinc-900/50"
+      )}
+    >
+      <ChevronIcon expanded={expanded} />
+    </button>
+  );
+}
+
+function RosterList({ starters, players }: { starters: string[]; players: PlayerMap | null }) {
+  if (!starters.length) {
+    return <div className="rounded-xl border border-zinc-800 bg-zinc-950/60 p-3 text-xs text-zinc-500">No starting lineup set for this week yet.</div>;
+  }
+
+  return (
+    <div className="divide-y divide-zinc-800/70 overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950/60">
+      {starters.map((pid) => {
+        const p = players?.[pid];
+        const name = p?.full_name || [p?.first_name, p?.last_name].filter(Boolean).join(" ") || pid;
+        const meta = [p?.position, p?.team].filter(Boolean).join(" · ");
+        return (
+          <div key={pid} className="flex items-center justify-between gap-3 px-3 py-1.5 text-xs">
+            <span className="truncate font-medium text-zinc-200">{name}</span>
+            <span className="shrink-0 text-zinc-500">{meta}</span>
+          </div>
+        );
+      })}
+    </div>
   );
 }
 
@@ -322,10 +379,23 @@ function ReportForm({
 }) {
   const [week, setWeek] = useState<number>(initialEntry?.week ?? defaultWeek);
   const leagueQuery = useLeagueDataQuery({ week });
+  const playersQuery = usePlayersQuery();
   const [picks, setPicks] = useState<Record<number, Pick>>({});
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const seededRef = useRef(false);
+
+  // Which teams' starting lineups are expanded, keyed by `${matchupId}-A|B`.
+  const [expandedRosters, setExpandedRosters] = useState<Set<string>>(new Set());
+
+  function toggleRoster(key: string) {
+    setExpandedRosters((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  }
 
   const data = leagueQuery.data;
   const teams = useMemo(() => (data ? buildTeams(data.users, data.rosters) : new Map()), [data]);
@@ -480,22 +550,43 @@ function ReportForm({
         <div className="space-y-3">
           {pairs.map((p) => {
             const pick = picks[p.matchupId] ?? { winnerRosterId: null, report: "" };
+            const sides = [
+              { key: "A", rosterId: p.rosterIdA, name: p.teamA, starters: p.startersA },
+              { key: "B", rosterId: p.rosterIdB, name: p.teamB, starters: p.startersB },
+            ] as const;
+
             return (
               <div key={p.matchupId} className="rounded-xl border border-zinc-800 bg-zinc-950/40 p-4">
                 <div className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">
                   Who wins?
                 </div>
-                <div className="flex gap-2">
-                  <WinnerButton
-                    label={p.teamA}
-                    active={pick.winnerRosterId === p.rosterIdA}
-                    onClick={() => setPick(p.matchupId, { winnerRosterId: p.rosterIdA })}
-                  />
-                  <WinnerButton
-                    label={p.teamB}
-                    active={pick.winnerRosterId === p.rosterIdB}
-                    onClick={() => setPick(p.matchupId, { winnerRosterId: p.rosterIdB })}
-                  />
+                <div className="grid grid-cols-2 gap-2">
+                  {sides.map((side) => {
+                    const rosterKey = `${p.matchupId}-${side.key}`;
+                    const rosterOpen = expandedRosters.has(rosterKey);
+
+                    return (
+                      <div key={side.key} className="min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          <WinnerButton
+                            label={side.name}
+                            active={pick.winnerRosterId === side.rosterId}
+                            onClick={() => setPick(p.matchupId, { winnerRosterId: side.rosterId })}
+                          />
+                          <RosterToggleButton
+                            expanded={rosterOpen}
+                            label={side.name}
+                            onClick={() => toggleRoster(rosterKey)}
+                          />
+                        </div>
+                        {rosterOpen ? (
+                          <div className="mt-2">
+                            <RosterList starters={side.starters} players={playersQuery.data ?? null} />
+                          </div>
+                        ) : null}
+                      </div>
+                    );
+                  })}
                 </div>
                 <textarea
                   value={pick.report}
@@ -748,8 +839,8 @@ export default function BillysReportPage() {
                   </div>
 
                   {expanded ? (
-                    <div className="overflow-x-auto">
-                      <table className="w-full min-w-[480px] text-left text-sm">
+                    <div>
+                      <table className="w-full table-fixed text-left text-sm">
                         <thead>
                           <tr className="border-b border-zinc-800/70 text-xs text-zinc-500">
                             <th className="w-2/5 px-5 py-2 font-medium">Matchup</th>
@@ -761,12 +852,12 @@ export default function BillysReportPage() {
                             const winner = winnerName(m);
                             return (
                               <tr key={m.id} className="border-b border-zinc-800/50 last:border-b-0">
-                                <td className="whitespace-pre-wrap px-5 py-3 align-top font-medium text-zinc-100">
+                                <td className="whitespace-pre-wrap break-words px-5 py-3 align-top font-medium text-zinc-100">
                                   {m.matchup || "—"}
                                 </td>
-                                <td className="whitespace-pre-wrap px-5 py-3 align-top leading-relaxed text-zinc-300">
+                                <td className="whitespace-pre-wrap break-words px-5 py-3 align-top leading-relaxed text-zinc-300">
                                   {winner ? (
-                                    <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-red-300">
+                                    <div className="mb-1 break-words text-xs font-semibold uppercase tracking-wide text-red-300">
                                       Winner: {winner}
                                     </div>
                                   ) : null}

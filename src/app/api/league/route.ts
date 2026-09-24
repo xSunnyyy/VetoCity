@@ -15,6 +15,13 @@ function clamp(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, n));
 }
 
+// Sleeper's own notion of "what week is it right now" — without this, a
+// request with no ?week= param has nothing to default to but a hardcoded 1.
+async function getCurrentWeek(): Promise<number> {
+  const state = await j<any>(`${BASE}/state/nfl`);
+  return Number(state?.leg ?? state?.week ?? 1) || 1;
+}
+
 function inferMaxWeekFromLeague(league: any) {
   const s = league?.settings || {};
   const leg = Number(s.leg ?? 0) || 0; // regular season length (often 14)
@@ -26,20 +33,26 @@ function inferMaxWeekFromLeague(league: any) {
 export async function GET(req: Request) {
   try {
     const url = new URL(req.url);
-    const requestedWeekRaw = Number(url.searchParams.get("week") || "");
-    const requestedWeek = Number.isFinite(requestedWeekRaw) ? requestedWeekRaw : null;
+    const weekParam = url.searchParams.get("week");
+    // Number("") is 0, not NaN — an absent param must resolve to null, or
+    // "no week requested" silently becomes "week 0" (clamped to 1).
+    const requestedWeek = weekParam != null && weekParam !== "" && Number.isFinite(Number(weekParam))
+      ? Number(weekParam)
+      : null;
 
-    const [league, users, rosters] = await Promise.all([
+    const [league, users, rosters, nflCurrentWeek] = await Promise.all([
       j(`${BASE}/league/${LEAGUE_ID}`),
       j(`${BASE}/league/${LEAGUE_ID}/users`),
       j(`${BASE}/league/${LEAGUE_ID}/rosters`),
+      getCurrentWeek(),
     ]);
 
     const maxWeek = inferMaxWeekFromLeague(league);
 
-    // Week to serve for matchups
+    // Week to serve for matchups — default to the NFL's actual current week,
+    // not a hardcoded 1, when the caller doesn't ask for a specific one.
     const week =
-      requestedWeek == null ? 1 : clamp(requestedWeek, 1, maxWeek);
+      requestedWeek == null ? clamp(nflCurrentWeek, 1, maxWeek) : clamp(requestedWeek, 1, maxWeek);
 
     const cacheKey = `week:${week}`;
     const now = Date.now();

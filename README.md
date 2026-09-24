@@ -122,7 +122,7 @@ The fix, in `src/app/lib/githubStore.ts`: instead of writing to local disk, Bill
 - `src/app/lib/githubStore.ts`
 - `src/app/lib/billysReportAuth.ts`
 - `data/billys-report.json`
-- Remove the `{ label: "Billy's Report", ... }` entry from `secondaryItems` in `src/app/components/FloatingNav.tsx`
+- Remove the `{ label: "Billy's Report", ... }` entry from `primaryItems` in `src/app/components/FloatingNav.tsx`
 
 No `GITHUB_TOKEN` needed if you do this.
 

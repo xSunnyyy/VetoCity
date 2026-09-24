@@ -22,25 +22,25 @@ type IconKey =
 type NavItem = { label: string; href: string; icon: IconKey };
 
 // Shown as top-level pills on desktop and as the permanent icon slots on
-// mobile — same five items, same order, on both.
+// mobile — same items, same order, on both.
 const primaryItems: NavItem[] = [
   { label: "Dashboard", href: "/", icon: "dashboard" },
-  { label: "Rules", href: "/rules", icon: "rules" },
   { label: "Managers", href: "/league/managers", icon: "managers" },
   { label: "Movement", href: "/movement", icon: "movement" },
   { label: "News", href: "/news", icon: "news" },
+  { label: "Billy's Report", href: "/league/billys-report", icon: "report" },
 ];
 
 // Everything else — the desktop "League Info" dropdown and the mobile
 // "More" popup both render this same list, in this same order.
 const secondaryItems: NavItem[] = [
-  { label: "Billy's Report", href: "/league/billys-report", icon: "report" },
   { label: "Rosters", href: "/league/rosters", icon: "rosters" },
   { label: "Rivalry", href: "/league/rivalry", icon: "rivalry" },
   { label: "Standings", href: "/league/standings", icon: "standings" },
   { label: "Drafts", href: "/league/drafts", icon: "drafts" },
   { label: "Awards", href: "/league/awards", icon: "awards" },
   { label: "Records", href: "/league/records", icon: "records" },
+  { label: "Rules", href: "/rules", icon: "rules" },
 ];
 
 function cx(...parts: Array<string | false | null | undefined>) {

@@ -120,10 +120,28 @@ The fix, in `src/app/lib/githubStore.ts`: instead of writing to local disk, Bill
 - `src/app/league/billys-report/`
 - `src/app/api/billys-report/`
 - `src/app/lib/githubStore.ts`
+- `src/app/lib/billysReportAuth.ts`
 - `data/billys-report.json`
-- Remove the `{ label: "Billy's Report", ... }` entry from `secondaryItems` in `src/app/components/FloatingNav.tsx`
+- Remove the `{ label: "Billy's Report", ... }` entry from `primaryItems` in `src/app/components/FloatingNav.tsx`
 
 No `GITHUB_TOKEN` needed if you do this.
+
+### Restricting who can add/edit/delete reports
+
+Reading Billy's Report is public to anyone visiting the site — no login. But adding, editing, and deleting reports is gated behind a single shared passcode, since a fantasy league site otherwise has no concept of "who's allowed to write here."
+
+**Setup required — a `BILLYS_REPORT_PASSCODE` env var:**
+
+1. Pick any passphrase — it's shared between whoever you want able to submit reports (e.g. you and one co-writer). It's typed once per person, per browser.
+2. Vercel → your project → **Settings → Environment Variables** → add `BILLYS_REPORT_PASSCODE` with that value, scoped to Production (and Preview if you want preview deployments gated too).
+3. For local dev, add the same variable to `.env.local` (see §8).
+4. Redeploy — env var changes don't apply to a deployment that's already live.
+
+How it works: the first time someone clicks **Add Report**, the pencil (edit), or the trash icon (delete), they're asked for the passcode. Enter it once and that browser remembers it (via a signed token in localStorage) — no repeat prompts after that. The actual add/edit/delete API routes verify that token server-side (`src/app/lib/billysReportAuth.ts`), so someone can't bypass the UI and call the API directly without knowing the passcode.
+
+**To change the passcode** (e.g. someone who had it shouldn't anymore): just update the `BILLYS_REPORT_PASSCODE` value in Vercel and redeploy. The token is signed with the passcode itself, so changing it instantly invalidates every previously-unlocked browser — everyone gets prompted again on their next add/edit/delete, and only the new passcode works. There's no separate list of "authorized devices" to manage.
+
+If `BILLYS_REPORT_PASSCODE` isn't set at all, reading reports still works normally, but adding/editing/deleting is disabled with a message explaining the env var needs to be set — it fails closed, not open.
 
 ### The News page needs no setup at all
 
@@ -181,4 +199,4 @@ npm run build    # production build — good sanity check before deploying
 npm run lint
 ```
 
-No `.env` file is required for local dev unless you're testing Billy's Report (needs `GITHUB_TOKEN`) — a `.env.local` file at the repo root works, since Next.js loads it automatically and it's gitignored.
+No `.env` file is required for local dev unless you're testing Billy's Report (needs `GITHUB_TOKEN` to save, `BILLYS_REPORT_PASSCODE` to gate who can save) — a `.env.local` file at the repo root works, since Next.js loads it automatically and it's gitignored.

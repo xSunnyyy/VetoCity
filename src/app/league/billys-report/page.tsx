@@ -46,6 +46,48 @@ type Pick = { winnerRosterId: number | null; report: string };
 
 const DEFAULT_ROW_COUNT = 6;
 const DEFAULT_MAX_WEEKS = 18;
+const TOKEN_KEY = "vetocity-billys-token";
+
+function getBillysToken(): string | null {
+  try {
+    return localStorage.getItem(TOKEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function setBillysToken(token: string) {
+  try {
+    localStorage.setItem(TOKEN_KEY, token);
+  } catch {
+    // ignore (private browsing, storage disabled, etc.)
+  }
+}
+
+function clearBillysToken() {
+  try {
+    localStorage.removeItem(TOKEN_KEY);
+  } catch {
+    // ignore
+  }
+}
+
+/** Included on every add/edit/delete request; the API checks it server-side. */
+function billysAuthHeaders(): Record<string, string> {
+  const token = getBillysToken();
+  return token ? { "x-billys-token": token } : {};
+}
+
+async function verifyBillysPasscode(passcode: string): Promise<void> {
+  const res = await fetch("/api/billys-report/auth", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ passcode }),
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok || json.error) throw new Error(json.error || "Incorrect passcode.");
+  setBillysToken(json.token);
+}
 
 function fmtDate(iso: string) {
   try {
@@ -225,7 +267,7 @@ function LegacyReportForm({
 
       const res = await fetch("/api/billys-report", {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...billysAuthHeaders() },
         body: JSON.stringify({
           id: entry.id,
           title,
@@ -234,6 +276,10 @@ function LegacyReportForm({
       });
       const json = await res.json();
 
+      if (res.status === 401) {
+        clearBillysToken();
+        throw new Error("Your access expired — click Cancel and try again to re-enter the passcode.");
+      }
       if (!res.ok || json.error) throw new Error(json.error || `API error ${res.status}`);
 
       onSaved(json.entries);
@@ -462,7 +508,7 @@ function ReportForm({
 
       const res = await fetch("/api/billys-report", {
         method: mode === "edit" ? "PUT" : "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...billysAuthHeaders() },
         body: JSON.stringify({
           id: initialEntry?.id,
           title,
@@ -474,6 +520,10 @@ function ReportForm({
       });
       const json = await res.json();
 
+      if (res.status === 401) {
+        clearBillysToken();
+        throw new Error("Your access expired — click Cancel and try again to re-enter the passcode.");
+      }
       if (!res.ok || json.error) throw new Error(json.error || `API error ${res.status}`);
 
       onSaved(json.entries);
@@ -602,6 +652,76 @@ function ReportForm({
   );
 }
 
+/** Shown before add/edit/delete for anyone whose browser hasn't verified the
+ * shared passcode yet. On success the passcode's own signed token is cached
+ * in localStorage, so this only appears once per browser. */
+function PasscodeModal({ onSuccess, onCancel }: { onSuccess: () => void; onCancel: () => void }) {
+  const [passcode, setPasscode] = useState("");
+  const [checking, setChecking] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!passcode.trim()) return;
+
+    try {
+      setChecking(true);
+      setErr(null);
+      await verifyBillysPasscode(passcode.trim());
+      onSuccess();
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "Incorrect passcode.");
+    } finally {
+      setChecking(false);
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/60 light:bg-black/30 p-4">
+      <form
+        onSubmit={submit}
+        className="w-full max-w-sm space-y-4 rounded-2xl border border-zinc-800/80 light:border-zinc-300 bg-zinc-950 light:bg-white p-6 shadow-[0_20px_60px_rgba(0,0,0,0.6)] light:shadow-[0_20px_60px_rgba(0,0,0,0.2)]"
+      >
+        <div>
+          <div className="text-sm font-semibold text-zinc-100 light:text-zinc-900">Enter passcode</div>
+          <div className="mt-1 text-xs text-zinc-500 light:text-zinc-500">
+            Only people with the Billy&apos;s Report passcode can add, edit, or delete reports.
+          </div>
+        </div>
+
+        <input
+          type="password"
+          autoFocus
+          value={passcode}
+          onChange={(e) => setPasscode(e.target.value)}
+          placeholder="Passcode"
+          className="w-full rounded-xl border border-zinc-800 light:border-zinc-200 bg-zinc-950/60 light:bg-zinc-50 px-3 py-2 text-sm text-zinc-100 light:text-zinc-900 placeholder:text-zinc-600 light:placeholder:text-zinc-400 outline-none focus:border-zinc-700 light:focus:border-zinc-400"
+        />
+
+        {err ? <div className="text-sm text-red-300 light:text-red-700">{err}</div> : null}
+
+        <div className="flex items-center justify-end gap-2">
+          <button
+            type="button"
+            onClick={onCancel}
+            disabled={checking}
+            className="h-10 rounded-full border border-zinc-800 light:border-zinc-200 bg-zinc-950/60 light:bg-zinc-50 px-4 text-sm font-medium text-zinc-300 light:text-zinc-700 transition hover:bg-zinc-900/50 light:hover:bg-zinc-100 disabled:opacity-50"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={checking || !passcode.trim()}
+            className="h-10 rounded-full border border-red-800/60 light:border-red-400 bg-red-950/40 light:bg-red-100 px-5 text-sm font-semibold text-red-200 light:text-red-800 transition hover:bg-red-900/40 light:hover:bg-red-200 disabled:opacity-50"
+          >
+            {checking ? "Checking…" : "Unlock"}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
+
 export default function BillysReportPage() {
   const [entries, setEntries] = useState<ReportEntry[] | null>(null);
   const [loading, setLoading] = useState(true);
@@ -611,6 +731,19 @@ export default function BillysReportPage() {
 
   const [formMode, setFormMode] = useState<"closed" | "add" | "edit">("closed");
   const [editingEntry, setEditingEntry] = useState<ReportEntry | null>(null);
+
+  // Gate for add/edit/delete: if this browser already has a verified
+  // passcode token, `action` runs immediately; otherwise the modal opens
+  // and `action` runs only once the passcode checks out.
+  const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
+
+  function withAuth(action: () => void) {
+    if (getBillysToken()) {
+      action();
+    } else {
+      setPendingAction(() => action);
+    }
+  }
 
   // Every report starts collapsed — only ids the user has clicked open live here.
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
@@ -677,9 +810,14 @@ export default function BillysReportPage() {
 
       const res = await fetch(`/api/billys-report?id=${encodeURIComponent(entry.id)}`, {
         method: "DELETE",
+        headers: billysAuthHeaders(),
       });
       const json = await res.json();
 
+      if (res.status === 401) {
+        clearBillysToken();
+        throw new Error("Your access expired — click delete again to re-enter the passcode.");
+      }
       if (!res.ok || json.error) throw new Error(json.error || `API error ${res.status}`);
 
       setEntries(json.entries);
@@ -704,7 +842,7 @@ export default function BillysReportPage() {
           {formMode === "closed" ? (
             <button
               type="button"
-              onClick={() => setFormMode("add")}
+              onClick={() => withAuth(() => setFormMode("add"))}
               className="inline-flex h-11 md:h-10 items-center justify-center gap-1.5 rounded-full border border-red-800/60 light:border-red-400 bg-red-950/40 light:bg-red-100 px-6 text-sm font-semibold text-red-200 light:text-red-800 transition hover:bg-red-900/40 light:hover:bg-red-200"
             >
               <span className="text-base leading-none">+</span> Add Report
@@ -782,10 +920,12 @@ export default function BillysReportPage() {
                       <div className="text-xs text-zinc-500 light:text-zinc-500">{fmtDate(entry.createdAt)}</div>
                       <button
                         type="button"
-                        onClick={() => {
-                          setEditingEntry(entry);
-                          setFormMode("edit");
-                        }}
+                        onClick={() =>
+                          withAuth(() => {
+                            setEditingEntry(entry);
+                            setFormMode("edit");
+                          })
+                        }
                         className="flex h-7 w-7 items-center justify-center rounded-full text-zinc-500 light:text-zinc-500 transition hover:bg-zinc-900/60 light:hover:bg-zinc-100 hover:text-zinc-200 light:hover:text-zinc-800"
                         aria-label={`Edit ${entry.title}`}
                         title={`Edit ${entry.title}`}
@@ -794,7 +934,7 @@ export default function BillysReportPage() {
                       </button>
                       <button
                         type="button"
-                        onClick={() => handleDelete(entry)}
+                        onClick={() => withAuth(() => handleDelete(entry))}
                         disabled={deletingId === entry.id}
                         className="flex h-7 w-7 items-center justify-center rounded-full text-zinc-500 light:text-zinc-500 transition hover:bg-red-950/40 light:hover:bg-red-200 hover:text-red-300 light:hover:text-red-700 disabled:opacity-50"
                         aria-label={`Delete ${entry.title}`}
@@ -854,6 +994,17 @@ export default function BillysReportPage() {
           </div>
         )}
       </div>
+
+      {pendingAction ? (
+        <PasscodeModal
+          onSuccess={() => {
+            const action = pendingAction;
+            setPendingAction(null);
+            action();
+          }}
+          onCancel={() => setPendingAction(null)}
+        />
+      ) : null}
     </main>
   );
 }

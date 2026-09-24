@@ -1,5 +1,13 @@
 import { NextResponse } from "next/server";
 import { readJsonFile, writeJsonFile } from "@/app/lib/githubStore";
+import { requireBillysAuth } from "@/app/lib/billysReportAuth";
+
+function unauthorized() {
+  return NextResponse.json(
+    { error: "Not authorized — enter the passcode to add, edit, or delete reports." },
+    { status: 401 }
+  );
+}
 
 const FILE_PATH = "data/billys-report.json";
 
@@ -75,6 +83,8 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  if (!requireBillysAuth(req)) return unauthorized();
+
   try {
     const body = await req.json().catch(() => ({}));
     const { title, matchups, season, week, leagueId } = parseEntryFields(body);
@@ -116,6 +126,8 @@ export async function POST(req: Request) {
 }
 
 export async function PUT(req: Request) {
+  if (!requireBillysAuth(req)) return unauthorized();
+
   try {
     const body = await req.json().catch(() => ({}));
     const id = String(body?.id || "").trim();
@@ -165,6 +177,8 @@ export async function PUT(req: Request) {
 }
 
 export async function DELETE(req: Request) {
+  if (!requireBillysAuth(req)) return unauthorized();
+
   try {
     const id = new URL(req.url).searchParams.get("id");
     if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });

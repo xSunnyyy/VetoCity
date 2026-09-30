@@ -105,5 +105,75 @@
     "season": "2026",
     "week": 3,
     "leagueId": "1388938159638708224"
+  },
+  {
+    "id": "1790782833276-xozehp",
+    "title": "Week 4 (2026)",
+    "matchups": [
+      {
+        "id": "1790782833276-0",
+        "matchup": "Kingpin vs Silver",
+        "report": "Wow first of all this is fucking dopeee!!! Silver is done bro! Got ass fucked on that trade. Williams looking better than chubba this week. Anik is a pudda anyway at the moment he got no real WR and kelce might be the only one saving his ass. Easily projecting kingpin to win",
+        "rosterIdA": 10,
+        "rosterIdB": 12,
+        "teamA": "Kingpin",
+        "teamB": "Silver",
+        "winnerRosterId": 10
+      },
+      {
+        "id": "1790782833276-1",
+        "matchup": "Kurta Pajama vs Duddu Paaaji",
+        "report": "I got my money on burrow and chase. I aint even know Adil got the stack! It should be a fun matchup. I like henry against Ten but swift has been a consistent rb. Wilson matchup looking tough tho but no hope for smith either. He’s the new AJ. Rest of the matchups are pretty even will send this to Adil",
+        "rosterIdA": 3,
+        "rosterIdB": 8,
+        "teamA": "Kurta Pajama",
+        "teamB": "Duddu Paaaji",
+        "winnerRosterId": 3
+      },
+      {
+        "id": "1790782833276-2",
+        "matchup": "Haramdami vs Sacko Bhai",
+        "report": "Given the bad luck sacko bhai has been getting i am just not even going to look at his team and give it to teshu even tho his team is garbage but pussy just wanted to score week 1.",
+        "rosterIdA": 7,
+        "rosterIdB": 11,
+        "teamA": "Haramdami",
+        "teamB": "Sacko Bhai",
+        "winnerRosterId": 7
+      },
+      {
+        "id": "1790782833276-3",
+        "matchup": "Regular Season Q vs Allen Bhai",
+        "report": "Fuckk fuckk fuckkk! Pan da pudda Q. Why I keep playing some high scoring team. Like Gibbs is a cheat mode right now plus hes playing CAR im hoping its one of those game where they take it lightly and get smacked. Cmc hasnt been cmc honestly now they wanan involve everywhere else smh. Allen not saving me this week. Fuck the matchup bro lets go have some paratha roll at food street.",
+        "rosterIdA": 5,
+        "rosterIdB": 9,
+        "teamA": "Regular Season Q",
+        "teamB": "Allen Bhai",
+        "winnerRosterId": 5
+      },
+      {
+        "id": "1790782833276-4",
+        "matchup": "Purdy Cocky vs General Mcnaughty",
+        "report": "Purdy has been busting assss!!! Mahomes honestly hasn’t been bad and looking solid for the round he went. Fuckin Walker!!!! Wtf thats also cheat mode. Both of russ rbs are okay but they have solid matchups so that be a factor. Wowwww dont fucking remind me puddi sunny got Amon. Russ you fucked bro. Just send me JSN and call it a day.  Rest of the matchups are pretty even but i think Sunny got this now.",
+        "rosterIdA": 4,
+        "rosterIdB": 6,
+        "teamA": "Purdy Cocky",
+        "teamB": "General Mcnaughty",
+        "winnerRosterId": 4
+      },
+      {
+        "id": "1790782833276-5",
+        "matchup": "Barista Bhaijaan vs Abbyyzz",
+        "report": "Damn wtf JJ playing?! Why i picked up Juan pedro madarchood. Cook about to eat but idk about young. He always on the sus side of the things. Pretty ass rest of the team with ass matchups. Maybe bowers and barkley? He hasnt done much so idk maybe a breakout. Lets see. Sending it to Abbbyzzz",
+        "rosterIdA": 1,
+        "rosterIdB": 2,
+        "teamA": "Barista Bhaijaan",
+        "teamB": "Abbyyzz",
+        "winnerRosterId": 2
+      }
+    ],
+    "createdAt": "2026-09-30T15:40:33.276Z",
+    "season": "2026",
+    "week": 4,
+    "leagueId": "1388938159638708224"
   }
 ]

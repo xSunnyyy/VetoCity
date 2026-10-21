@@ -176,5 +176,75 @@
     "week": 4,
     "leagueId": "1388938159638708224",
     "updatedAt": "2026-09-30T15:53:28.781Z"
+  },
+  {
+    "id": "1792600134865-5x9voi",
+    "title": "Week 7 (2026)",
+    "matchups": [
+      {
+        "id": "1792600134865-0",
+        "matchup": "Allen Bhai vs Silver",
+        "report": "Damn no Josh Allen or big dick shakir/moore lmao. Damn i think goff about to pop off tho. Fucking i cant believe i have to go up against puca. They trsh but he eating! Cmc finally had s game so lets see if it continues with everyone out. Big boy jacobs is bach?! Damn this is going to be either really good or those trash games! Giving the win to Silver",
+        "rosterIdA": 9,
+        "rosterIdB": 12,
+        "teamA": "Allen Bhai",
+        "teamB": "Silver",
+        "winnerRosterId": 12
+      },
+      {
+        "id": "1792600134865-1",
+        "matchup": "Purdy Cocky vs Haramdani",
+        "report": "I like purdy over stafford!  Big boy walker! Honestly hes been the bestt pickup after Gibbs amon been ass tho. Sunny idk man i think you lost that trade with Adams out you got smacked rest of the team is even but i think Haradami going to get the W",
+        "rosterIdA": 4,
+        "rosterIdB": 7,
+        "teamA": "Purdy Cocky",
+        "teamB": "Haramdani",
+        "winnerRosterId": 7
+      },
+      {
+        "id": "1792600134865-2",
+        "matchup": "Barista Bhaijaan vs Kurta Pajama",
+        "report": "Pussy ass Jordan love! He finally going off tho! Dak honestly fell off. Idk he just want to jerk off CD and see his nutz. Swift been a winner. JJ about to have a nice game! Oo chase and no burrow? I do like that stack tho! Adil play him! Sending the W to Kurta pajama",
+        "rosterIdA": 1,
+        "rosterIdB": 3,
+        "teamA": "Barista Bhaijaan",
+        "teamB": "Kurta Pajama",
+        "winnerRosterId": 3
+      },
+      {
+        "id": "1792600134865-3",
+        "matchup": "Abbyyzz vs Kingpin",
+        "report": "Damn the matchup of two lucky mofos!! Kingpin did my boy immy dirty! Kingpin team been coming back tho! But Abbas with his lucky wins! Honestly both teams\nAre pretty even i think Abbas taking the W",
+        "rosterIdA": 2,
+        "rosterIdB": 10,
+        "teamA": "Abbyyzz",
+        "teamB": "Kingpin",
+        "winnerRosterId": 2
+      },
+      {
+        "id": "1792600134865-4",
+        "matchup": "General Mcnaughty vs Duddu Paaaji",
+        "report": "Duddu paaji da pudda! Wanna be highest scorer and shit and then shit lmao damn russ did woody give you a wood last week? Heard the run game at Texas was insane damn and now you Marvin heard hes the new nico fucking up my boY Q! Idk i still like baks team i think hes taking the win!",
+        "rosterIdA": 6,
+        "rosterIdB": 8,
+        "teamA": "General Mcnaughty",
+        "teamB": "Duddu Paaaji",
+        "winnerRosterId": 8
+      },
+      {
+        "id": "1792600134865-5",
+        "matchup": "Regular Season Q vs Sacko Bhai",
+        "report": "Damnn the besties face off! Big dick Gibbs is back and Watson about to pop off. Idk sakco bahi somebody always fucking you up hopefully if you rubs Abbas balls you can catch some of that luck until then sending this to Q",
+        "rosterIdA": 5,
+        "rosterIdB": 11,
+        "teamA": "Regular Season Q",
+        "teamB": "Sacko Bhai",
+        "winnerRosterId": 5
+      }
+    ],
+    "createdAt": "2026-10-21T16:28:54.865Z",
+    "season": "2026",
+    "week": 7,
+    "leagueId": "1388938159638708224"
   }
 ]
